@@ -1,17 +1,15 @@
 import {addBackgroundScene} from "./app/scene.js";
-
-const HIGH_SCORE_KEY = 'mxlle.spacecat.highScore';
+import {checkWinningCondition, resetVictoryInPosition, updateDisplayedScore} from "./app/score.js";
 
 let intervalId;
 let intervalCount = 0;
 
-let score = 0;
-let victoryInPosition = false;
 
 function init() {
     addBackgroundScene();
 
     document.addEventListener("click", function(event){
+        console.log(event);
         const cat = document.getElementById("cat");
         cat.style.left = event.pageX + "px";
         cat.style.top = event.pageY + "px";
@@ -19,6 +17,10 @@ function init() {
             synthFleesToOtherPosition();
         }
         startIntervalChecking();
+
+        if (event.target.id === 'space-key') {
+            toggleGlobalSpace();
+        }
     });
 
     document.addEventListener("keydown", function(event){
@@ -51,46 +53,11 @@ function startIntervalChecking() {
     }
 }
 
-function checkWinningCondition() {
-    const cat = document.getElementById("cat");
-    const synth = document.getElementById("synth");
-    const catBox = cat.getBoundingClientRect();
-    const synthBox = synth.getBoundingClientRect();
-
-    console.log('CHECK WINNING CONDITION');
-
-    const overlap = !(catBox.right < synthBox.left ||
-        catBox.left > synthBox.right ||
-        catBox.bottom < synthBox.top ||
-        catBox.top > synthBox.bottom);
-
-    if (overlap) {
-        document.body.classList.add("victory");
-    } else {
-        document.body.classList.remove("victory");
-    }
-
-    if (overlap && !victoryInPosition) {
-        score++;
-        victoryInPosition = true;
-        updateDisplayedScore();
-    }
-}
-
-function updateDisplayedScore() {
-    let highScore = getHighScore();
-    if (score > highScore) {
-        highScore = score;
-        saveHighScore(highScore);
-    }
-    document.getElementById("score").innerText = `Score: ${score} High Score: ${highScore}`;
-}
-
 function synthFleesToOtherPosition() {
     const synth = document.getElementById("synth");
     synth.style.left = getRandomInt(0, window.innerWidth) + "px";
     synth.style.top = getRandomInt(0, window.innerHeight) + "px";
-    victoryInPosition = false;
+    resetVictoryInPosition();
 }
 
 function getRandomInt(min, max) {
@@ -99,12 +66,12 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function getHighScore() {
-    return Number(localStorage.getItem(HIGH_SCORE_KEY));
-}
-
-function saveHighScore(score) {
-    localStorage.setItem(HIGH_SCORE_KEY, score);
+function toggleGlobalSpace() {
+    if (document.body.classList.contains('global-space-animation')) {
+        document.body.classList.remove('global-space-animation');
+    } else {
+        document.body.classList.add('global-space-animation');
+    }
 }
 
 // START

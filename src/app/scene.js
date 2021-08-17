@@ -4,15 +4,13 @@ export function addBackgroundScene() {
     }
 }
 
-const text1 = "★ ° . .　　　 　.　☾ °☆ 　.  * ● ¸    .　 . ●　　★　° : .　 .  •  ○ ° ★　 .  　 *　.　　　. 　 ° 　";
-const text2 = ". .　  　 :.　 . • ○ ° ★　 . 　 *　.　　★ ° 　　.　 ☾ °☆ 　. * ● ¸ .　　 　　. 　 ° 　. ●　　★　°";
-const text3 = "○ ° ★　 .　  *　. 　　　　　. ★ ° . .　 　.　☾ °☆ 　. * ●  ¸ .　　　★　 ° : .　 . • 　 ° 　. ●";
+const text1 = " ★ ° . .　 　 .　☾ °☆ 　.  * ¸ 　 . 　 .　 . ● 　 　 ★ 　° : .　 . 　 •  ○ ° ★　 .  　 * 　. . 　 ° ";
+const text2 = ". .　  　 :.　 . • ° ★　 . 　 * .  ★ ° 　 　.　 ☾ ° ☆ 　. *  ¸ .　 　 　 　. 　 ° 　. ● ★ ° ";
+const text3 = "　 ○ ° ★ 　 .　  *　. 　 　 . 　 　 . 　 　 　. ★ ° . .　  .　 ☾ °☆ 　. * 　  ¸ .　  　 ★ 　 ° : . 　 . • 　 ° 　 . ● ";
 
 function addOneStarRow() {
-    const node = document.createElement("SPAN");
     const textNode = document.createTextNode(getRandomText());
-    node.appendChild(textNode);
-    document.getElementById("sky").appendChild(node);
+    document.getElementById("sky").appendChild(textNode);
 }
 
 function getRandomText() {
