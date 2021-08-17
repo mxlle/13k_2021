@@ -1,0 +1,80 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    background: black;
+    color: white;
+    font-family: monospace;
+    transition: background-color .5s;
+}
+
+body.victory {
+    background: darkslategray;
+}
+
+body::before {
+    font-size: 17px;
+    content: 'Put the cat on the synthesizer. Hold SPACE for more fun';
+    margin: 7px;
+    display: block;
+}
+
+#sky {
+    font-size: 6px;
+    position: absolute;
+    color: darkslategray;
+    pointer-events: none;
+    top: 0;
+}
+
+#score {
+    font-size: 42px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+    margin: 7px 21px;
+}
+
+#cat {
+    font-size: 42px;
+}
+
+#synth {
+    font-size: 42px;
+}
+
+.start-position, .start-position-2 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: top .5s linear, left .5s linear;
+}
+
+.start-position-2 {
+    top: 20%;
+}
+
+.object {
+    user-select: none;
+    white-space: nowrap;
+}
+
+.animated {
+    animation: rotation 1s infinite forwards linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(-359deg);
+    }
+}
