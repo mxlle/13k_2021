@@ -73,10 +73,8 @@ let loop = GameLoop({
     }
 
     if (collides(cat1.obj, cat2.obj)) {
-      cat1.wormhole();
-      cat2.wormhole();
-      cat1.slowDown();
-      cat2.slowDown();
+      cat1.deceleratingWormhole();
+      cat2.deceleratingWormhole();
     }
   },
   render: function () {

@@ -1,4 +1,3 @@
-const HIGH_SCORE_KEY = 'mxlle.spacecat.highScore';
 const GOAL = 5;
 
 let score1 = 0;
@@ -26,12 +25,4 @@ export function resetScores() {
   score1 = 0;
   score2 = 0;
   updateDisplayedScore();
-}
-
-function getHighScore() {
-  return Number(localStorage.getItem(HIGH_SCORE_KEY));
-}
-
-function saveHighScore(score) {
-  localStorage.setItem(HIGH_SCORE_KEY, score);
 }

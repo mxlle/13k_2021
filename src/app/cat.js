@@ -29,6 +29,21 @@ export class Cat {
     wormhole(this.obj);
   }
 
+  deceleratingWormhole() {
+    this.wormhole();
+    this.startMoving();
+  }
+
+  startMoving() {
+    if (Math.random() < 0.5) {
+      this.obj.dx = getStartVelocity();
+      this.obj.dy = 0;
+    } else {
+      this.obj.dx = 0;
+      this.obj.dy = getStartVelocity();
+    }
+  }
+
   move() {
     this.obj.update();
     wrapObjectOnEdge(this.obj);
@@ -67,12 +82,7 @@ export class Cat {
 
   speedUp() {
     if (this.obj.dx === 0 && this.obj.dy === 0) {
-      const velocity = Math.random() < 0.5 ? -3 : 3;
-      if (Math.random() < 0.5) {
-        this.obj.dx = velocity;
-      } else {
-        this.obj.dy = velocity;
-      }
+      this.startMoving();
     } else if (this.obj.dx === 0) {
       this.obj.dy = this.obj.dy > 0 ? this.obj.dy + 1 : this.obj.dy - 1;
     } else {
@@ -80,18 +90,14 @@ export class Cat {
     }
   }
 
-  slowDown() {
-    if (this.obj.dx === 0) {
-      this.obj.dy = this.obj.dy > 0 ? 1 : -1;
-    } else {
-      this.obj.dx = this.obj.dx > 0 ? 1 : -1;
-    }
-  }
-
   stop() {
     this.obj.dx = 0;
     this.obj.dy = 0;
   }
+}
+
+function getStartVelocity() {
+  return Math.random() < 0.5 ? -3 : 3;
 }
 
 function wrapObjectOnEdge(obj) {
