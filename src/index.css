@@ -18,6 +18,10 @@ body.victory {
   background: darkslategray;
 }
 
+canvas {
+  position: absolute;
+}
+
 .description {
   font-size: 17px;
   margin: 11px;
@@ -28,7 +32,7 @@ body.victory {
 }
 
 #sky {
-  font-size: 7px;
+  font-size: 13px;
   position: absolute;
   color: darkslategray;
   pointer-events: none;
@@ -45,55 +49,14 @@ body.victory {
   text-align: right;
 }
 
-#cat {
-  font-size: 42px;
-}
-
-#synth {
-  font-size: 42px;
-}
-
 #space-key {
   color: yellow;
   border: 1px solid yellow;
   padding: 7px 21px;
-}
-
-.start-position,
-.start-position-2 {
   position: absolute;
-  left: 50%;
   top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  transition: top 0.5s linear, left 0.5s linear;
-}
-
-.start-position-2 {
-  top: 20%;
-}
-
-.object {
-  user-select: none;
-  white-space: nowrap;
-}
-
-#cat.animated,
-body.global-space-animation #cat {
-  animation: rotation 1s infinite forwards linear;
-}
-
-body.global-space-animation #space-key {
-  color: white;
-  border-color: white;
-}
-
-@keyframes rotation {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(-359deg);
-  }
 }
 
 @media screen and (hover: hover) {

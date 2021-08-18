@@ -1,78 +1,134 @@
+import { init, GameLoop, Text, initKeys, bindKeys, collides } from '../node_modules/kontra/kontra.mjs';
+
+import { Cat } from './app/cat.js';
 import { addBackgroundScene } from './app/scene.js';
-import { checkWinningCondition, resetVictoryInPosition, updateDisplayedScore } from './app/score.js';
+import { resetScores, updateDisplayedScore, updateScore } from './app/score.js';
+import { wormhole } from './app/wormhole.js';
 
-let intervalId;
-let intervalCount = 0;
+let gameStarted = false;
+let { canvas } = init();
+initKeys();
 
-function init() {
-  addBackgroundScene();
+// resize the canvas to fill browser window dynamically
+window.addEventListener('resize', resizeCanvas, false);
 
-  document.addEventListener('click', function (event) {
-    console.log(event);
-    const cat = document.getElementById('cat');
-    cat.style.left = event.pageX + 'px';
-    cat.style.top = event.pageY + 'px';
-    if (Math.random() > 0.2) {
-      synthFleesToOtherPosition();
-    }
-    startIntervalChecking();
-
-    if (event.target.id === 'space-key') {
-      toggleGlobalSpace();
-    }
-  });
-
-  document.addEventListener('keydown', function (event) {
-    if (event.code === 'Space') {
-      const cat = document.getElementById('cat');
-      cat.classList.add('animated');
-    }
-  });
-
-  document.addEventListener('keyup', function (event) {
-    if (event.code === 'Space') {
-      const cat = document.getElementById('cat');
-      cat.classList.remove('animated');
-    }
-  });
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
 
-function startIntervalChecking() {
-  intervalCount = 0;
+resizeCanvas();
 
-  if (!intervalId) {
-    intervalId = setInterval(() => {
-      checkWinningCondition();
-      intervalCount++;
-      if (intervalCount >= 20) {
-        clearInterval(intervalId);
-        intervalId = undefined;
-      }
-    }, 100);
-  }
-}
+bindKeys('space', onSpace);
 
-function synthFleesToOtherPosition() {
-  const synth = document.getElementById('synth');
-  synth.style.left = getRandomInt(0, window.innerWidth) + 'px';
-  synth.style.top = getRandomInt(0, window.innerHeight) + 'px';
-  resetVictoryInPosition();
-}
+let synth = Text({
+  text: '🎹',
+  font: '100px sans-serif',
+});
+wormhole(synth);
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+let rocket = Text({
+  text: '🚀',
+  font: '50px sans-serif',
+});
+wormhole(rocket);
 
-function toggleGlobalSpace() {
-  if (document.body.classList.contains('global-space-animation')) {
-    document.body.classList.remove('global-space-animation');
+const cat1 = new Cat('🐈', 'left', 'right', 1);
+const cat2 = new Cat('🐱', 'a', 'd', 2);
+
+let loop = GameLoop({
+  // create the main game loop
+  update: function () {
+    if (!gameStarted) return;
+
+    // update the game state
+    cat1.move();
+    cat2.move();
+
+    const c1 = collides(cat1.obj, synth);
+    const c2 = collides(cat2.obj, synth);
+    let goalReached = false;
+
+    if (c1) {
+      goalReached ||= updateScore(1);
+    }
+    if (c2) {
+      goalReached ||= updateScore(2);
+    }
+
+    if (goalReached) {
+      endGame();
+      return;
+    } else if (c1 || c2) {
+      wormhole(synth);
+    }
+
+    if (collides(rocket, cat1.obj)) {
+      cat1.wormhole();
+      wormhole(rocket);
+    }
+    if (collides(rocket, cat2.obj)) {
+      cat2.wormhole();
+      wormhole(rocket);
+    }
+
+    if (collides(cat1.obj, cat2.obj)) {
+      cat1.wormhole();
+      cat2.wormhole();
+      cat1.slowDown();
+      cat2.slowDown();
+    }
+  },
+  render: function () {
+    // render the game state
+    synth.render();
+    rocket.render();
+    cat1.obj.render();
+    cat2.obj.render();
+  },
+});
+
+function onSpace() {
+  if (gameStarted) {
+    speedUpCats();
   } else {
-    document.body.classList.add('global-space-animation');
+    startGame();
   }
 }
+
+function speedUpCats() {
+  cat1.speedUp();
+  cat2.speedUp();
+}
+
+function stopCats() {
+  cat1.stop();
+  cat2.stop();
+}
+
+function endGame() {
+  gameStarted = false;
+  stopCats();
+  document.body.classList.add('victory');
+}
+
+function startGame() {
+  if (document.body.classList.contains('victory')) {
+    wormhole(synth);
+    resetScores();
+  }
+  document.body.classList.remove('victory');
+  gameStarted = true;
+  speedUpCats();
+}
+
+document.addEventListener('click', function (event) {
+  if (event.target.id === 'space-key') {
+    onSpace();
+  }
+});
 
 // START
-init();
+addBackgroundScene();
 updateDisplayedScore();
+loop.start();

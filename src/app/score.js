@@ -1,45 +1,31 @@
 const HIGH_SCORE_KEY = 'mxlle.spacecat.highScore';
+const GOAL = 5;
 
-let score = 0;
-let victoryInPosition = false;
+let score1 = 0;
+let score2 = 0;
 
-export function checkWinningCondition() {
-  const cat = document.getElementById('cat');
-  const synth = document.getElementById('synth');
-  const catBox = cat.getBoundingClientRect();
-  const synthBox = synth.getBoundingClientRect();
-
-  const overlap = !(
-    catBox.right < synthBox.left ||
-    catBox.left > synthBox.right ||
-    catBox.bottom < synthBox.top ||
-    catBox.top > synthBox.bottom
-  );
-
-  if (overlap) {
-    document.body.classList.add('victory');
+export function updateScore(id) {
+  if (id === 1) {
+    score1++;
   } else {
-    document.body.classList.remove('victory');
+    score2++;
   }
 
-  if (overlap && !victoryInPosition) {
-    score++;
-    victoryInPosition = true;
-    updateDisplayedScore();
-  }
+  updateDisplayedScore();
+
+  return score1 === GOAL || score2 === GOAL;
 }
 
 export function updateDisplayedScore() {
-  let highScore = getHighScore();
-  if (score > highScore) {
-    highScore = score;
-    saveHighScore(highScore);
-  }
-  document.getElementById('score').innerHTML = `Current&nbsp;Score:&nbsp;${score}<br/>High&nbsp;Score:&nbsp;${highScore}`;
+  document.getElementById(
+    'score'
+  ).innerHTML = `🐈&nbsp;[&larr;]&nbsp;[&rarr;]&nbsp;Score:&nbsp;${score1}<br/>🐱&nbsp;[A]&nbsp;[D]&nbsp;Score:&nbsp;${score2}<br/>Goal:&nbsp;${GOAL}`;
 }
 
-export function resetVictoryInPosition() {
-  victoryInPosition = false;
+export function resetScores() {
+  score1 = 0;
+  score2 = 0;
+  updateDisplayedScore();
 }
 
 function getHighScore() {
