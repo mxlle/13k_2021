@@ -1,100 +1,103 @@
-html, body {
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
 body {
-    background: black;
-    color: white;
-    font-family: monospace;
-    transition: background-color .5s;
+  background: black;
+  color: white;
+  font-family: monospace;
+  transition: background-color 0.5s;
 }
 
 body.victory {
-    background: darkslategray;
+  background: darkslategray;
 }
 
 .description {
-    font-size: 17px;
-    margin: 11px;
-    display: block;
-    position: fixed;
-    bottom: 0;
-    left: 0;
+  font-size: 17px;
+  margin: 11px;
+  display: block;
+  position: fixed;
+  bottom: 0;
+  left: 0;
 }
 
 #sky {
-    font-size: 7px;
-    position: absolute;
-    color: darkslategray;
-    pointer-events: none;
-    top: 0;
+  font-size: 7px;
+  position: absolute;
+  color: darkslategray;
+  pointer-events: none;
+  top: 0;
 }
 
 #score {
-    font-size: 21px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    pointer-events: none;
-    margin: 7px 21px;
-    text-align: right;
+  font-size: 21px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+  margin: 7px 21px;
+  text-align: right;
 }
 
 #cat {
-    font-size: 42px;
+  font-size: 42px;
 }
 
 #synth {
-    font-size: 42px;
+  font-size: 42px;
 }
 
 #space-key {
-    color: yellow;
-    border: 1px solid yellow;
-    padding: 7px 21px;
+  color: yellow;
+  border: 1px solid yellow;
+  padding: 7px 21px;
 }
 
-.start-position, .start-position-2 {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    transition: top .5s linear, left .5s linear;
+.start-position,
+.start-position-2 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: top 0.5s linear, left 0.5s linear;
 }
 
 .start-position-2 {
-    top: 20%;
+  top: 20%;
 }
 
 .object {
-    user-select: none;
-    white-space: nowrap;
+  user-select: none;
+  white-space: nowrap;
 }
 
-#cat.animated, body.global-space-animation #cat {
-    animation: rotation 1s infinite forwards linear;
+#cat.animated,
+body.global-space-animation #cat {
+  animation: rotation 1s infinite forwards linear;
 }
 
 body.global-space-animation #space-key {
-    color: white;
-    border-color: white;
+  color: white;
+  border-color: white;
 }
 
 @keyframes rotation {
-    from {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-    to {
-        transform: translate(-50%, -50%) rotate(-359deg);
-    }
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-359deg);
+  }
 }
 
 @media screen and (hover: hover) {
-    #space-key {
-        display: none;
-    }
+  #space-key {
+    display: none;
+  }
 }
