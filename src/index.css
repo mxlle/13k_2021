@@ -18,6 +18,11 @@ body.victory {
   background: darkslategray;
 }
 
+body.victory #sky {
+  color: darkslategray;
+  animation: none;
+}
+
 canvas {
   position: absolute;
 }
@@ -34,9 +39,31 @@ canvas {
 #sky {
   font-size: 13px;
   position: absolute;
-  color: darkslategray;
+  color: indigo;
   pointer-events: none;
   top: 0;
+  animation: rainbow-color 20s infinite;
+}
+
+@keyframes rainbow-color {
+  0% {
+    color: indigo;
+  }
+  20% {
+    color: purple;
+  }
+  40% {
+    color: saddlebrown;
+  }
+  60% {
+    color: darkslategray;
+  }
+  80% {
+    color: darkslateblue;
+  }
+  100% {
+    color: indigo;
+  }
 }
 
 #score {
