@@ -2,5 +2,8 @@
   "name": "13k_2021",
   "version": "0.0.1",
   "dependencies": {
+  },
+  "devDependencies": {
+    "prettier": "^2.3.2"
   }
 }
