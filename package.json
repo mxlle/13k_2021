@@ -2,6 +2,7 @@
   "name": "13k_2021",
   "version": "0.0.1",
   "dependencies": {
+    "kontra": "^7.1.3"
   },
   "devDependencies": {
     "prettier": "^2.3.2"

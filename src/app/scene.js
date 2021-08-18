@@ -6,7 +6,7 @@ export function addBackgroundScene() {
 
 const text1 = ' ★ ° . .　 　 .　☾ °☆ 　.  * ¸ 　 . 　 .　 . ● 　 　 ★ 　° : .　 . 　 •  ○ ° ★　 .  　 * 　. . 　 ° ';
 const text2 = '. .　  　 :.　 . • ° ★　 . 　 * .  ★ ° 　 　.　 ☾ ° ☆ 　. *  ¸ .　 　 　 　. 　 ° 　. ● ★ ° ';
-const text3 = '　 ○ ° ★ 　 .　  *　. 　 　 . 　 　 . 　 　 　. ★ ° . .　  .　 ☾ °☆ 　. * 　  ¸ .　  　 ★ 　 ° : . 　 . • 　 ° 　 . ● ';
+const text3 = '　 ○ ° ★ 　 .　  *　. 　 　 . 　 　 . 　🛸 　 　. ★ ° . .　  .　 ☾ °☆ 　. * 　  ¸ .　  　 ★ 　 ° : . 　 . • 　 ° 　 . ● ';
 
 function addOneStarRow() {
   const textNode = document.createTextNode(getRandomText());
