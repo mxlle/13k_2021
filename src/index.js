@@ -6,6 +6,7 @@ import { resetScores, updateDisplayedScore, updateScore } from './app/score.js';
 import { wormhole } from './app/wormhole.js';
 
 let gameStarted = false;
+let randomMode = false;
 let { canvas } = init();
 initKeys();
 
@@ -76,6 +77,11 @@ let loop = GameLoop({
       cat1.deceleratingWormhole();
       cat2.deceleratingWormhole();
     }
+
+    if (randomMode && Math.random() < 0.02) {
+      Math.random() < 0.5 ? cat1.turnRight() : cat1.turnLeft();
+      Math.random() < 0.5 ? cat2.turnRight() : cat2.turnLeft();
+    }
   },
   render: function () {
     // render the game state
@@ -107,6 +113,7 @@ function stopCats() {
 function endGame() {
   gameStarted = false;
   stopCats();
+  randomMode = false;
   document.body.classList.add('victory');
 }
 
@@ -123,6 +130,7 @@ function startGame() {
 document.addEventListener('click', function (event) {
   if (event.target.id === 'space-key') {
     onSpace();
+    randomMode = !randomMode;
   }
 });
 
