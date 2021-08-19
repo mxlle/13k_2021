@@ -5,6 +5,7 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
+  user-select: none;
 }
 
 body {
@@ -28,7 +29,7 @@ canvas {
 }
 
 .description {
-  font-size: 17px;
+  font-size: 37px;
   margin: 11px;
   display: block;
   position: fixed;
@@ -67,7 +68,7 @@ canvas {
 }
 
 #score {
-  font-size: 21px;
+  font-size: 37px;
   position: absolute;
   top: 0;
   right: 0;
@@ -81,6 +82,8 @@ canvas {
   border: 1px solid yellow;
   padding: 7px 21px;
   position: absolute;
+  font-size: 23px;
+  text-align: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
