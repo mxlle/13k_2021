@@ -1,4 +1,4 @@
-import { randInt } from '../../node_modules/kontra/kontra.mjs';
+import { randInt } from 'kontra';
 
 export function wormhole(obj) {
   obj.x = randInt(0, window.innerWidth - obj.width);

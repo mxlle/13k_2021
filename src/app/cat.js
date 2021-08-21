@@ -1,5 +1,5 @@
-import { Text, bindKeys } from '../../node_modules/kontra/kontra.mjs';
-import { wormhole } from './wormhole.js';
+import { Text, bindKeys } from 'kontra';
+import { wormhole } from './wormhole';
 
 export class Cat {
   id;

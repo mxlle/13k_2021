@@ -1,9 +1,11 @@
-import { init, GameLoop, Text, initKeys, bindKeys, collides } from '../node_modules/kontra/kontra.mjs';
+import { init, GameLoop, Text, initKeys, bindKeys, collides } from 'kontra';
 
-import { Cat } from './app/cat.js';
-import { addBackgroundScene } from './app/scene.js';
-import { resetScores, updateDisplayedScore, updateScore } from './app/score.js';
-import { wormhole } from './app/wormhole.js';
+import './index.css';
+
+import { Cat } from './app/cat';
+import { addBackgroundScene } from './app/scene';
+import { resetScores, updateDisplayedScore, updateScore } from './app/score';
+import { wormhole } from './app/wormhole';
 
 let gameStarted = false;
 let randomMode = false;
