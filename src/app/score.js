@@ -1,28 +1,9 @@
-const GOAL = 5;
+export const GOAL = 3;
 
-let score1 = 0;
-let score2 = 0;
+export function updateScoreboard(cats) {
+  const catText = cats
+    .map((cat) => `${cat.character}&nbsp;[${cat.leftKey}]&nbsp;[${cat.rightKey}]&nbsp;Score:&nbsp;${cat.score}`)
+    .join('<br/>');
 
-export function updateScore(id) {
-  if (id === 1) {
-    score1++;
-  } else {
-    score2++;
-  }
-
-  updateDisplayedScore();
-
-  return score1 === GOAL || score2 === GOAL;
-}
-
-export function updateDisplayedScore() {
-  document.getElementById(
-    'score'
-  ).innerHTML = `🐈&nbsp;[&larr;]&nbsp;[&rarr;]&nbsp;Score:&nbsp;${score1}<br/>🐱&nbsp;[A]&nbsp;[D]&nbsp;Score:&nbsp;${score2}<br/>Goal:&nbsp;${GOAL}`;
-}
-
-export function resetScores() {
-  score1 = 0;
-  score2 = 0;
-  updateDisplayedScore();
+  document.getElementById('score').innerHTML = `${catText}<br/>Goal:&nbsp;${GOAL}`;
 }
