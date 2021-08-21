@@ -1,20 +1,18 @@
-import { Text, bindKeys } from 'kontra';
-import { wormhole } from './wormhole';
+import { bindKeys } from 'kontra';
+import { GameObject } from './gameObject';
+import { GOAL } from './score';
 
-export class Cat {
-  id;
-  obj;
+export class Cat extends GameObject {
+  character;
+  score = 0;
+  random = false;
+  leftKey;
+  rightKey;
 
-  constructor(character, leftKey, rightKey, id) {
-    this.id = id;
+  constructor(type, character, leftKey, rightKey) {
+    super(type, character);
 
-    this.obj = Text({
-      text: character,
-      font: '100px sans-serif',
-      //anchor: { x: 0.5, y: 0.5 }
-    });
-
-    this.wormhole();
+    this.character = character;
 
     bindKeys(leftKey, () => {
       this.turnLeft();
@@ -23,10 +21,9 @@ export class Cat {
     bindKeys(rightKey, () => {
       this.turnRight();
     });
-  }
 
-  wormhole() {
-    wormhole(this.obj);
+    this.leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
+    this.rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
   }
 
   deceleratingWormhole() {
@@ -47,6 +44,10 @@ export class Cat {
   move() {
     this.obj.update();
     wrapObjectOnEdge(this.obj);
+
+    if (this.random && Math.random() < 0.02) {
+      Math.random() < 0.5 ? this.turnRight() : this.turnLeft();
+    }
   }
 
   turnLeft() {
@@ -93,6 +94,16 @@ export class Cat {
   stop() {
     this.obj.dx = 0;
     this.obj.dy = 0;
+    this.random = false;
+  }
+
+  incScore() {
+    this.score++;
+    return this.score === GOAL;
+  }
+
+  resetScore() {
+    this.score = 0;
   }
 }
 

@@ -1,14 +1,14 @@
-import { init, GameLoop, Text, initKeys, bindKeys, collides } from 'kontra';
+import { init, GameLoop, initKeys, bindKeys, collides } from 'kontra';
 
 import './index.css';
 
 import { Cat } from './app/cat';
 import { addBackgroundScene } from './app/scene';
-import { resetScores, updateDisplayedScore, updateScore } from './app/score';
-import { wormhole } from './app/wormhole';
+import { GOAL, updateScoreboard } from './app/score';
+import { GameObject, ObjectType } from './app/gameObject';
 
+let gameInitialized = false;
 let gameStarted = false;
-let randomMode = false;
 let { canvas } = init();
 initKeys();
 
@@ -18,125 +18,121 @@ window.addEventListener('resize', resizeCanvas, false);
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  if (gameInitialized) allObjects.forEach((obj) => obj.wormhole());
 }
 
 resizeCanvas();
 
 bindKeys('space', onSpace);
 
-let synth = Text({
-  text: '🎹',
-  font: '100px sans-serif',
-});
-wormhole(synth);
-
-let rocket = Text({
-  text: '🚀',
-  font: '50px sans-serif',
-});
-wormhole(rocket);
-
-const cat1 = new Cat('🐈', 'left', 'right', 1);
-const cat2 = new Cat('🐱', 'a', 'd', 2);
+const cats = [new Cat(ObjectType.CAT, '🐈', 'left', 'right'), new Cat(ObjectType.CAT, '🐱', 'a', 'd')];
+const objects = [new GameObject(ObjectType.SYNTH), new GameObject(ObjectType.ROCKET)];
+const allObjects = [...cats, ...objects];
 
 let loop = GameLoop({
   // create the main game loop
   update: function () {
     if (!gameStarted) return;
 
-    // update the game state
-    cat1.move();
-    cat2.move();
+    // move cats
+    cats.forEach((cat) => cat.move());
 
-    const c1 = collides(cat1.obj, synth);
-    const c2 = collides(cat2.obj, synth);
-    let goalReached = false;
+    // check for collisions
+    const collisions = getCollisions(allObjects);
+    const wormholeLater = [];
+    collisions.forEach(({ cat, obj }) => {
+      switch (obj.type) {
+        case ObjectType.CAT:
+          cat.deceleratingWormhole();
+          obj.deceleratingWormhole();
+          break;
+        case ObjectType.SYNTH:
+          cat.incScore();
+          wormholeLater.push(obj);
+          break;
+        case ObjectType.ROCKET:
+          cat.wormhole();
+          obj.wormhole();
+          break;
+      }
+    });
 
-    if (c1) {
-      goalReached ||= updateScore(1);
-    }
-    if (c2) {
-      goalReached ||= updateScore(2);
-    }
+    updateScoreboard(cats);
 
-    if (goalReached) {
+    if (cats.some((cat) => cat.score >= GOAL)) {
       endGame();
-      return;
-    } else if (c1 || c2) {
-      wormhole(synth);
-    }
-
-    if (collides(rocket, cat1.obj)) {
-      cat1.wormhole();
-      wormhole(rocket);
-    }
-    if (collides(rocket, cat2.obj)) {
-      cat2.wormhole();
-      wormhole(rocket);
-    }
-
-    if (collides(cat1.obj, cat2.obj)) {
-      cat1.deceleratingWormhole();
-      cat2.deceleratingWormhole();
-    }
-
-    if (randomMode && Math.random() < 0.02) {
-      Math.random() < 0.5 ? cat1.turnRight() : cat1.turnLeft();
-      Math.random() < 0.5 ? cat2.turnRight() : cat2.turnLeft();
+    } else {
+      wormholeLater.forEach((obj) => obj.wormhole());
     }
   },
   render: function () {
-    // render the game state
-    synth.render();
-    rocket.render();
-    cat1.obj.render();
-    cat2.obj.render();
+    cats.forEach((cat) => cat.obj.render());
+    objects.forEach((obj) => obj.obj.render());
+    gameInitialized = true;
   },
 });
 
 function onSpace() {
   if (gameStarted) {
-    speedUpCats();
+    cats.forEach((cat) => cat.speedUp());
   } else {
     startGame();
   }
 }
 
-function speedUpCats() {
-  cat1.speedUp();
-  cat2.speedUp();
-}
-
-function stopCats() {
-  cat1.stop();
-  cat2.stop();
-}
-
 function endGame() {
   gameStarted = false;
-  stopCats();
-  randomMode = false;
+  cats.forEach((cat) => cat.stop());
   document.body.classList.add('victory');
 }
 
 function startGame() {
   if (document.body.classList.contains('victory')) {
-    wormhole(synth);
-    resetScores();
+    objects.forEach((obj) => obj.wormhole());
+    cats.forEach((cat) => cat.resetScore());
+    updateScoreboard(cats);
+    document.body.classList.remove('victory');
   }
-  document.body.classList.remove('victory');
   gameStarted = true;
-  speedUpCats();
+  cats.forEach((cat) => cat.startMoving());
+}
+
+function getCollisions(objs) {
+  const collisions = [];
+
+  for (let i = 0; i < objs.length - 1; i++) {
+    for (let j = i + 1; j < objs.length; j++) {
+      let o1 = objs[i];
+      let o2 = objs[j];
+      let cat, obj;
+      if (o1.isCat()) {
+        cat = o1;
+        obj = o2;
+      } else if (o2.isCat()) {
+        cat = o2;
+        obj = o1;
+      } else {
+        // no collision if no cat involved
+        continue;
+      }
+
+      if (collides(cat.obj, obj.obj)) {
+        collisions.push({ cat, obj });
+      }
+    }
+  }
+
+  return collisions;
 }
 
 document.addEventListener('click', function (event) {
   if (event.target.id === 'space-key') {
     onSpace();
-    randomMode = !randomMode;
+    cats.forEach((cat) => (cat.random = !cat.random));
   }
 });
 
 // START
 addBackgroundScene();
-updateDisplayedScore();
+updateScoreboard(cats);
 loop.start();
