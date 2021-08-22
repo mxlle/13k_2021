@@ -84,3 +84,27 @@ body.gameStarted #score {
   z-index: 0;
   background: none;
 }
+
+.screenControls {
+  position: fixed;
+  display: none;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.screenControls button {
+  font-size: 78px;
+  margin: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 26px;
+  height: calc(100% - 26px);
+  width: 50%;
+  border: none;
+}
+
+body.clickMode .screenControls {
+  display: flex;
+}

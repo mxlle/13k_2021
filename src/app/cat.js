@@ -8,8 +8,9 @@ export class Cat extends GameObject {
   _score = 0;
   _leftKey;
   _rightKey;
-  _marker;
-  _random = false;
+  _swapMarker;
+  _trophyMarker;
+  _random = true;
   _swappedControls = false;
   _swapTimeout;
 
@@ -18,14 +19,14 @@ export class Cat extends GameObject {
 
     this._character = character;
 
-    this._random = true;
-
-    this._marker = new Text({ text: '↔️', font: '30px sans-serif', x: this.obj.width - 30 });
-    this.obj.children.push(this._marker);
-    this._marker.opacity = 0;
+    this._swapMarker = new Text({ text: '↔️', font: '30px sans-serif', x: this.obj.width - 30 });
+    this._trophyMarker = new Text({ text: '🏆️', font: '30px sans-serif', x: this.obj.width - 30 });
+    this.obj.children.push(this._swapMarker, this._trophyMarker);
+    this._swapMarker.opacity = 0;
+    this._trophyMarker.opacity = 0;
 
     bindKeys(leftKey, () => {
-      this._random = false;
+      this.controlManually();
       if (!this._swappedControls) {
         this.turnLeft();
       } else {
@@ -34,7 +35,7 @@ export class Cat extends GameObject {
     });
 
     bindKeys(rightKey, () => {
-      this._random = false;
+      this.controlManually();
       if (!this._swappedControls) {
         this.turnRight();
       } else {
@@ -44,6 +45,10 @@ export class Cat extends GameObject {
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
     this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
+  }
+
+  controlManually() {
+    this._random = false;
   }
 
   deceleratingWormhole() {
@@ -96,11 +101,6 @@ export class Cat extends GameObject {
     //obj.rotation = (obj.rotation + Math.PI/2) % (Math.PI*2);
   }
 
-  turnAround() {
-    this.turnLeft();
-    this.turnLeft();
-  }
-
   speedUp() {
     if (this.obj.dx === 0 && this.obj.dy === 0) {
       this.startMoving();
@@ -113,12 +113,12 @@ export class Cat extends GameObject {
 
   swapControls() {
     this._swappedControls = true;
-    this._marker.opacity = 1;
+    this._swapMarker.opacity = 1;
 
     if (this._swapTimeout) clearTimeout(this._swapTimeout);
 
     this._swapTimeout = setTimeout(() => {
-      this._marker.opacity = 0;
+      this._swapMarker.opacity = 0;
       this._swappedControls = false;
       this._swapTimeout = undefined;
     }, SWAP_TIME);
@@ -128,6 +128,7 @@ export class Cat extends GameObject {
     this.obj.dx = 0;
     this.obj.dy = 0;
     this._random = true;
+    this._swapMarker.opacity = 0;
   }
 
   incScore() {
@@ -137,6 +138,7 @@ export class Cat extends GameObject {
 
   resetScore() {
     this._score = 0;
+    this._trophyMarker.opacity = 0;
   }
 
   getScoreOutput() {
@@ -144,7 +146,9 @@ export class Cat extends GameObject {
   }
 
   hasWon() {
-    return this._score >= GOAL;
+    const hasWon = this._score >= GOAL;
+    if (hasWon) this._trophyMarker.opacity = 1;
+    return hasWon;
   }
 }
 
