@@ -1,29 +1,49 @@
-import { bindKeys } from 'kontra';
-import { GameObject } from './gameObject';
+import { bindKeys, Text } from 'kontra';
+import { GameObject, ObjectType } from './gameObject';
 import { GOAL } from './score';
+import { SWAP_TIME } from './game';
 
 export class Cat extends GameObject {
-  character;
-  score = 0;
-  random = false;
-  leftKey;
-  rightKey;
+  _character;
+  _score = 0;
+  _leftKey;
+  _rightKey;
+  _marker;
+  _random = false;
+  _swappedControls = false;
+  _swapTimeout;
 
-  constructor(type, character, leftKey, rightKey) {
-    super(type, character);
+  constructor(character, leftKey, rightKey) {
+    super(ObjectType.CAT, character);
 
-    this.character = character;
+    this._character = character;
+
+    this._random = true;
+
+    this._marker = new Text({ text: '↔️', font: '30px sans-serif', x: this.obj.width - 30 });
+    this.obj.children.push(this._marker);
+    this._marker.opacity = 0;
 
     bindKeys(leftKey, () => {
-      this.turnLeft();
+      this._random = false;
+      if (!this._swappedControls) {
+        this.turnLeft();
+      } else {
+        this.turnRight();
+      }
     });
 
     bindKeys(rightKey, () => {
-      this.turnRight();
+      this._random = false;
+      if (!this._swappedControls) {
+        this.turnRight();
+      } else {
+        this.turnLeft();
+      }
     });
 
-    this.leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
-    this.rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
+    this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
+    this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
   }
 
   deceleratingWormhole() {
@@ -45,7 +65,7 @@ export class Cat extends GameObject {
     this.obj.update();
     wrapObjectOnEdge(this.obj);
 
-    if (this.random && Math.random() < 0.02) {
+    if (this._random && Math.random() < 0.02) {
       Math.random() < 0.5 ? this.turnRight() : this.turnLeft();
     }
   }
@@ -91,19 +111,40 @@ export class Cat extends GameObject {
     }
   }
 
+  swapControls() {
+    this._swappedControls = true;
+    this._marker.opacity = 1;
+
+    if (this._swapTimeout) clearTimeout(this._swapTimeout);
+
+    this._swapTimeout = setTimeout(() => {
+      this._marker.opacity = 0;
+      this._swappedControls = false;
+      this._swapTimeout = undefined;
+    }, SWAP_TIME);
+  }
+
   stop() {
     this.obj.dx = 0;
     this.obj.dy = 0;
-    this.random = false;
+    this._random = true;
   }
 
   incScore() {
-    this.score++;
-    return this.score === GOAL;
+    this._score++;
+    return this._score === GOAL;
   }
 
   resetScore() {
-    this.score = 0;
+    this._score = 0;
+  }
+
+  getScoreOutput() {
+    return `${this._character}&nbsp;[${this._leftKey}]&nbsp;[${this._rightKey}]&nbsp;Score:&nbsp;${this._score}`;
+  }
+
+  hasWon() {
+    return this._score >= GOAL;
   }
 }
 

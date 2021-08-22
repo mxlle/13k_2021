@@ -6,6 +6,11 @@ export const ObjectType = {
   CAT: '🐱',
   SYNTH: '🎹',
   ROCKET: '🚀',
+  WORMHOLE: '💥',
+  DIE: '🎲',
+  ATTACK: '🔫', // '🏹', //'😈',
+  TRAP: '💩',
+  DEATH: '☠️',
 };
 
 export class GameObject {
@@ -19,7 +24,7 @@ export class GameObject {
 
     this.obj = Text({
       text: character || type,
-      font: `${type === ObjectType.ROCKET ? 50 : 100}px sans-serif`,
+      font: `${type === ObjectType.CAT ? 75 : 50}px sans-serif`,
       //anchor: { x: 0.5, y: 0.5 }
     });
 
@@ -33,5 +38,17 @@ export class GameObject {
   wormhole() {
     this.obj.x = randInt(0, window.innerWidth - this.obj.width);
     this.obj.y = randInt(0, window.innerHeight - this.obj.height);
+  }
+
+  hide() {
+    this.obj.x = -1000;
+    this.obj.y = -1000;
+  }
+
+  hideForTime(timeout) {
+    this.hide();
+    setTimeout(() => {
+      this.wormhole();
+    }, timeout);
   }
 }
