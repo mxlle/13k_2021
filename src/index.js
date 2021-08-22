@@ -6,6 +6,8 @@ import { addBackgroundScene } from './app/scene';
 import { initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
 import { getCats, getObjects } from './app/gameSetup';
 
+let clickMode = false;
+
 // ---------------------------
 // setup environment
 let { canvas } = init();
@@ -26,8 +28,28 @@ function setupEventListeners() {
   initKeys();
 
   // space key to start game
-  bindKeys('space', onSpace);
-  document.addEventListener('click', function () {
+  bindKeys('space', () => {
+    if (clickMode) deactivateClickMode();
+    onSpace();
+  });
+  document.addEventListener('click', (event) => {
+    if (!clickMode) activateClickMode();
+
+    if (isGameStarted()) {
+      const firstCat = cats[0];
+
+      if (event.target.id === 'left') {
+        firstCat.controlManually();
+        firstCat.turnLeft();
+        return;
+      }
+      if (event.target.id === 'right') {
+        firstCat.controlManually();
+        firstCat.turnRight();
+        return;
+      }
+    }
+
     onSpace();
   });
 }
@@ -42,4 +64,14 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   if (isGameInitialized()) shuffleAll();
+}
+
+function activateClickMode() {
+  clickMode = true;
+  document.body.classList.add('clickMode');
+}
+
+function deactivateClickMode() {
+  clickMode = false;
+  document.body.classList.remove('clickMode');
 }
