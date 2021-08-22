@@ -11,7 +11,7 @@ module.exports = {
     }),
   ],
   output: {
-    filename: 'space-cat.js',
+    filename: 'space-cat-[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
