@@ -27,20 +27,12 @@ export class Cat extends GameObject {
 
     bindKeys(leftKey, () => {
       this.controlManually();
-      if (!this._swappedControls) {
-        this.turnLeft();
-      } else {
-        this.turnRight();
-      }
+      this.turnLeft();
     });
 
     bindKeys(rightKey, () => {
       this.controlManually();
-      if (!this._swappedControls) {
-        this.turnRight();
-      } else {
-        this.turnLeft();
-      }
+      this.turnRight();
     });
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
@@ -76,29 +68,33 @@ export class Cat extends GameObject {
   }
 
   turnLeft() {
-    const obj = this.obj;
-    const velocity = Math.abs(obj.dx) || Math.abs(obj.dy);
-    if (obj.dx === 0) {
-      obj.dx = obj.dy < 0 ? -1 * velocity : velocity;
-      obj.dy = 0;
+    if (this._swappedControls) {
+      this.turn(Direction.RIGHT);
     } else {
-      obj.dy = obj.dx < 0 ? velocity : -1 * velocity;
-      obj.dx = 0;
+      this.turn(Direction.LEFT);
     }
     //obj.rotation = Math.abs(obj.rotation - Math.PI/2);
   }
 
   turnRight() {
+    if (this._swappedControls) {
+      this.turn(Direction.LEFT);
+    } else {
+      this.turn(Direction.RIGHT);
+    }
+    //obj.rotation = (obj.rotation + Math.PI/2) % (Math.PI*2);
+  }
+
+  turn(direction) {
     const obj = this.obj;
     const velocity = Math.abs(obj.dx) || Math.abs(obj.dy);
     if (obj.dx === 0) {
-      obj.dx = obj.dy < 0 ? velocity : -1 * velocity;
+      obj.dx = direction * (obj.dy < 0 ? -1 * velocity : velocity);
       obj.dy = 0;
     } else {
-      obj.dy = obj.dx < 0 ? -1 * velocity : velocity;
+      obj.dy = direction * (obj.dx < 0 ? velocity : -1 * velocity);
       obj.dx = 0;
     }
-    //obj.rotation = (obj.rotation + Math.PI/2) % (Math.PI*2);
   }
 
   speedUp() {
@@ -151,6 +147,11 @@ export class Cat extends GameObject {
     return hasWon;
   }
 }
+
+const Direction = {
+  LEFT: 1,
+  RIGHT: -1,
+};
 
 function getStartVelocity() {
   return Math.random() < 0.5 ? -3 : 3;
