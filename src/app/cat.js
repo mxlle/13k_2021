@@ -2,6 +2,7 @@ import { bindKeys, Text } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
 import { GOAL } from './score';
 import { SWAP_TIME } from './game';
+import { deactivateClickMode } from '../index';
 
 export class Cat extends GameObject {
   _character;
@@ -26,11 +27,13 @@ export class Cat extends GameObject {
     this._trophyMarker.opacity = 0;
 
     bindKeys(leftKey, () => {
+      deactivateClickMode();
       this.controlManually();
       this.turnLeft();
     });
 
     bindKeys(rightKey, () => {
+      deactivateClickMode();
       this.controlManually();
       this.turnRight();
     });

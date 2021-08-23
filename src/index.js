@@ -71,7 +71,7 @@ function activateClickMode() {
   document.body.classList.add('clickMode');
 }
 
-function deactivateClickMode() {
+export function deactivateClickMode() {
   clickMode = false;
   document.body.classList.remove('clickMode');
 }
