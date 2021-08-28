@@ -114,7 +114,7 @@ canvas {
 
 /* modification for different ame states */
 body {
-  &.game-finished {
+  &.game-ended {
     #sky {
       animation: none;
     }
