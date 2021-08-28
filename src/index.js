@@ -6,11 +6,13 @@ import { addBackgroundScene } from './app/scene';
 import { getFirstCat, initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
 import { getAvailableLevels, getLevelConfig } from './app/gameSetup';
 
-const StoreKey = {
+export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
+  EXPERT: '🐱🚀🎹.expert',
 };
 
 let clickMode = false;
+let expertMode = false;
 
 // ---------------------------
 // setup environment
@@ -18,6 +20,7 @@ let { canvas } = init();
 resizeCanvas();
 addBackgroundScene();
 setupEventListeners();
+setupExpertMode();
 
 // initialize game
 loadLevel();
@@ -45,11 +48,6 @@ function setupEventListeners() {
     onSpace();
   });
 
-  bindKeys(getAvailableLevels(), (event) => {
-    setStoreItem(StoreKey.LEVEL, event.key);
-    loadLevel();
-  });
-
   document.addEventListener('click', (event) => {
     if (!clickMode) activateClickMode();
 
@@ -67,6 +65,16 @@ function setupEventListeners() {
 
     onSpace();
   });
+}
+
+export function setupExpertMode() {
+  if (getStoreItem(StoreKey.EXPERT) && !expertMode) {
+    bindKeys(getAvailableLevels(), (event) => {
+      setStoreItem(StoreKey.LEVEL, event.key);
+      loadLevel();
+    });
+    expertMode = true;
+  }
 }
 
 function onSpace() {

@@ -1,8 +1,8 @@
-import { collides, GameLoop } from 'kontra';
+import { collides, GameLoop, setStoreItem } from 'kontra';
 import { ObjectType } from './gameObject';
-import { getGoal, initScoreboard } from './score';
-import { loadLevel } from '../index';
-import { getNextLevel } from './gameSetup';
+import { initScoreboard } from './score';
+import { loadLevel, setupExpertMode, StoreKey } from '../index';
+import { getNextLevel, isLastLevel } from './gameSetup';
 
 export const SWAP_TIME = 5000;
 
@@ -11,6 +11,8 @@ let loop;
 let cats;
 let objects;
 let allObjects;
+
+let currentLevel;
 
 let gameInitialized = false;
 let gameStarted = false;
@@ -22,6 +24,7 @@ export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
   allObjects = [...cats, ...objects];
+  currentLevel = goal;
   initScoreboard(goal, cats);
   if (!loop) {
     loop = getGameLoop();
@@ -100,7 +103,7 @@ function getGameLoop() {
 
 export function startGame() {
   if (document.body.classList.contains('victory')) {
-    loadLevel(getNextLevel(getGoal()));
+    loadLevel(getNextLevel(currentLevel));
   } else {
     loadLevel();
   }
@@ -118,6 +121,11 @@ function endGame() {
   cats.forEach((cat) => cat.stop());
   if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
     document.body.classList.add('victory');
+    // check all levels finished
+    if (isLastLevel(currentLevel)) {
+      setStoreItem(StoreKey.EXPERT, true);
+      setupExpertMode();
+    }
   } else if (cats.every((cat) => !cat.isHuman())) {
     document.body.classList.add('bot-only');
   } else {
