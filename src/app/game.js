@@ -1,16 +1,25 @@
 import { collides, GameLoop, setStoreItem } from 'kontra';
 import { ObjectType } from './gameObject';
 import { initScoreboard } from './score';
-import { loadLevel, setupExpertMode, StoreKey } from '../index';
+import { loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
 
 export const SWAP_TIME = 5000;
 
+export const Result = {
+  VICTORY: 'victory',
+  DEFEAT: 'defeat',
+  BOT_ONLY: 'bot-only',
+};
+
+export const GameState = {
+  STARTED: 'game-started',
+  ENDED: 'game-ended',
+};
+
 let loop;
 
-let cats;
-let objects;
-let allObjects;
+let cats, objects, allObjects;
 
 let currentLevel;
 
@@ -102,37 +111,41 @@ function getGameLoop() {
 }
 
 export function startGame() {
-  if (document.body.classList.contains('victory')) {
-    loadLevel(getNextLevel(currentLevel));
+  if (document.body.classList.contains(Result.VICTORY)) {
+    loadGame(getNextLevel(currentLevel));
   } else {
-    loadLevel();
+    loadGame();
   }
   gameStarted = true;
-  document.body.classList.remove('game-finished');
-  document.body.classList.add('game-started');
+  document.body.classList.remove(GameState.ENDED);
+  document.body.classList.add(GameState.STARTED);
   cats.forEach((cat) => cat.startMoving());
+  // reset result after timeout to have it while css transition
   setTimeout(() => {
-    document.body.classList.remove('victory', 'bot-only', 'defeat');
+    document.body.classList.remove(Result.VICTORY, Result.BOT_ONLY, Result.DEFEAT);
   }, 2000);
 }
 
 function endGame() {
   gameStarted = false;
   cats.forEach((cat) => cat.stop());
+
+  // check who won
   if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
-    document.body.classList.add('victory');
+    document.body.classList.add(Result.VICTORY);
     // check all levels finished
     if (isLastLevel(currentLevel)) {
       setStoreItem(StoreKey.EXPERT, true);
       setupExpertMode();
     }
   } else if (cats.every((cat) => !cat.isHuman())) {
-    document.body.classList.add('bot-only');
+    document.body.classList.add(Result.BOT_ONLY);
   } else {
-    document.body.classList.add('defeat');
+    document.body.classList.add(Result.DEFEAT);
   }
-  document.body.classList.add('game-finished');
-  document.body.classList.remove('game-started');
+
+  document.body.classList.add(GameState.ENDED);
+  document.body.classList.remove(GameState.STARTED);
 }
 
 export function getFirstCat() {
@@ -146,12 +159,12 @@ function shuffleObjects() {
   objects.forEach((obj) => obj.wormhole());
 }
 
-function swapControls(cat, devil) {
+function swapControls(cat, attack) {
   const otherCats = cats.filter((c) => c.id !== cat.id);
   otherCats.forEach((c) => {
     c.swapControls();
   });
-  devil.hideForTime(SWAP_TIME);
+  attack.hideForTime(SWAP_TIME);
 }
 
 function getCollisions(objs) {

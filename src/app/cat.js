@@ -31,30 +31,8 @@ export class Cat extends GameObject {
 
     this._character = character;
 
-    const markerFont = '30px sans-serif';
-
-    this._humanMarker = new Text({ text: '🧑‍🚀', font: markerFont, x: -10, y: this.obj.height - 30 });
-    this._swapMarker = new Text({ text: '↔️', font: markerFont, x: this.obj.width - 20, y: -10 });
-    this._trophyMarker = new Text({ text: '🏆️', font: markerFont, x: this.obj.width - 20, y: -10 });
-    this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
-    this._humanMarker.opacity = 0;
-    this._swapMarker.opacity = 0;
-    this._trophyMarker.opacity = 0;
-
-    bindKeys(leftKey, () => {
-      deactivateClickMode();
-      this.controlManually();
-      this.turnLeft();
-    });
-
-    bindKeys(rightKey, () => {
-      deactivateClickMode();
-      this.controlManually();
-      this.turnRight();
-    });
-
-    this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
-    this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
+    this.setupMarkers();
+    this.setupKeys(leftKey, rightKey);
 
     this.startMoving();
   }
@@ -82,6 +60,7 @@ export class Cat extends GameObject {
     this.obj.update();
     wrapObjectOnEdge(this.obj);
 
+    // let bots turn randomly
     if (this._random && Math.random() < 0.02) {
       Math.random() < 0.5 ? this.turnRight() : this.turnLeft();
     }
@@ -149,8 +128,12 @@ export class Cat extends GameObject {
   }
 
   getScoreOutput() {
+    let keys = '';
+    if (this._leftKey && this._rightKey) {
+      keys = `<span class="keys">[${this._leftKey}]&nbsp;[${this._rightKey}]</span>`;
+    }
     return `<div class="result ${this._random ? 'bot' : 'human'}">
-                <span class="keys">[${this._leftKey}]&nbsp;[${this._rightKey}]</span>
+                ${keys}
                 <span class="cat">${this._character}</span>
                 <span>Score:&nbsp;${this._score}</span>
             </div>`;
@@ -164,6 +147,37 @@ export class Cat extends GameObject {
 
   isHuman() {
     return !this._random;
+  }
+
+  setupMarkers() {
+    const markerFont = '30px sans-serif';
+
+    this._humanMarker = new Text({ text: '🧑‍🚀', font: markerFont, x: -10, y: this.obj.height - 30 });
+    this._swapMarker = new Text({ text: '↔️', font: markerFont, x: this.obj.width - 20, y: -10 });
+    this._trophyMarker = new Text({ text: '🏆️', font: markerFont, x: this.obj.width - 20, y: -10 });
+    this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
+    this._humanMarker.opacity = 0;
+    this._swapMarker.opacity = 0;
+    this._trophyMarker.opacity = 0;
+  }
+
+  setupKeys(leftKey, rightKey) {
+    if (!leftKey || !rightKey) return;
+
+    bindKeys(leftKey, () => {
+      deactivateClickMode();
+      this.controlManually();
+      this.turnLeft();
+    });
+
+    bindKeys(rightKey, () => {
+      deactivateClickMode();
+      this.controlManually();
+      this.turnRight();
+    });
+
+    this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
+    this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
   }
 }
 

@@ -44,21 +44,30 @@ function getCats(level) {
 
 function getObjects(level) {
   return [
+    // 1
     new GameObject(ObjectType.SYNTH),
+    // 2
     new GameObject(ObjectType.ROCKET),
     new GameObject(ObjectType.ROCKET),
+    // 3
     new GameObject(ObjectType.WORMHOLE),
     new GameObject(ObjectType.WORMHOLE),
+    // 4
     new GameObject(ObjectType.SYNTH),
     new GameObject(ObjectType.TRAP),
+    // 5
     new GameObject(ObjectType.ATTACK),
     new GameObject(ObjectType.ROCKET),
+    // 6
     new GameObject(ObjectType.DIE),
     new GameObject(ObjectType.ROCKET),
+    // 7
     new GameObject(ObjectType.DEATH),
     new GameObject(ObjectType.TRAP),
+    // 8
     new GameObject(ObjectType.WORMHOLE),
     new GameObject(ObjectType.SYNTH),
+    // 9
     new GameObject(ObjectType.ROCKET),
     new GameObject(ObjectType.DEATH),
   ].slice(0, level * 2 - 1);

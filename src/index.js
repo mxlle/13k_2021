@@ -10,6 +10,7 @@ export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
   EXPERT: '🐱🚀🎹.expert',
 };
+const CLICK_MODE = 'click-mode';
 
 let clickMode = false;
 let expertMode = false;
@@ -23,11 +24,11 @@ setupEventListeners();
 setupExpertMode();
 
 // initialize game
-loadLevel();
+loadGame();
 
 // ---------------------------
 
-export function loadLevel(nextLevel) {
+export function loadGame(nextLevel) {
   if (nextLevel) {
     setStoreItem(StoreKey.LEVEL, nextLevel);
   }
@@ -51,19 +52,17 @@ function setupEventListeners() {
   document.addEventListener('click', (event) => {
     if (!clickMode) activateClickMode();
 
+    onSpace();
+
     const firstCat = getFirstCat();
     firstCat.controlManually();
 
-    if (isGameStarted()) {
-      if (event.target.id === 'left') {
-        firstCat.turnLeft();
-      }
-      if (event.target.id === 'right') {
-        firstCat.turnRight();
-      }
+    if (event.target.id === 'left') {
+      firstCat.turnLeft();
     }
-
-    onSpace();
+    if (event.target.id === 'right') {
+      firstCat.turnRight();
+    }
   });
 }
 
@@ -71,7 +70,7 @@ export function setupExpertMode() {
   if (getStoreItem(StoreKey.EXPERT) && !expertMode) {
     bindKeys(getAvailableLevels(), (event) => {
       setStoreItem(StoreKey.LEVEL, event.key);
-      loadLevel();
+      loadGame();
     });
     expertMode = true;
   }
@@ -91,10 +90,10 @@ function resizeCanvas() {
 
 function activateClickMode() {
   clickMode = true;
-  document.body.classList.add('click-mode');
+  document.body.classList.add(CLICK_MODE);
 }
 
 export function deactivateClickMode() {
   clickMode = false;
-  document.body.classList.remove('click-mode');
+  document.body.classList.remove(CLICK_MODE);
 }
