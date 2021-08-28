@@ -1,8 +1,12 @@
 import { collides, GameLoop } from 'kontra';
 import { ObjectType } from './gameObject';
-import { updateScoreboard } from './score';
+import { getGoal, setGoal, updateScoreboard } from './score';
+import { loadLevel } from '../index';
+import { getNextLevel } from './gameSetup';
 
 export const SWAP_TIME = 5000;
+
+let loop;
 
 let cats;
 let objects;
@@ -14,13 +18,16 @@ let gameStarted = false;
 export const isGameInitialized = () => gameInitialized;
 export const isGameStarted = () => gameStarted;
 
-export function initGame(_cats, _objects) {
+export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
   allObjects = [...cats, ...objects];
+  setGoal(goal);
   updateScoreboard(cats);
-  const loop = getGameLoop();
-  loop.start();
+  if (!loop) {
+    loop = getGameLoop();
+    loop.start();
+  }
 }
 
 function getGameLoop() {
@@ -96,9 +103,7 @@ function getGameLoop() {
 
 export function startGame() {
   if (document.body.classList.contains('victory')) {
-    shuffleObjects();
-    cats.forEach((cat) => cat.resetScore());
-    updateScoreboard(cats);
+    loadLevel(getNextLevel(getGoal()));
     document.body.classList.remove('victory');
   }
   gameStarted = true;
@@ -111,6 +116,10 @@ function endGame() {
   cats.forEach((cat) => cat.stop());
   document.body.classList.add('victory');
   document.body.classList.remove('gameStarted');
+}
+
+export function getFirstCat() {
+  return cats[0];
 }
 
 export function shuffleAll() {

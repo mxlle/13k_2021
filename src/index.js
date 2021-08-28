@@ -1,10 +1,14 @@
-import { init, initKeys, bindKeys } from 'kontra';
+import { init, initKeys, bindKeys, getStoreItem, setStoreItem } from 'kontra';
 
 import './index.css';
 
 import { addBackgroundScene } from './app/scene';
-import { initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
-import { getCats, getObjects } from './app/gameSetup';
+import { getFirstCat, initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
+import { getAvailableLevels, getLevelConfig } from './app/gameSetup';
+
+const StoreKey = {
+  LEVEL: '🐱🚀🎹.level',
+};
 
 let clickMode = false;
 
@@ -16,10 +20,15 @@ addBackgroundScene();
 setupEventListeners();
 
 // initialize game
-const cats = getCats();
-const objects = getObjects();
-initGame(cats, objects);
+loadLevel();
+
 // ---------------------------
+
+export function loadLevel(levelOverride) {
+  const level = levelOverride || getStoreItem(StoreKey.LEVEL) || 1;
+  const { cats, objects, goal } = getLevelConfig(level);
+  initGame(cats, objects, goal);
+}
 
 function setupEventListeners() {
   // resize the canvas to fill browser window dynamically
@@ -32,11 +41,17 @@ function setupEventListeners() {
     if (clickMode) deactivateClickMode();
     onSpace();
   });
+
+  bindKeys(getAvailableLevels(), (event) => {
+    setStoreItem(StoreKey.LEVEL, event.key);
+    loadLevel();
+  });
+
   document.addEventListener('click', (event) => {
     if (!clickMode) activateClickMode();
 
     if (isGameStarted()) {
-      const firstCat = cats[0];
+      const firstCat = getFirstCat();
 
       if (event.target.id === 'left') {
         firstCat.controlManually();
