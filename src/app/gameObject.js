@@ -13,6 +13,13 @@ export const ObjectType = {
   DEATH: '☠️',
 };
 
+export const ObjectSize = {
+  SMALL: 50,
+  MEDIUM: 60,
+  LARGE: 70,
+  XL: 100,
+};
+
 export class GameObject {
   id;
   collisionDetector;
@@ -22,11 +29,9 @@ export class GameObject {
   size;
   canCollide = true;
 
-  constructor(type, character) {
+  constructor(type, size, character) {
     this.id = idGen++;
     this.type = type;
-
-    const size = type === ObjectType.CAT ? 75 : 50;
 
     this.defaultSize = size;
     this.size = size;

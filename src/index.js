@@ -4,7 +4,7 @@ import './index.scss';
 
 import { addBackgroundScene } from './app/scene';
 import { getFirstCat, initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
-import { getAvailableLevels, getLevelConfig } from './app/gameSetup';
+import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
 
 export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
@@ -68,9 +68,11 @@ function setupEventListeners() {
 
 export function setupExpertMode() {
   if (getStoreItem(StoreKey.EXPERT) && !expertMode) {
-    bindKeys(getAvailableLevels(), (event) => {
-      setStoreItem(StoreKey.LEVEL, event.key);
-      loadGame();
+    bindKeys(getAvailableLevelsAsString(), (event) => {
+      if (!isGameStarted()) {
+        setStoreItem(StoreKey.LEVEL, event.key);
+        loadGame();
+      }
     });
     expertMode = true;
   }

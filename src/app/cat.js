@@ -31,12 +31,13 @@ export class Cat extends GameObject {
   _random = true;
   _swappedControls = false;
   _swapTimeout;
+  _crashTimeout;
   _activeRotation = 0;
   _rotationFrameCount = 0;
   _activeWormhole = 0;
 
-  constructor(character, leftKey, rightKey) {
-    super(ObjectType.CAT, character);
+  constructor(character, leftKey, rightKey, size) {
+    super(ObjectType.CAT, size, character);
 
     this._character = character;
 
@@ -107,9 +108,11 @@ export class Cat extends GameObject {
   handleCrash(direction) {
     this.startSpinning(direction);
     this.activateSafetyMode(CRASH_SAFETY_TIME);
-    setTimeout(() => {
+    clearTimeout(this._crashTimeout);
+    this._crashTimeout = setTimeout(() => {
       this.stopSpinning();
       this.startMoving();
+      this._crashTimeout = undefined;
     }, SPIN_TIME);
   }
 
@@ -198,6 +201,7 @@ export class Cat extends GameObject {
     this._velocity = 0;
     this.onDirectionOrVelocityUpdate();
     clearTimeout(this._swapTimeout);
+    clearTimeout(this._crashTimeout);
     this.restoreControls();
     this.obj.opacity = 1;
   }
@@ -248,7 +252,7 @@ export class Cat extends GameObject {
   }
 
   setupMarkers() {
-    const markerSize = 30;
+    const markerSize = this.defaultSize / 3;
     const markerFont = `${markerSize}px sans-serif`;
     const margin = markerSize / 3;
 
@@ -277,12 +281,14 @@ export class Cat extends GameObject {
     if (!leftKey || !rightKey) return;
 
     bindKeys(leftKey, () => {
+      if (!isGameStarted()) return;
       deactivateClickMode();
       this.controlManually();
       this.turnLeft();
     });
 
     bindKeys(rightKey, () => {
+      if (!isGameStarted()) return;
       deactivateClickMode();
       this.controlManually();
       this.turnRight();

@@ -32,7 +32,7 @@ export const isGameStarted = () => gameStarted;
 export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
-  allObjects = [...cats, ...objects];
+  allObjects = [...objects, ...cats];
   currentLevel = goal;
   initScoreboard(goal, cats);
   if (!loop) {
