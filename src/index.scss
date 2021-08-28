@@ -15,7 +15,7 @@ body {
   transition: background-color 0.5s;
 
   &::before {
-    opacity: 0.075; /* fade out loading banner */
+    opacity: 0; /* fade out loading banner */
   }
 }
 
@@ -52,12 +52,46 @@ canvas {
   right: 0;
   pointer-events: none;
   padding: 7px 21px;
-  text-align: right;
   z-index: 1;
   background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  div {
+    white-space: nowrap;
+  }
+
+  span {
+    vertical-align: top;
+  }
+
+  .goal {
+    font-weight: bold;
+  }
+
+  .result {
+    &.bot {
+      color: #bbb;
+    }
+
+    &.human {
+      .cat {
+        position: relative;
+
+        &::before {
+          content: '🧑‍🚀';
+          font-size: 14px;
+          position: absolute;
+          bottom: 0;
+          left: -7px;
+        }
+      }
+    }
+  }
 }
 
-.screenControls {
+.screen-controls {
   position: fixed;
   display: none;
   justify-content: space-between;
@@ -66,30 +100,70 @@ canvas {
   right: 0;
   bottom: 0;
 
-  button {
-    font-size: 78px;
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 91px;
     margin: 13px;
     background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.6);
-    padding: 26px;
-    height: calc(100% - 26px);
+    color: rgba(255, 255, 255, 0.3);
     width: 50%;
-    border: none;
   }
 }
 
 /* modification for different ame states */
 body {
-  &.victory {
-    background: darkslategray;
-
+  &.game-finished {
     #sky {
-      color: darkslategray;
       animation: none;
+    }
+
+    &::before {
+      opacity: 0.15; /* slightly fade in logo */
+    }
+
+    &.victory {
+      background: darkslategray;
+      #sky {
+        color: darkslategray;
+      }
+    }
+
+    &.defeat {
+      background: darkred;
+      #sky {
+        color: darkred;
+      }
+    }
+
+    &.bot-only {
+      background: darkslateblue;
+      #sky {
+        color: darkslateblue;
+      }
     }
   }
 
-  &.gameStarted {
+  &.victory {
+    &::before {
+      content: '🏆️🐱🏆️\Ameow';
+    }
+  }
+
+  &.defeat {
+    &::before {
+      content: '☠️🙀🔫\A#!$§#';
+    }
+  }
+
+  &.bot-only {
+    &::before {
+      content: '🚀😹🎲\A?!?!?';
+    }
+  }
+
+  &.game-started {
     .description {
       opacity: 0.5;
     }
@@ -101,9 +175,22 @@ body {
     }
   }
 
-  &.clickMode {
-    .screenControls {
+  &.click-mode {
+    .screen-controls {
       display: flex;
+    }
+
+    #score {
+      .result {
+        .keys {
+          display: none;
+        }
+
+        &.human .cat::before {
+          content: '🧑‍🚀';
+          font-size: 14px;
+        }
+      }
     }
   }
 }

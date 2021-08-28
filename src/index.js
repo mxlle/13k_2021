@@ -24,8 +24,11 @@ loadLevel();
 
 // ---------------------------
 
-export function loadLevel(levelOverride) {
-  const level = levelOverride || getStoreItem(StoreKey.LEVEL) || 1;
+export function loadLevel(nextLevel) {
+  if (nextLevel) {
+    setStoreItem(StoreKey.LEVEL, nextLevel);
+  }
+  const level = getStoreItem(StoreKey.LEVEL) || 1;
   const { cats, objects, goal } = getLevelConfig(level);
   initGame(cats, objects, goal);
 }
@@ -50,18 +53,15 @@ function setupEventListeners() {
   document.addEventListener('click', (event) => {
     if (!clickMode) activateClickMode();
 
-    if (isGameStarted()) {
-      const firstCat = getFirstCat();
+    const firstCat = getFirstCat();
+    firstCat.controlManually();
 
+    if (isGameStarted()) {
       if (event.target.id === 'left') {
-        firstCat.controlManually();
         firstCat.turnLeft();
-        return;
       }
       if (event.target.id === 'right') {
-        firstCat.controlManually();
         firstCat.turnRight();
-        return;
       }
     }
 
@@ -83,10 +83,10 @@ function resizeCanvas() {
 
 function activateClickMode() {
   clickMode = true;
-  document.body.classList.add('clickMode');
+  document.body.classList.add('click-mode');
 }
 
 export function deactivateClickMode() {
   clickMode = false;
-  document.body.classList.remove('clickMode');
+  document.body.classList.remove('click-mode');
 }
