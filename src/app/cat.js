@@ -1,14 +1,24 @@
-import { bindKeys, Text } from 'kontra';
+import { bindKeys, randInt, Text } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
 import { GOAL } from './score';
 import { SWAP_TIME } from './game';
 import { deactivateClickMode } from '../index';
+
+const DEFAULT_VELOCITY = 3;
+const DIRECTIONS = [
+  { x: 0, y: -1 }, // UP
+  { x: 1, y: 0 }, /// RIGHT
+  { x: 0, y: 1 }, /// DOWN
+  { x: -1, y: 0 }, // LEFT
+];
 
 export class Cat extends GameObject {
   _character;
   _score = 0;
   _leftKey;
   _rightKey;
+  _direction;
+  _velocity;
   _swapMarker;
   _trophyMarker;
   _random = true;
@@ -40,6 +50,8 @@ export class Cat extends GameObject {
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
     this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
+
+    this.startMoving();
   }
 
   controlManually() {
@@ -52,13 +64,9 @@ export class Cat extends GameObject {
   }
 
   startMoving() {
-    if (Math.random() < 0.5) {
-      this.obj.dx = getStartVelocity();
-      this.obj.dy = 0;
-    } else {
-      this.obj.dx = 0;
-      this.obj.dy = getStartVelocity();
-    }
+    this._velocity = DEFAULT_VELOCITY;
+    this._direction = randInt(0, 3);
+    this.onDirectionOrVelocityUpdate();
   }
 
   move() {
@@ -70,44 +78,35 @@ export class Cat extends GameObject {
     }
   }
 
-  turnLeft() {
-    if (this._swappedControls) {
-      this.turn(Direction.RIGHT);
+  turnLeft(alreadySwapped) {
+    if (this._swappedControls && !alreadySwapped) {
+      this.turnRight(true);
     } else {
-      this.turn(Direction.LEFT);
+      // actually turn left
+      this._direction = (this._direction + 3) % 4;
+      this.onDirectionOrVelocityUpdate();
     }
-    //obj.rotation = Math.abs(obj.rotation - Math.PI/2);
   }
 
-  turnRight() {
-    if (this._swappedControls) {
-      this.turn(Direction.LEFT);
+  turnRight(alreadySwapped) {
+    if (this._swappedControls && !alreadySwapped) {
+      this.turnLeft(true);
     } else {
-      this.turn(Direction.RIGHT);
+      // actually turn right
+      this._direction = (this._direction + 1) % 4;
+      this.onDirectionOrVelocityUpdate();
     }
-    //obj.rotation = (obj.rotation + Math.PI/2) % (Math.PI*2);
   }
 
-  turn(direction) {
-    const obj = this.obj;
-    const velocity = Math.abs(obj.dx) || Math.abs(obj.dy);
-    if (obj.dx === 0) {
-      obj.dx = direction * (obj.dy < 0 ? -1 * velocity : velocity);
-      obj.dy = 0;
-    } else {
-      obj.dy = direction * (obj.dx < 0 ? velocity : -1 * velocity);
-      obj.dx = 0;
-    }
+  onDirectionOrVelocityUpdate() {
+    const { x, y } = DIRECTIONS[this._direction];
+    this.obj.dx = x * this._velocity;
+    this.obj.dy = y * this._velocity;
   }
 
   speedUp() {
-    if (this.obj.dx === 0 && this.obj.dy === 0) {
-      this.startMoving();
-    } else if (this.obj.dx === 0) {
-      this.obj.dy = this.obj.dy > 0 ? this.obj.dy + 1 : this.obj.dy - 1;
-    } else {
-      this.obj.dx = this.obj.dx > 0 ? this.obj.dx + 1 : this.obj.dx - 1;
-    }
+    this._velocity = Math.max(this._velocity++, DEFAULT_VELOCITY);
+    this.onDirectionOrVelocityUpdate();
   }
 
   swapControls() {
@@ -124,8 +123,8 @@ export class Cat extends GameObject {
   }
 
   stop() {
-    this.obj.dx = 0;
-    this.obj.dy = 0;
+    this._velocity = 0;
+    this.onDirectionOrVelocityUpdate();
     this._random = true;
     this._swapMarker.opacity = 0;
   }
@@ -149,15 +148,6 @@ export class Cat extends GameObject {
     if (hasWon) this._trophyMarker.opacity = 1;
     return hasWon;
   }
-}
-
-const Direction = {
-  LEFT: 1,
-  RIGHT: -1,
-};
-
-function getStartVelocity() {
-  return Math.random() < 0.5 ? -3 : 3;
 }
 
 function wrapObjectOnEdge(obj) {
