@@ -15,6 +15,7 @@ export const Result = {
 export const GameState = {
   STARTED: 'game-started',
   ENDED: 'game-ended',
+  PREPARATION: 'game-preparation',
 };
 
 let loop;
@@ -25,15 +26,17 @@ let currentLevel;
 
 let gameInitialized = false;
 let gameStarted = false;
+let preparationMode = false;
 
 export const isGameInitialized = () => gameInitialized;
 export const isGameStarted = () => gameStarted;
+export const isPreparationMode = () => preparationMode;
 
 export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
   allObjects = [...objects, ...cats];
-  currentLevel = goal;
+  updateLevel(goal);
   initScoreboard(goal, cats);
   if (!loop) {
     loop = getGameLoop();
@@ -113,19 +116,25 @@ function getGameLoop() {
   });
 }
 
-export function startGame() {
+export function prepareGame() {
+  preparationMode = true;
   if (document.body.classList.contains(Result.VICTORY)) {
     loadGame(getNextLevel(currentLevel));
   } else {
     loadGame();
   }
+  document.body.classList.remove(GameState.ENDED, Result.VICTORY, Result.BOT_ONLY, Result.DEFEAT);
+  document.body.classList.add(GameState.PREPARATION);
+}
+
+export function startGame() {
+  preparationMode = false;
   gameStarted = true;
-  document.body.classList.remove(GameState.ENDED);
   document.body.classList.add(GameState.STARTED);
   cats.forEach((cat) => cat.startMoving());
   // reset result after timeout to have it while css transition
   setTimeout(() => {
-    document.body.classList.remove(Result.VICTORY, Result.BOT_ONLY, Result.DEFEAT);
+    document.body.classList.remove(GameState.PREPARATION);
   }, 2000);
 }
 
@@ -168,6 +177,14 @@ function swapControls(cat, attack) {
     c.swapControls();
   });
   attack.hideForTime(SWAP_TIME);
+}
+
+function updateLevel(newLevel) {
+  if (currentLevel) {
+    document.body.classList.remove('level' + currentLevel);
+  }
+  currentLevel = newLevel;
+  document.body.classList.add('level' + currentLevel);
 }
 
 function getCollisions(objs) {

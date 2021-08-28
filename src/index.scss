@@ -154,6 +154,58 @@ body {
     }
   }
 
+  &.game-preparation {
+    &:not(.game-started)::before {
+      opacity: 0.2; /* fade in logo */
+    }
+
+    &.level1 {
+      &::before {
+        content: '🐱🎹\ALevel 1';
+      }
+    }
+    &.level2 {
+      &::before {
+        content: '🐱🚀🎹\ALevel 2';
+      }
+    }
+    &.level3 {
+      &::before {
+        content: '🐱💥🎹\ALevel 3';
+      }
+    }
+    &.level4 {
+      &::before {
+        content: '🎹🐱🎹\ALevel 4';
+      }
+    }
+    &.level5 {
+      &::before {
+        content: '🐱🚀🔫\ALevel 5';
+      }
+    }
+    &.level6 {
+      &::before {
+        content: '🎲🐱🚀\ALevel 6';
+      }
+    }
+    &.level7 {
+      &::before {
+        content: '🐱💩🎹\ALevel 7';
+      }
+    }
+    &.level8 {
+      &::before {
+        content: '🎹🚀🎹\ALevel 8';
+      }
+    }
+    &.level9 {
+      &::before {
+        content: '☠️🐱🔫\ALevel 9';
+      }
+    }
+  }
+
   &.game-started {
     .description {
       opacity: 0.5;
@@ -167,8 +219,10 @@ body {
   }
 
   &.click-mode {
-    .screen-controls {
-      display: flex;
+    &.game-started {
+      .screen-controls {
+        display: flex;
+      }
     }
 
     #score {
