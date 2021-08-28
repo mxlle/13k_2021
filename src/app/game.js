@@ -45,10 +45,10 @@ function getGameLoop() {
   return GameLoop({
     // create the main game loop
     update: function () {
-      // move cats (also outside game for fun)
-      cats.forEach((cat) => cat.update());
-
       if (!gameStarted) return;
+
+      // move cats
+      cats.forEach((cat) => cat.update());
 
       // check for collisions
       const collisions = getCollisions(allObjects);
