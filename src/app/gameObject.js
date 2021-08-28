@@ -8,7 +8,7 @@ export const ObjectType = {
   ROCKET: '🚀',
   WORMHOLE: '💥',
   DIE: '🎲',
-  ATTACK: '🔫', // '🏹', //'😈',
+  ATTACK: '🔫',
   TRAP: '💩',
   DEATH: '☠️',
 };

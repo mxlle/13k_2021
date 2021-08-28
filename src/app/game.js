@@ -1,6 +1,6 @@
 import { collides, GameLoop } from 'kontra';
 import { ObjectType } from './gameObject';
-import { getGoal, setGoal, updateScoreboard } from './score';
+import { getGoal, initScoreboard } from './score';
 import { loadLevel } from '../index';
 import { getNextLevel } from './gameSetup';
 
@@ -22,8 +22,7 @@ export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
   allObjects = [...cats, ...objects];
-  setGoal(goal);
-  updateScoreboard(cats);
+  initScoreboard(goal, cats);
   if (!loop) {
     loop = getGameLoop();
     loop.start();
@@ -52,7 +51,6 @@ function getGameLoop() {
           case ObjectType.SYNTH:
             // SCORE
             cat.incScore();
-            updateScoreboard(cats);
             wormholeLater.push(obj);
             break;
           case ObjectType.ROCKET:
@@ -81,7 +79,6 @@ function getGameLoop() {
           case ObjectType.DEATH:
             // BYE-BYE SCORE
             cat.resetScore();
-            updateScoreboard(cats);
             obj.wormhole();
             break;
         }
@@ -104,18 +101,30 @@ function getGameLoop() {
 export function startGame() {
   if (document.body.classList.contains('victory')) {
     loadLevel(getNextLevel(getGoal()));
-    document.body.classList.remove('victory');
+  } else {
+    loadLevel();
   }
   gameStarted = true;
-  document.body.classList.add('gameStarted');
+  document.body.classList.remove('game-finished');
+  document.body.classList.add('game-started');
   cats.forEach((cat) => cat.startMoving());
+  setTimeout(() => {
+    document.body.classList.remove('victory', 'bot-only', 'defeat');
+  }, 2000);
 }
 
 function endGame() {
   gameStarted = false;
   cats.forEach((cat) => cat.stop());
-  document.body.classList.add('victory');
-  document.body.classList.remove('gameStarted');
+  if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
+    document.body.classList.add('victory');
+  } else if (cats.every((cat) => !cat.isHuman())) {
+    document.body.classList.add('bot-only');
+  } else {
+    document.body.classList.add('defeat');
+  }
+  document.body.classList.add('game-finished');
+  document.body.classList.remove('game-started');
 }
 
 export function getFirstCat() {

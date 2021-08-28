@@ -1,6 +1,6 @@
 import { bindKeys, randInt, Text } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
-import { getGoal } from './score';
+import { getGoal, updateScoreboard } from './score';
 import { SWAP_TIME } from './game';
 import { deactivateClickMode } from '../index';
 
@@ -19,6 +19,7 @@ export class Cat extends GameObject {
   _rightKey;
   _direction;
   _velocity;
+  _humanMarker;
   _swapMarker;
   _trophyMarker;
   _random = true;
@@ -30,9 +31,13 @@ export class Cat extends GameObject {
 
     this._character = character;
 
-    this._swapMarker = new Text({ text: '↔️', font: '30px sans-serif', x: this.obj.width - 30 });
-    this._trophyMarker = new Text({ text: '🏆️', font: '30px sans-serif', x: this.obj.width - 30 });
-    this.obj.children.push(this._swapMarker, this._trophyMarker);
+    const markerFont = '30px sans-serif';
+
+    this._humanMarker = new Text({ text: '🧑‍🚀', font: markerFont, x: -10, y: this.obj.height - 30 });
+    this._swapMarker = new Text({ text: '↔️', font: markerFont, x: this.obj.width - 20, y: -10 });
+    this._trophyMarker = new Text({ text: '🏆️', font: markerFont, x: this.obj.width - 20, y: -10 });
+    this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
+    this._humanMarker.opacity = 0;
     this._swapMarker.opacity = 0;
     this._trophyMarker.opacity = 0;
 
@@ -57,6 +62,7 @@ export class Cat extends GameObject {
   controlManually() {
     if (this._random) {
       this._random = false;
+      this._humanMarker.opacity = 1;
       this.resetScore(); // when switching from bot to human, reset score
     }
   }
@@ -128,27 +134,36 @@ export class Cat extends GameObject {
   stop() {
     this._velocity = 0;
     this.onDirectionOrVelocityUpdate();
-    this._random = true;
     this._swapMarker.opacity = 0;
   }
 
   incScore() {
     this._score++;
+    updateScoreboard();
   }
 
   resetScore() {
     this._score = 0;
     this._trophyMarker.opacity = 0;
+    updateScoreboard();
   }
 
   getScoreOutput() {
-    return `${this._character}&nbsp;[${this._leftKey}]&nbsp;[${this._rightKey}]&nbsp;Score:&nbsp;${this._score}`;
+    return `<div class="result ${this._random ? 'bot' : 'human'}">
+                <span class="keys">[${this._leftKey}]&nbsp;[${this._rightKey}]</span>
+                <span class="cat">${this._character}</span>
+                <span>Score:&nbsp;${this._score}</span>
+            </div>`;
   }
 
   hasWon() {
     const hasWon = this._score >= getGoal();
     if (hasWon) this._trophyMarker.opacity = 1;
     return hasWon;
+  }
+
+  isHuman() {
+    return !this._random;
   }
 }
 
