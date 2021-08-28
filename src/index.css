@@ -15,6 +15,14 @@ body {
   transition: background-color 0.5s;
 }
 
+body::before {
+  opacity: 0.1; /* fade out loading banner */
+}
+
+div {
+  display: initial; /* was hidden in index.html for startup */
+}
+
 body.victory {
   background: darkslategray;
 }

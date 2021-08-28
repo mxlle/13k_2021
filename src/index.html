@@ -3,6 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- Add style for loading period -->
+    <style>
+      body {
+        background: black;
+        font-family: monospace;
+      }
+      body::before {
+        content: '🐱🚀🎹 SPACE';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 15vw;
+        color: gold;
+        transition: opacity 1s ease-out;
+      }
+      div {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <div id="sky"></div>
