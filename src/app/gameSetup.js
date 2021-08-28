@@ -1,12 +1,16 @@
 import { Cat } from './cat';
 import { GameObject, ObjectType } from './gameObject';
 
+export function isLastLevel(level) {
+  return level === getAllCats().length;
+}
+
 export function getNextLevel(level) {
-  return Math.min(level + 1, getCats(42).length);
+  return isLastLevel(level) ? level : level + 1;
 }
 
 export function getAvailableLevels() {
-  return getCats(42).map((_, index) => `${index + 1}`);
+  return getAllCats().map((_, index) => `${index + 1}`);
 }
 
 export function getLevelConfig(_level) {
@@ -17,6 +21,10 @@ export function getLevelConfig(_level) {
     objects: getObjects(level),
     goal: level,
   };
+}
+
+function getAllCats() {
+  return getCats(42);
 }
 
 function getCats(level) {
