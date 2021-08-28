@@ -45,10 +45,10 @@ function getGameLoop() {
   return GameLoop({
     // create the main game loop
     update: function () {
-      if (!gameStarted) return;
+      // move cats (also outside game for fun)
+      cats.forEach((cat) => cat.update());
 
-      // move cats
-      cats.forEach((cat) => cat.move());
+      if (!gameStarted) return;
 
       // check for collisions
       const collisions = getCollisions(allObjects);
@@ -57,8 +57,10 @@ function getGameLoop() {
         switch (obj.type) {
           case ObjectType.CAT:
             // CRASH -> WHOOSH
-            cat.deceleratingWormhole();
-            obj.deceleratingWormhole();
+            if (cat.canCollide && obj.canCollide) {
+              cat.handleCrash(1);
+              obj.handleCrash(-1);
+            }
             break;
           case ObjectType.SYNTH:
             // SCORE
@@ -72,8 +74,9 @@ function getGameLoop() {
             break;
           case ObjectType.WORMHOLE:
             // WHOOSH
-            cat.wormhole();
-            obj.wormhole();
+            if (obj.canCollide) {
+              cat.handleWormhole(obj);
+            }
             break;
           case ObjectType.DIE:
             // EVERYBODY SHUFFLING
@@ -104,7 +107,7 @@ function getGameLoop() {
       }
     },
     render: function () {
-      allObjects.forEach((obj) => obj.obj.render());
+      allObjects.forEach((obj) => obj.render());
       gameInitialized = true;
     },
   });
@@ -186,7 +189,7 @@ function getCollisions(objs) {
         continue;
       }
 
-      if (collides(cat.obj, obj.obj)) {
+      if (collides(cat.collisionDetector, obj.collisionDetector)) {
         collisions.push({ cat, obj });
       }
     }

@@ -1,4 +1,4 @@
-import { Text, randInt } from 'kontra';
+import { Text, randInt, Sprite } from 'kontra';
 
 let idGen = 0;
 
@@ -15,20 +15,48 @@ export const ObjectType = {
 
 export class GameObject {
   id;
+  collisionDetector;
   obj;
   type;
+  defaultSize;
+  size;
+  canCollide = true;
 
   constructor(type, character) {
     this.id = idGen++;
     this.type = type;
 
-    this.obj = Text({
-      text: character || type,
-      font: `${type === ObjectType.CAT ? 75 : 50}px sans-serif`,
-      //anchor: { x: 0.5, y: 0.5 }
+    const size = type === ObjectType.CAT ? 75 : 50;
+
+    this.defaultSize = size;
+    this.size = size;
+
+    this.collisionDetector = new Sprite({
+      width: size,
+      height: size,
+      //color: 'blue',
     });
 
+    this.obj = Text({
+      text: character || type,
+      anchor: { x: 0.5, y: 0.5 },
+      x: size / 2,
+      y: size / 2,
+    });
+
+    this.setFontSize(size);
+
+    this.collisionDetector.children.push(this.obj);
+
     this.wormhole();
+  }
+
+  render() {
+    this.collisionDetector.render();
+  }
+
+  update() {
+    this.collisionDetector.update();
   }
 
   isCat() {
@@ -36,13 +64,13 @@ export class GameObject {
   }
 
   wormhole() {
-    this.obj.x = randInt(0, window.innerWidth - this.obj.width);
-    this.obj.y = randInt(0, window.innerHeight - this.obj.height);
+    this.collisionDetector.x = randInt(0, window.innerWidth - this.collisionDetector.width);
+    this.collisionDetector.y = randInt(0, window.innerHeight - this.collisionDetector.height);
   }
 
   hide() {
-    this.obj.x = -1000;
-    this.obj.y = -1000;
+    this.collisionDetector.x = -1000;
+    this.collisionDetector.y = -1000;
   }
 
   hideForTime(timeout) {
@@ -50,5 +78,19 @@ export class GameObject {
     setTimeout(() => {
       this.wormhole();
     }, timeout);
+  }
+
+  setDxDy(dx, dy) {
+    this.collisionDetector.dx = dx;
+    this.collisionDetector.dy = dy;
+  }
+
+  changeSize(dir) {
+    this.size = Math.min(Math.max(this.size + dir, this.defaultSize / 10), this.defaultSize);
+    this.setFontSize(this.size);
+  }
+
+  setFontSize(size) {
+    this.obj.font = `${size}px sans-serif`;
   }
 }
