@@ -8,6 +8,8 @@ const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
 const WORMHOLE_TIME = 1000;
 
+const ANIMATION_FRAME_DISTANCE = 5;
+
 const DEFAULT_VELOCITY = 3;
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
@@ -21,8 +23,8 @@ export class Cat extends GameObject {
   _score = 0;
   _leftKey;
   _rightKey;
-  _direction;
-  _velocity;
+  _direction = 0;
+  _velocity = 0;
   _humanMarker;
   _swapMarker;
   _trophyMarker;
@@ -30,6 +32,7 @@ export class Cat extends GameObject {
   _swappedControls = false;
   _swapTimeout;
   _activeRotation = 0;
+  _rotationFrameCount = 0;
   _activeWormhole = 0;
 
   constructor(character, leftKey, rightKey) {
@@ -56,7 +59,7 @@ export class Cat extends GameObject {
   }
 
   update() {
-    let continueMoving = isGameStarted();
+    let continueMoving = true;
     if (this._activeRotation) continueMoving = this.handleSpinningMove();
     if (this._activeWormhole) continueMoving = this.handleWormholeMove();
 
@@ -116,13 +119,17 @@ export class Cat extends GameObject {
 
   stopSpinning() {
     this._activeRotation = 0;
+    this._rotationFrameCount = 0;
     this.obj.rotation = 0;
   }
 
   handleSpinningMove() {
-    const turnsPerSec = isGameStarted() ? 2 : 0.5;
-    const divider = 60 / turnsPerSec;
-    this.obj.rotation = this.obj.rotation + (this._activeRotation * (2 * Math.PI)) / divider;
+    this._rotationFrameCount++;
+    if (this._rotationFrameCount % ANIMATION_FRAME_DISTANCE === 0) {
+      const turnsPerSec = isGameStarted() ? 2 : 0.5;
+      const divider = 60 / turnsPerSec;
+      this.obj.rotation = this.obj.rotation + ANIMATION_FRAME_DISTANCE * ((this._activeRotation * (2 * Math.PI)) / divider);
+    }
     return false;
   }
 
@@ -152,11 +159,11 @@ export class Cat extends GameObject {
   handleWormholeMove() {
     if (this._activeWormhole < 0) {
       this._activeWormhole--;
-      if (this._activeWormhole % 5 === 0) this.changeSize((1000 / WORMHOLE_TIME) * -10);
+      if (this._activeWormhole % ANIMATION_FRAME_DISTANCE === 0) this.changeSize((1000 / WORMHOLE_TIME) * -2 * ANIMATION_FRAME_DISTANCE);
       return this._activeWormhole > (-1 * this.size) / 3 + this._velocity;
     } else {
       this._activeWormhole++;
-      if (this._activeWormhole % 5 === 0) this.changeSize((1000 / WORMHOLE_TIME) * 10);
+      if (this._activeWormhole % ANIMATION_FRAME_DISTANCE === 0) this.changeSize((1000 / WORMHOLE_TIME) * 2 * ANIMATION_FRAME_DISTANCE);
     }
     return false;
   }
