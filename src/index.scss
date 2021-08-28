@@ -116,6 +116,8 @@ canvas {
 body {
   &.game-ended {
     #sky {
+      opacity: 0.05;
+      color: gold;
       animation: none;
     }
 
@@ -125,23 +127,12 @@ body {
 
     &.victory {
       background: darkslategray;
-      #sky {
-        color: darkslategray;
-      }
     }
-
     &.defeat {
       background: darkred;
-      #sky {
-        color: darkred;
-      }
     }
-
     &.bot-only {
       background: darkslateblue;
-      #sky {
-        color: darkslateblue;
-      }
     }
   }
 
