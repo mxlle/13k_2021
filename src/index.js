@@ -1,6 +1,6 @@
 import { init, initKeys, bindKeys, getStoreItem, setStoreItem } from 'kontra';
 
-import './index.css';
+import './index.scss';
 
 import { addBackgroundScene } from './app/scene';
 import { getFirstCat, initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
