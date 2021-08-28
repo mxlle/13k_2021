@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/index.js',
   plugins: [
     new HtmlWebpackPlugin({
-      title: '🐱🚀🎹 Space cat 🎹🚀🐱',
+      title: '🐱🚀🎹 SPACE: Playful Adventures of Cat Emojis 🎹🚀🐱',
       template: './src/index.html',
     }),
   ],
