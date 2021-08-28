@@ -1,8 +1,12 @@
 import { bindKeys, randInt, Text } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
 import { getGoal, updateScoreboard } from './score';
-import { SWAP_TIME } from './game';
+import { isGameStarted, SWAP_TIME } from './game';
 import { deactivateClickMode } from '../index';
+
+const SPIN_TIME = 1000;
+const CRASH_SAFETY_TIME = 2000;
+const WORMHOLE_TIME = 1000;
 
 const DEFAULT_VELOCITY = 3;
 const DIRECTIONS = [
@@ -25,6 +29,8 @@ export class Cat extends GameObject {
   _random = true;
   _swappedControls = false;
   _swapTimeout;
+  _activeRotation = 0;
+  _activeWormhole = 0;
 
   constructor(character, leftKey, rightKey) {
     super(ObjectType.CAT, character);
@@ -33,8 +39,6 @@ export class Cat extends GameObject {
 
     this.setupMarkers();
     this.setupKeys(leftKey, rightKey);
-
-    this.startMoving();
   }
 
   controlManually() {
@@ -45,20 +49,21 @@ export class Cat extends GameObject {
     }
   }
 
-  deceleratingWormhole() {
-    this.wormhole();
-    this.startMoving();
-  }
-
   startMoving() {
     this._velocity = DEFAULT_VELOCITY;
     this._direction = randInt(0, 3);
     this.onDirectionOrVelocityUpdate();
   }
 
-  move() {
-    this.obj.update();
-    wrapObjectOnEdge(this.obj);
+  update() {
+    let continueMoving = isGameStarted();
+    if (this._activeRotation) continueMoving = this.handleSpinningMove();
+    if (this._activeWormhole) continueMoving = this.handleWormholeMove();
+
+    if (!continueMoving) return;
+
+    super.update();
+    wrapObjectOnEdge(this.collisionDetector);
 
     // let bots turn randomly
     if (this._random && Math.random() < 0.02) {
@@ -88,32 +93,106 @@ export class Cat extends GameObject {
 
   onDirectionOrVelocityUpdate() {
     const { x, y } = DIRECTIONS[this._direction];
-    this.obj.dx = x * this._velocity;
-    this.obj.dy = y * this._velocity;
+    this.setDxDy(x * this._velocity, y * this._velocity);
   }
 
   speedUp() {
-    this._velocity = Math.max(this._velocity++, DEFAULT_VELOCITY);
+    this._velocity = Math.max(this._velocity + 1, DEFAULT_VELOCITY);
     this.onDirectionOrVelocityUpdate();
+  }
+
+  handleCrash(direction) {
+    this.startSpinning(direction);
+    this.activateSafetyMode(CRASH_SAFETY_TIME);
+    setTimeout(() => {
+      this.stopSpinning();
+      this.startMoving();
+    }, SPIN_TIME);
+  }
+
+  startSpinning(direction) {
+    this._activeRotation = direction || 1;
+  }
+
+  stopSpinning() {
+    this._activeRotation = 0;
+    this.obj.rotation = 0;
+  }
+
+  handleSpinningMove() {
+    const turnsPerSec = isGameStarted() ? 2 : 0.5;
+    const divider = 60 / turnsPerSec;
+    this.obj.rotation = this.obj.rotation + (this._activeRotation * (2 * Math.PI)) / divider;
+    return false;
+  }
+
+  handleWormhole(wormhole) {
+    wormhole.canCollide = false;
+    this.hideAllMarkers();
+    // start shrinking
+    this._activeWormhole = -1;
+
+    setTimeout(() => {
+      // actual wormhole jump
+      this.wormhole();
+      wormhole.wormhole();
+      wormhole.canCollide = true;
+      // start growing
+      this._activeWormhole = 1;
+    }, WORMHOLE_TIME / 2);
+
+    setTimeout(() => {
+      // restore size
+      this._activeWormhole = 0;
+      this.setFontSize(this.defaultSize);
+      this.showAllMarkers();
+    }, WORMHOLE_TIME);
+  }
+
+  handleWormholeMove() {
+    if (this._activeWormhole < 0) {
+      this._activeWormhole--;
+      if (this._activeWormhole % 5 === 0) this.changeSize((1000 / WORMHOLE_TIME) * -10);
+      return this._activeWormhole > (-1 * this.size) / 3 + this._velocity;
+    } else {
+      this._activeWormhole++;
+      if (this._activeWormhole % 5 === 0) this.changeSize((1000 / WORMHOLE_TIME) * 10);
+    }
+    return false;
+  }
+
+  activateSafetyMode(time) {
+    this.canCollide = false;
+    this.obj.opacity = 0.6;
+    setTimeout(() => {
+      this.canCollide = true;
+      this.obj.opacity = 1;
+    }, time);
   }
 
   swapControls() {
     this._swappedControls = true;
     this._swapMarker.opacity = 1;
 
-    if (this._swapTimeout) clearTimeout(this._swapTimeout);
+    clearTimeout(this._swapTimeout);
 
     this._swapTimeout = setTimeout(() => {
-      this._swapMarker.opacity = 0;
-      this._swappedControls = false;
-      this._swapTimeout = undefined;
+      this.restoreControls();
     }, SWAP_TIME);
+  }
+
+  restoreControls() {
+    this._swapMarker.opacity = 0;
+    this._swappedControls = false;
+    this._swapTimeout = undefined;
   }
 
   stop() {
     this._velocity = 0;
     this.onDirectionOrVelocityUpdate();
-    this._swapMarker.opacity = 0;
+    clearTimeout(this._swapTimeout);
+    this.restoreControls();
+    this.obj.opacity = 1;
   }
 
   incScore() {
@@ -149,12 +228,38 @@ export class Cat extends GameObject {
     return !this._random;
   }
 
-  setupMarkers() {
-    const markerFont = '30px sans-serif';
+  hideAllMarkers() {
+    this._humanMarker.opacity = 0;
+    this._swapMarker.opacity = 0;
+    this._trophyMarker.opacity = 0;
+  }
 
-    this._humanMarker = new Text({ text: '🧑‍🚀', font: markerFont, x: -10, y: this.obj.height - 30 });
-    this._swapMarker = new Text({ text: '↔️', font: markerFont, x: this.obj.width - 20, y: -10 });
-    this._trophyMarker = new Text({ text: '🏆️', font: markerFont, x: this.obj.width - 20, y: -10 });
+  showAllMarkers() {
+    if (this.isHuman()) this._humanMarker.opacity = 1;
+    if (this.hasWon()) this._trophyMarker.opacity = 1;
+    else if (this._swappedControls) this._swapMarker.opacity = 1;
+  }
+
+  setupMarkers() {
+    const markerSize = 30;
+    const markerFont = `${markerSize}px sans-serif`;
+    const margin = markerSize / 3;
+
+    const bottomLeft = {
+      font: markerFont,
+      x: -(this.size / 2 + margin),
+      y: this.size / 2 - markerSize + margin,
+    };
+
+    const rightTop = {
+      font: markerFont,
+      x: this.size / 2 - markerSize + margin,
+      y: -(this.size / 2 + margin),
+    };
+
+    this._humanMarker = new Text({ text: '🧑‍🚀', ...bottomLeft });
+    this._swapMarker = new Text({ text: '↔️', ...rightTop });
+    this._trophyMarker = new Text({ text: '🏆️', ...rightTop });
     this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
     this._humanMarker.opacity = 0;
     this._swapMarker.opacity = 0;
