@@ -16,7 +16,7 @@ body {
 }
 
 body::before {
-  opacity: 0.1; /* fade out loading banner */
+  opacity: 0.075; /* fade out loading banner */
 }
 
 div {
@@ -43,6 +43,10 @@ canvas {
   position: fixed;
   bottom: 0;
   left: 0;
+}
+
+body.gameStarted .description {
+  opacity: 0.5;
 }
 
 #sky {
