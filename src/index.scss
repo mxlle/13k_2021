@@ -13,23 +13,14 @@ body {
   color: white;
   font-family: monospace;
   transition: background-color 0.5s;
-}
 
-body::before {
-  opacity: 0.075; /* fade out loading banner */
+  &::before {
+    opacity: 0.075; /* fade out loading banner */
+  }
 }
 
 div {
   display: initial; /* was hidden in index.html for startup */
-}
-
-body.victory {
-  background: darkslategray;
-}
-
-body.victory #sky {
-  color: darkslategray;
-  animation: none;
 }
 
 canvas {
@@ -45,10 +36,6 @@ canvas {
   left: 0;
 }
 
-body.gameStarted .description {
-  opacity: 0.5;
-}
-
 #sky {
   font-size: 13px;
   position: absolute;
@@ -56,6 +43,69 @@ body.gameStarted .description {
   pointer-events: none;
   top: 0;
   animation: rainbow-color 20s infinite;
+}
+
+#score {
+  font-size: 37px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+  padding: 7px 21px;
+  text-align: right;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.screenControls {
+  position: fixed;
+  display: none;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  button {
+    font-size: 78px;
+    margin: 13px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 26px;
+    height: calc(100% - 26px);
+    width: 50%;
+    border: none;
+  }
+}
+
+/* modification for different ame states */
+body {
+  &.victory {
+    background: darkslategray;
+
+    #sky {
+      color: darkslategray;
+      animation: none;
+    }
+  }
+
+  &.gameStarted {
+    .description {
+      opacity: 0.5;
+    }
+
+    #score {
+      background: none;
+      opacity: 0.5;
+      z-index: 0;
+    }
+  }
+
+  &.clickMode {
+    .screenControls {
+      display: flex;
+    }
+  }
 }
 
 @keyframes rainbow-color {
@@ -77,46 +127,4 @@ body.gameStarted .description {
   100% {
     color: indigo;
   }
-}
-
-#score {
-  font-size: 37px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  pointer-events: none;
-  padding: 7px 21px;
-  text-align: right;
-  z-index: 1;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-body.gameStarted #score {
-  opacity: 0.5;
-  z-index: 0;
-  background: none;
-}
-
-.screenControls {
-  position: fixed;
-  display: none;
-  justify-content: space-between;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-.screenControls button {
-  font-size: 78px;
-  margin: 13px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.6);
-  padding: 26px;
-  height: calc(100% - 26px);
-  width: 50%;
-  border: none;
-}
-
-body.clickMode .screenControls {
-  display: flex;
 }
