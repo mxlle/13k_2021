@@ -78,7 +78,7 @@ function getGameLoop() {
               cat.handleWormhole(obj);
             }
             break;
-          case ObjectType.DIE:
+          case ObjectType.SHUFFLE:
             // EVERYBODY SHUFFLING
             shuffleObjects();
             break;

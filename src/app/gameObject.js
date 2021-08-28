@@ -7,7 +7,7 @@ export const ObjectType = {
   SYNTH: '🎹',
   ROCKET: '🚀',
   WORMHOLE: '💥',
-  DIE: '🎲',
+  SHUFFLE: '🎲',
   ATTACK: '🔫',
   TRAP: '💩',
   DEATH: '☠️',
