@@ -3,7 +3,7 @@ import { init, initKeys, bindKeys, getStoreItem, setStoreItem } from 'kontra';
 import './index.scss';
 
 import { addBackgroundScene } from './app/scene';
-import { getFirstCat, initGame, isGameInitialized, isGameStarted, shuffleAll, startGame } from './app/game';
+import { getFirstCat, initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
 import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
 
 export const StoreKey = {
@@ -24,7 +24,7 @@ setupEventListeners();
 setupExpertMode();
 
 // initialize game
-loadGame();
+prepareGame();
 
 // ---------------------------
 
@@ -71,7 +71,7 @@ export function setupExpertMode() {
     bindKeys(getAvailableLevelsAsString(), (event) => {
       if (!isGameStarted()) {
         setStoreItem(StoreKey.LEVEL, event.key);
-        loadGame();
+        prepareGame();
       }
     });
     expertMode = true;
@@ -80,7 +80,11 @@ export function setupExpertMode() {
 
 function onSpace() {
   if (!isGameStarted()) {
-    startGame();
+    if (isPreparationMode()) {
+      startGame();
+    } else {
+      prepareGame();
+    }
   }
 }
 
