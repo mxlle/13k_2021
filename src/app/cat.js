@@ -1,6 +1,6 @@
 import { bindKeys, randInt, Text } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
-import { GOAL } from './score';
+import { getGoal } from './score';
 import { SWAP_TIME } from './game';
 import { deactivateClickMode } from '../index';
 
@@ -55,7 +55,10 @@ export class Cat extends GameObject {
   }
 
   controlManually() {
-    this._random = false;
+    if (this._random) {
+      this._random = false;
+      this.resetScore(); // when switching from bot to human, reset score
+    }
   }
 
   deceleratingWormhole() {
@@ -131,7 +134,6 @@ export class Cat extends GameObject {
 
   incScore() {
     this._score++;
-    return this._score === GOAL;
   }
 
   resetScore() {
@@ -144,7 +146,7 @@ export class Cat extends GameObject {
   }
 
   hasWon() {
-    const hasWon = this._score >= GOAL;
+    const hasWon = this._score >= getGoal();
     if (hasWon) this._trophyMarker.opacity = 1;
     return hasWon;
   }
