@@ -59,7 +59,7 @@ function getObjects(level) {
     new GameObject(ObjectType.ATTACK),
     new GameObject(ObjectType.ROCKET),
     // 6
-    new GameObject(ObjectType.DIE),
+    new GameObject(ObjectType.SHUFFLE),
     new GameObject(ObjectType.ROCKET),
     // 7
     new GameObject(ObjectType.DEATH),
