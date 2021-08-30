@@ -183,6 +183,7 @@ export class Cat extends GameObject {
   swapControls() {
     this._swappedControls = true;
     this._swapMarker.opacity = 1;
+    updateScoreboard();
 
     clearTimeout(this._swapTimeout);
 
@@ -195,6 +196,7 @@ export class Cat extends GameObject {
     this._swapMarker.opacity = 0;
     this._swappedControls = false;
     this._swapTimeout = undefined;
+    updateScoreboard();
   }
 
   stop() {
@@ -220,7 +222,11 @@ export class Cat extends GameObject {
   getScoreOutput() {
     let keys = '';
     if (this._leftKey && this._rightKey) {
-      keys = `<span class="keys">[${this._leftKey}]&nbsp;[${this._rightKey}]</span>`;
+      if (!this._swappedControls || this._random) {
+        keys = `<span class="keys">[${this._leftKey}]&nbsp;[${this._rightKey}]</span>`;
+      } else {
+        keys = `<span class="keys swapped">[${this._rightKey}]&nbsp;[${this._leftKey}]</span>`;
+      }
     }
     return `<div class="result ${this._random ? 'bot' : 'human'}">
                 ${keys}
@@ -252,7 +258,7 @@ export class Cat extends GameObject {
   }
 
   setupMarkers() {
-    const markerSize = this.defaultSize / 3;
+    const markerSize = this.defaultSize / 2.5;
     const markerFont = `${markerSize}px sans-serif`;
     const margin = markerSize / 3;
 
@@ -269,7 +275,7 @@ export class Cat extends GameObject {
     };
 
     this._humanMarker = new Text({ text: '🧑‍🚀', ...bottomLeft });
-    this._swapMarker = new Text({ text: '↔️', ...rightTop });
+    this._swapMarker = new Text({ text: '💩️', ...rightTop });
     this._trophyMarker = new Text({ text: '🏆️', ...rightTop });
     this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
     this._humanMarker.opacity = 0;

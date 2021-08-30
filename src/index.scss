@@ -87,6 +87,10 @@ canvas {
           left: -7px;
         }
       }
+
+      .keys.swapped {
+        animation: danger-text .5s infinite;
+      }
     }
   }
 }
@@ -213,8 +217,10 @@ body {
 
     #score {
       background: none;
-      opacity: 0.5;
       z-index: 0;
+      span:not(.keys.swapped) {
+        opacity: 0.5;
+      }
     }
   }
 
@@ -258,5 +264,17 @@ body {
   }
   100% {
     color: indigo;
+  }
+}
+
+@keyframes danger-text {
+  0% {
+    color: white;
+  }
+  50% {
+    color: orange;
+  }
+  100% {
+    color: white;
   }
 }
