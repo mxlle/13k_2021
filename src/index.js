@@ -69,7 +69,7 @@ function setupEventListeners() {
 export function setupExpertMode() {
   if (getStoreItem(StoreKey.EXPERT) && !expertMode) {
     bindKeys(getAvailableLevelsAsString(), (event) => {
-      if (!isGameStarted()) {
+      if (isPreparationMode()) {
         setStoreItem(StoreKey.LEVEL, event.key);
         prepareGame();
       }
