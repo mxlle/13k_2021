@@ -3,19 +3,20 @@ import { ObjectType } from './gameObject';
 import { initScoreboard } from './score';
 import { loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
+import { addBodyClasses, removeBodyClasses } from './utils';
 
 export const SWAP_TIME = 5000;
 
 export const Result = {
-  VICTORY: 'victory',
-  DEFEAT: 'defeat',
-  BOT_ONLY: 'bot-only',
+  WON: 'won',
+  LOST: 'lost',
+  BOTS: 'bots',
 };
 
 export const GameState = {
-  STARTED: 'game-started',
-  ENDED: 'game-ended',
-  PREPARATION: 'game-preparation',
+  STARTED: 'started',
+  ENDED: 'ended',
+  PREPARATION: 'prepare',
 };
 
 let loop;
@@ -118,23 +119,23 @@ function getGameLoop() {
 
 export function prepareGame() {
   preparationMode = true;
-  if (document.body.classList.contains(Result.VICTORY)) {
+  if (document.body.classList.contains(Result.WON)) {
     loadGame(getNextLevel(currentLevel));
   } else {
     loadGame();
   }
-  document.body.classList.remove(GameState.ENDED, Result.VICTORY, Result.BOT_ONLY, Result.DEFEAT);
-  document.body.classList.add(GameState.PREPARATION);
+  removeBodyClasses(GameState.ENDED, Result.WON, Result.BOTS, Result.LOST);
+  addBodyClasses(GameState.PREPARATION);
 }
 
 export function startGame() {
   preparationMode = false;
   gameStarted = true;
-  document.body.classList.add(GameState.STARTED);
+  addBodyClasses(GameState.STARTED);
   cats.forEach((cat) => cat.startMoving());
   // reset result after timeout to have it while css transition
   setTimeout(() => {
-    document.body.classList.remove(GameState.PREPARATION);
+    removeBodyClasses(GameState.PREPARATION);
   }, 2000);
 }
 
@@ -144,20 +145,20 @@ function endGame() {
 
   // check who won
   if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
-    document.body.classList.add(Result.VICTORY);
+    addBodyClasses(Result.WON);
     // check all levels finished
     if (isLastLevel(currentLevel)) {
       setStoreItem(StoreKey.EXPERT, true);
       setupExpertMode();
     }
   } else if (cats.every((cat) => !cat.isHuman())) {
-    document.body.classList.add(Result.BOT_ONLY);
+    addBodyClasses(Result.BOTS);
   } else {
-    document.body.classList.add(Result.DEFEAT);
+    addBodyClasses(Result.LOST);
   }
 
-  document.body.classList.add(GameState.ENDED);
-  document.body.classList.remove(GameState.STARTED);
+  addBodyClasses(GameState.ENDED);
+  removeBodyClasses(GameState.STARTED);
 }
 
 export function getFirstCat() {
@@ -180,11 +181,8 @@ function swapControls(cat, attack) {
 }
 
 function updateLevel(newLevel) {
-  if (currentLevel) {
-    document.body.classList.remove('level' + currentLevel);
-  }
   currentLevel = newLevel;
-  document.body.classList.add('level' + currentLevel);
+  document.body.setAttribute('data-level', newLevel);
 }
 
 function getCollisions(objs) {

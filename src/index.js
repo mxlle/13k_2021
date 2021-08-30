@@ -5,6 +5,7 @@ import './index.scss';
 import { addBackgroundScene } from './app/scene';
 import { getFirstCat, initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
 import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
+import { addBodyClasses, removeBodyClasses } from './app/utils';
 
 export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
@@ -96,10 +97,10 @@ function resizeCanvas() {
 
 function activateClickMode() {
   clickMode = true;
-  document.body.classList.add(CLICK_MODE);
+  addBodyClasses(CLICK_MODE);
 }
 
 export function deactivateClickMode() {
   clickMode = false;
-  document.body.classList.remove(CLICK_MODE);
+  removeBodyClasses(CLICK_MODE);
 }

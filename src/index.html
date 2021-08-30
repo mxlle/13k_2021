@@ -10,7 +10,7 @@
         background: black;
         font-family: monospace;
       }
-      body::before {
+      body::after {
         content: '🐱🚀🎹\ASPACE';
         position: absolute;
         white-space: pre;
@@ -20,6 +20,7 @@
         transform: translate(-50%, -50%);
         font-size: 20vw;
         color: gold;
+        z-index: -1;
         transition: opacity 1s ease-out;
       }
       div {
@@ -30,9 +31,9 @@
   <body>
     <div id="sky"></div>
     <div id="score"></div>
-    <div class="description">Bring&nbsp;your&nbsp;cat&nbsp;to&nbsp;a&nbsp;synthesizer. Hit&nbsp;SPACE&nbsp;to&nbsp;start.</div>
+    <div class="desc">Bring&nbsp;your&nbsp;cat&nbsp;to&nbsp;a&nbsp;synthesizer. Hit&nbsp;SPACE&nbsp;to&nbsp;start.</div>
     <canvas></canvas>
-    <div class="screen-controls">
+    <div class="controls">
       <div id="left">&larr;</div>
       <div id="right">&rarr;</div>
     </div>
