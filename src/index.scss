@@ -9,12 +9,10 @@ body {
 }
 
 body {
-  background: black;
   color: white;
-  font-family: monospace;
   transition: background-color 0.5s;
 
-  &::before {
+  &::after {
     opacity: 0; /* fade out loading banner */
   }
 }
@@ -27,33 +25,25 @@ canvas {
   position: absolute;
 }
 
-.description {
+.desc {
   font-size: 37px;
-  margin: 11px;
   display: block;
   position: fixed;
-  bottom: 0;
-  left: 0;
+  bottom: 11px;
+  left: 11px;
 }
 
 #sky {
   font-size: 13px;
   position: absolute;
-  color: indigo;
-  pointer-events: none;
-  top: 0;
-  animation: rainbow-color 20s infinite;
+  animation: rainbow 20s infinite;
 }
 
 #score {
   font-size: 37px;
   position: absolute;
-  top: 0;
   right: 0;
-  pointer-events: none;
   padding: 7px 21px;
-  z-index: 1;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -65,40 +55,39 @@ canvas {
   span {
     vertical-align: top;
   }
+}
 
-  .goal {
-    font-weight: bold;
+.goal {
+  font-weight: bold;
+}
+
+.result {
+  &.bot {
+    color: #bbb;
   }
 
-  .result {
-    &.bot {
-      color: #bbb;
+  &.human {
+    .cat {
+      position: relative;
+
+      &::after {
+        content: '🧑‍🚀';
+        font-size: 14px;
+        position: absolute;
+        bottom: 0;
+        left: -7px;
+      }
     }
 
-    &.human {
-      .cat {
-        position: relative;
-
-        &::before {
-          content: '🧑‍🚀';
-          font-size: 14px;
-          position: absolute;
-          bottom: 0;
-          left: -7px;
-        }
-      }
-
-      .keys.swapped {
-        animation: danger-text .5s infinite;
-      }
+    .swapped {
+      animation: danger .5s infinite;
     }
   }
 }
 
-.screen-controls {
+.controls {
   position: fixed;
   display: none;
-  justify-content: space-between;
   top: 0;
   left: 0;
   right: 0;
@@ -118,135 +107,94 @@ canvas {
 
 /* modification for different ame states */
 body {
-  &.game-ended {
+  &.ended {
     #sky {
       opacity: 0.05;
       color: gold;
       animation: none;
     }
 
-    &::before {
+    &::after {
       opacity: 0.15; /* slightly fade in logo */
     }
 
-    &.victory {
+    &.won {
       background: darkslategray;
     }
-    &.defeat {
+    &.lost {
       background: darkred;
     }
-    &.bot-only {
+    &.bots {
       background: darkslateblue;
     }
   }
 
-  &.victory {
-    &::before {
+  &.won {
+    &::after {
       content: '🏆️🐱🏆️\Ameow';
     }
   }
 
-  &.defeat {
-    &::before {
+  &.lost {
+    &::after {
       content: '☠️🙀🔫\A#!$§#';
     }
   }
 
-  &.bot-only {
-    &::before {
+  &.bots {
+    &::after {
       content: '🚀😹🎲\A?!?!?';
     }
   }
 
-  &.game-preparation {
-    &:not(.game-started)::before {
+  &.prepare {
+    &:not(.started)::after {
       opacity: 0.2; /* fade in logo */
     }
 
-    &.level1 {
-      &::before {
-        content: '🐱🎹\ALevel 1';
-      }
-    }
-    &.level2 {
-      &::before {
-        content: '🐱🚀🎹\ALevel 2';
-      }
-    }
-    &.level3 {
-      &::before {
-        content: '🐱💥🎹\ALevel 3';
-      }
-    }
-    &.level4 {
-      &::before {
-        content: '🎹🐱🎹\ALevel 4';
-      }
-    }
-    &.level5 {
-      &::before {
-        content: '🐱🚀🔫\ALevel 5';
-      }
-    }
-    &.level6 {
-      &::before {
-        content: '🎲🐱🚀\ALevel 6';
-      }
-    }
-    &.level7 {
-      &::before {
-        content: '🐱💩🎹\ALevel 7';
-      }
-    }
-    &.level8 {
-      &::before {
-        content: '🎹🚀🎹\ALevel 8';
-      }
-    }
-    &.level9 {
-      &::before {
-        content: '☠️🐱🔫\ALevel 9';
+    &[data-level] {
+      &::after {
+        content: '🐱🚀🎹\ALevel ' attr(data-level);
       }
     }
   }
 
-  &.game-started {
-    .description {
+  &.started {
+    .desc {
       opacity: 0.5;
     }
 
     #score {
-      background: none;
-      z-index: 0;
-      span:not(.keys.swapped) {
+      span:not(.swapped) {
         opacity: 0.5;
       }
     }
   }
 
+  &:not(.started) #score {
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
   &.click-mode {
-    &.game-started {
-      .screen-controls {
+    &.started {
+      .controls {
         display: flex;
       }
     }
 
-    #score {
-      .result {
-        .keys {
-          display: none;
-        }
+    .keys {
+      display: none;
+    }
 
-        &.human .cat::before {
-          content: '🧑‍🚀';
-          font-size: 14px;
-        }
-      }
+    .human .cat::after {
+      content: '🧑‍🚀';
+      font-size: 14px;
     }
   }
 }
 
-@keyframes rainbow-color {
+@keyframes rainbow {
   0% {
     color: indigo;
   }
@@ -267,7 +215,7 @@ body {
   }
 }
 
-@keyframes danger-text {
+@keyframes danger {
   0% {
     color: white;
   }
