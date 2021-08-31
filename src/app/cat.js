@@ -1,8 +1,9 @@
-import { bindKeys, randInt, Text } from 'kontra';
+import { bindKeys, randInt } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
 import { getGoal, updateScoreboard } from './score';
 import { isGameStarted, SWAP_TIME } from './game';
 import { deactivateClickMode } from '../index';
+import { Marker } from './marker';
 
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
@@ -48,7 +49,7 @@ export class Cat extends GameObject {
   controlManually() {
     if (this._random) {
       this._random = false;
-      this._humanMarker.opacity = 1;
+      this._humanMarker.show();
       this.resetScore(); // when switching from bot to human, reset score
     }
   }
@@ -111,7 +112,7 @@ export class Cat extends GameObject {
     clearTimeout(this._crashTimeout);
     this._crashTimeout = setTimeout(() => {
       this.stopSpinning();
-      this.startMoving();
+      this.startMoving(); // move in a random direction with default speed
       this._crashTimeout = undefined;
     }, SPIN_TIME);
   }
@@ -129,7 +130,7 @@ export class Cat extends GameObject {
   handleSpinningMove() {
     this._rotationFrameCount++;
     if (this._rotationFrameCount % ANIMATION_FRAME_DISTANCE === 0) {
-      const turnsPerSec = isGameStarted() ? 2 : 0.5;
+      const turnsPerSec = 2;
       const divider = 60 / turnsPerSec;
       this.obj.rotation = this.obj.rotation + ANIMATION_FRAME_DISTANCE * ((this._activeRotation * (2 * Math.PI)) / divider);
     }
@@ -182,7 +183,7 @@ export class Cat extends GameObject {
 
   swapControls() {
     this._swappedControls = true;
-    this._swapMarker.opacity = 1;
+    this._swapMarker.show();
     updateScoreboard();
 
     clearTimeout(this._swapTimeout);
@@ -193,7 +194,7 @@ export class Cat extends GameObject {
   }
 
   restoreControls() {
-    this._swapMarker.opacity = 0;
+    this._swapMarker.hide();
     this._swappedControls = false;
     this._swapTimeout = undefined;
     updateScoreboard();
@@ -215,7 +216,7 @@ export class Cat extends GameObject {
 
   resetScore() {
     this._score = 0;
-    this._trophyMarker.opacity = 0;
+    this._trophyMarker.hide();
     updateScoreboard();
   }
 
@@ -237,7 +238,7 @@ export class Cat extends GameObject {
 
   hasWon() {
     const hasWon = this._score >= getGoal();
-    if (hasWon) this._trophyMarker.opacity = 1;
+    if (hasWon) this._trophyMarker.show();
     return hasWon;
   }
 
@@ -246,41 +247,21 @@ export class Cat extends GameObject {
   }
 
   hideAllMarkers() {
-    this._humanMarker.opacity = 0;
-    this._swapMarker.opacity = 0;
-    this._trophyMarker.opacity = 0;
+    this._humanMarker.hide();
+    this._swapMarker.hide();
+    this._trophyMarker.hide();
   }
 
   showAllMarkers() {
-    if (this.isHuman()) this._humanMarker.opacity = 1;
-    if (this.hasWon()) this._trophyMarker.opacity = 1;
-    else if (this._swappedControls) this._swapMarker.opacity = 1;
+    if (this.isHuman()) this._humanMarker.show();
+    if (this.hasWon()) this._trophyMarker.show();
+    else if (this._swappedControls) this._swapMarker.show();
   }
 
   setupMarkers() {
-    const markerSize = this.defaultSize / 2.5;
-    const markerFont = `${markerSize}px sans-serif`;
-    const margin = markerSize / 3;
-
-    const bottomLeft = {
-      font: markerFont,
-      x: -(this.size / 2 + margin),
-      y: this.size / 2 - markerSize + margin,
-    };
-
-    const rightTop = {
-      font: markerFont,
-      x: this.size / 2 - markerSize + margin,
-      y: -(this.size / 2 + margin),
-    };
-
-    this._humanMarker = new Text({ text: '🧑‍🚀', ...bottomLeft });
-    this._swapMarker = new Text({ text: '💩️', ...rightTop });
-    this._trophyMarker = new Text({ text: '🏆️', ...rightTop });
-    this.obj.children.push(this._humanMarker, this._swapMarker, this._trophyMarker);
-    this._humanMarker.opacity = 0;
-    this._swapMarker.opacity = 0;
-    this._trophyMarker.opacity = 0;
+    this._humanMarker = new Marker('🧑‍🚀', this, true);
+    this._swapMarker = new Marker('💩️', this);
+    this._trophyMarker = new Marker('🏆️', this);
   }
 
   setupKeys(leftKey, rightKey) {
