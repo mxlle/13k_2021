@@ -54,14 +54,17 @@ function getGameLoop() {
       // move cats
       cats.forEach((cat) => cat.update());
 
+      // update objects (for animations)
+      objects.forEach((object) => object.update());
+
       // check for collisions
       const collisions = getCollisions(allObjects);
       const wormholeLater = [];
       collisions.forEach(({ cat, obj }) => {
         switch (obj.type) {
           case ObjectType.CAT:
-            // CRASH -> WHOOSH
-            if (cat.canCollide && obj.canCollide) {
+            // CRASH
+            if (!cat.crashSafety && !obj.crashSafety) {
               cat.handleCrash(1);
               obj.handleCrash(-1);
             }
@@ -78,9 +81,7 @@ function getGameLoop() {
             break;
           case ObjectType.WORMHOLE:
             // WHOOSH
-            if (obj.canCollide) {
-              cat.handleWormhole(obj);
-            }
+            cat.handleWormhole(obj);
             break;
           case ObjectType.SHUFFLE:
             // EVERYBODY SHUFFLING
@@ -169,7 +170,10 @@ export function shuffleAll() {
   allObjects.forEach((obj) => obj.wormhole());
 }
 function shuffleObjects() {
-  objects.forEach((obj) => obj.wormhole());
+  objects.forEach((obj, index) => {
+    obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => console.log('new spin during shuffle'));
+    obj.wormhole();
+  });
 }
 
 function swapControls(cat, attack) {
@@ -192,6 +196,11 @@ function getCollisions(objs) {
     for (let j = i + 1; j < objs.length; j++) {
       let o1 = objs[i];
       let o2 = objs[j];
+
+      if (!o1.canCollide || !o2.canCollide) {
+        continue;
+      }
+
       let cat, obj;
       if (o1.isCat()) {
         cat = o1;
