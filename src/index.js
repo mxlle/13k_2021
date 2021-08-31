@@ -1,11 +1,11 @@
-import { init, initKeys, bindKeys, getStoreItem, setStoreItem } from 'kontra';
+import { init, initKeys, bindKeys } from 'kontra';
 
 import './index.scss';
 
 import { addBackgroundScene } from './app/scene';
 import { getFirstCat, initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
 import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
-import { addBodyClasses, removeBodyClasses } from './app/utils';
+import { addBodyClasses, getStoredNumber, removeBodyClasses, storeNumber } from './app/utils';
 
 export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
@@ -31,9 +31,9 @@ prepareGame();
 
 export function loadGame(nextLevel) {
   if (nextLevel) {
-    setStoreItem(StoreKey.LEVEL, nextLevel);
+    storeNumber(StoreKey.LEVEL, nextLevel);
   }
-  const level = getStoreItem(StoreKey.LEVEL) || 1;
+  const level = getStoredNumber(StoreKey.LEVEL) || 1;
   const { cats, objects, goal } = getLevelConfig(level);
   initGame(cats, objects, goal);
 }
@@ -68,10 +68,10 @@ function setupEventListeners() {
 }
 
 export function setupExpertMode() {
-  if (getStoreItem(StoreKey.EXPERT) && !expertMode) {
+  if (getStoredNumber(StoreKey.EXPERT) && !expertMode) {
     bindKeys(getAvailableLevelsAsString(), (event) => {
       if (isPreparationMode()) {
-        setStoreItem(StoreKey.LEVEL, event.key);
+        storeNumber(StoreKey.LEVEL, event.key);
         prepareGame();
       }
     });

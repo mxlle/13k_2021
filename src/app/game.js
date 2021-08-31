@@ -1,9 +1,9 @@
-import { collides, GameLoop, setStoreItem } from 'kontra';
+import { collides, GameLoop } from 'kontra';
 import { ObjectType } from './gameObject';
 import { initScoreboard } from './score';
 import { loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
-import { addBodyClasses, removeBodyClasses } from './utils';
+import { addBodyClasses, removeBodyClasses, storeNumber } from './utils';
 
 export const SWAP_TIME = 5000;
 
@@ -148,7 +148,7 @@ function endGame() {
     addBodyClasses(Result.WON);
     // check all levels finished
     if (isLastLevel(currentLevel)) {
-      setStoreItem(StoreKey.EXPERT, true);
+      storeNumber(StoreKey.EXPERT, 1);
       setupExpertMode();
     }
   } else if (cats.every((cat) => !cat.isHuman())) {
