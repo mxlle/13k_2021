@@ -7,9 +7,6 @@ import { Marker } from './marker';
 
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
-const WORMHOLE_TIME = 1000;
-
-const ANIMATION_FRAME_DISTANCE = 5;
 
 const DEFAULT_VELOCITY = 3;
 const DIRECTIONS = [
@@ -32,10 +29,7 @@ export class Cat extends GameObject {
   _random = true;
   _swappedControls = false;
   _swapTimeout;
-  _crashTimeout;
-  _activeRotation = 0;
-  _rotationFrameCount = 0;
-  _activeWormhole = 0;
+  crashSafety = false;
 
   constructor(character, leftKey, rightKey, size) {
     super(ObjectType.CAT, size, character);
@@ -54,21 +48,14 @@ export class Cat extends GameObject {
     }
   }
 
-  startMoving() {
-    this._velocity = DEFAULT_VELOCITY;
+  startMoving(velocity) {
+    this._velocity = velocity ?? DEFAULT_VELOCITY;
     this._direction = randInt(0, 3);
     this.onDirectionOrVelocityUpdate();
   }
 
   update() {
-    let continueMoving = true;
-    if (this._activeRotation) continueMoving = this.handleSpinningMove();
-    if (this._activeWormhole) continueMoving = this.handleWormholeMove();
-
-    if (!continueMoving) return;
-
     super.update();
-    wrapObjectOnEdge(this.collisionDetector);
 
     // let bots turn randomly
     if (this._random && Math.random() < 0.02) {
@@ -107,76 +94,28 @@ export class Cat extends GameObject {
   }
 
   handleCrash(direction) {
-    this.startSpinning(direction);
     this.activateSafetyMode(CRASH_SAFETY_TIME);
-    clearTimeout(this._crashTimeout);
-    this._crashTimeout = setTimeout(() => {
-      this.stopSpinning();
-      this.startMoving(); // move in a random direction with default speed
-      this._crashTimeout = undefined;
-    }, SPIN_TIME);
+    this.animationHandler
+      .spinAround(SPIN_TIME, direction, 2)
+      .then(() => {
+        this.startMoving(); // move in a random direction with default speed
+      })
+      .catch(() => console.log('new crash'));
   }
 
-  startSpinning(direction) {
-    this._activeRotation = direction || 1;
-  }
-
-  stopSpinning() {
-    this._activeRotation = 0;
-    this._rotationFrameCount = 0;
-    this.obj.rotation = 0;
-  }
-
-  handleSpinningMove() {
-    this._rotationFrameCount++;
-    if (this._rotationFrameCount % ANIMATION_FRAME_DISTANCE === 0) {
-      const turnsPerSec = 2;
-      const divider = 60 / turnsPerSec;
-      this.obj.rotation = this.obj.rotation + ANIMATION_FRAME_DISTANCE * ((this._activeRotation * (2 * Math.PI)) / divider);
-    }
-    return false;
-  }
-
-  handleWormhole(wormhole) {
-    wormhole.canCollide = false;
-    this.hideAllMarkers();
-    // start shrinking
-    this._activeWormhole = -1;
-
-    setTimeout(() => {
-      // actual wormhole jump
-      this.wormhole();
-      wormhole.wormhole();
-      wormhole.canCollide = true;
-      // start growing
-      this._activeWormhole = 1;
-    }, WORMHOLE_TIME / 2);
-
-    setTimeout(() => {
-      // restore size
-      this._activeWormhole = 0;
-      this.setFontSize(this.defaultSize);
+  async handleWormhole(wormhole) {
+    this.hideAllMarkers(); // better for animation // todo scale?
+    wormhole.wormhole();
+    this.wormhole().then(() => {
       this.showAllMarkers();
-    }, WORMHOLE_TIME);
-  }
-
-  handleWormholeMove() {
-    if (this._activeWormhole < 0) {
-      this._activeWormhole--;
-      if (this._activeWormhole % ANIMATION_FRAME_DISTANCE === 0) this.changeSize((1000 / WORMHOLE_TIME) * -2 * ANIMATION_FRAME_DISTANCE);
-      return this._activeWormhole > (-1 * this.size) / 3 + this._velocity;
-    } else {
-      this._activeWormhole++;
-      if (this._activeWormhole % ANIMATION_FRAME_DISTANCE === 0) this.changeSize((1000 / WORMHOLE_TIME) * 2 * ANIMATION_FRAME_DISTANCE);
-    }
-    return false;
+    });
   }
 
   activateSafetyMode(time) {
-    this.canCollide = false;
+    this.crashSafety = true;
     this.obj.opacity = 0.6;
     setTimeout(() => {
-      this.canCollide = true;
+      this.crashSafety = false;
       this.obj.opacity = 1;
     }, time);
   }
@@ -204,7 +143,6 @@ export class Cat extends GameObject {
     this._velocity = 0;
     this.onDirectionOrVelocityUpdate();
     clearTimeout(this._swapTimeout);
-    clearTimeout(this._crashTimeout);
     this.restoreControls();
     this.obj.opacity = 1;
   }
@@ -283,20 +221,5 @@ export class Cat extends GameObject {
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
     this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
-  }
-}
-
-function wrapObjectOnEdge(obj) {
-  if (obj.x > window.innerWidth) {
-    obj.x = -obj.width;
-  }
-  if (obj.x < -obj.width) {
-    obj.x = window.innerWidth;
-  }
-  if (obj.y > window.innerHeight) {
-    obj.y = -obj.height;
-  }
-  if (obj.y < -obj.height) {
-    obj.y = window.innerHeight;
   }
 }
