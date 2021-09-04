@@ -2,7 +2,8 @@
   "name": "13k_2021",
   "version": "0.0.1",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.config.js",
+    "build-dev": "webpack",
     "start": "webpack serve --open"
   },
   "dependencies": {
