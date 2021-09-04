@@ -41,7 +41,6 @@ canvas {
 }
 
 #sky {
-  font-size: 13px;
   position: absolute;
   animation: rainbow 20s infinite;
 }
@@ -54,10 +53,6 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-
-  div {
-    white-space: nowrap;
-  }
 
   span {
     vertical-align: top;
@@ -233,11 +228,6 @@ body {
 
     .keys, .d2 {
       display: none;
-    }
-
-    .human .cat::after {
-      content: '🧑‍🚀';
-      font-size: 14px;
     }
   }
 
