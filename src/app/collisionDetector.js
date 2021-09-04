@@ -42,8 +42,8 @@ export class CollisionDetector extends Sprite.class {
   }
 
   hide() {
-    this.x = -1000;
-    this.y = -1000;
+    this.x = -999;
+    this.y = -999;
   }
 
   hideForTime(timeout) {
