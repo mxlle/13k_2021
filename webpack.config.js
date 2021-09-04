@@ -1,24 +1,18 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/index.js',
   plugins: [
     new HtmlWebpackPlugin({
       title: '🐱🚀🎹 SPACE: Playful Adventures of Cat Emojis 🎹🚀🐱',
       template: './src/index.html',
-      minify: {
-        collapseWhitespace: true,
-        minifyCSS: true,
-        removeComments: true,
-      },
     }),
   ],
   output: {
-    filename: 'space-cat-[contenthash].js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'space-cat.js',
+    path: path.resolve(__dirname, 'out'),
     clean: true,
   },
   module: {
@@ -29,21 +23,7 @@ module.exports = {
       },
     ],
   },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          mangle: {
-            properties: {
-              keep_quoted: true,
-            },
-          },
-        },
-      }),
-    ],
-  },
   devServer: {
-    static: './dist',
+    static: './out',
   },
 };
