@@ -3,7 +3,7 @@ import { init, initKeys, bindKeys } from 'kontra';
 import './index.scss';
 
 import { addBackgroundScene } from './app/scene';
-import { getFirstCat, initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
+import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
 import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
 import { addBodyClasses, getStoredNumber, removeBodyClasses, storeNumber } from './app/utils';
 
@@ -50,20 +50,10 @@ function setupEventListeners() {
     onSpace();
   });
 
-  document.addEventListener('click', (event) => {
+  document.addEventListener('click', () => {
     if (!clickMode) activateClickMode();
 
     onSpace();
-
-    const firstCat = getFirstCat();
-    firstCat.controlManually();
-
-    if (event.target.id === 'left') {
-      firstCat.turnLeft();
-    }
-    if (event.target.id === 'right') {
-      firstCat.turnRight();
-    }
   });
 }
 

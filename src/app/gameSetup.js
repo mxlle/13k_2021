@@ -1,7 +1,14 @@
 import { Cat } from './cat';
-import { GameObject, ObjectSize, ObjectType } from './gameObject';
+import { GameObject, ObjectType } from './gameObject';
 
 const LEVEL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const ObjectSize = {
+  SMALL: 50,
+  MEDIUM: 60,
+  LARGE: 70,
+  XL: 100,
+};
 
 export function isLastLevel(level) {
   return level === LEVEL_NUMBERS.length;
@@ -30,45 +37,45 @@ export function getLevelConfig(_level) {
 function getCats(level, size) {
   return [
     // players
-    new Cat('😻', 'left', 'right', size),
-    new Cat('😸', 'a', 'd', size),
-    new Cat('🙀', 'v', 'b', size),
-    new Cat('😼', 'k', 'l', size),
-    new Cat('😹', 'r', 't', size),
-    new Cat('😽', 'u', 'i', size),
-    new Cat('😿', 'n', 'm', size),
-    new Cat('😺', 'x', 'c', size),
-    new Cat('😾', 'g', 'h', size),
+    new Cat({ character: '😻', leftKey: 'left', rightKey: 'right', size }),
+    new Cat({ character: '😸', leftKey: 'a', rightKey: 'd', size }),
+    new Cat({ character: '🙀', leftKey: 'v', rightKey: 'b', size }),
+    new Cat({ character: '😼', leftKey: 'k', rightKey: 'l', size }),
+    new Cat({ character: '😹', leftKey: 'r', rightKey: 't', size }),
+    new Cat({ character: '😽', leftKey: 'u', rightKey: 'i', size }),
+    new Cat({ character: '😿', leftKey: 'n', rightKey: 'm', size }),
+    new Cat({ character: '😺', leftKey: 'x', rightKey: 'c', size }),
+    new Cat({ character: '😾', leftKey: 'g', rightKey: 'h', size }),
   ].slice(0, level);
 }
 
 function getObjects(level, size) {
   return [
     // 1
-    new GameObject(ObjectType.SYNTH, size),
+    new GameObject({ type: ObjectType.SYNTH, size }),
     // 2
-    new GameObject(ObjectType.ROCKET, size),
-    new GameObject(ObjectType.ROCKET, size),
+    new GameObject({ type: ObjectType.ROCKET, size }),
+    new GameObject({ type: ObjectType.ROCKET, size }),
     // 3
-    new GameObject(ObjectType.WORMHOLE, size),
-    new GameObject(ObjectType.WORMHOLE, size),
+    new GameObject({ type: ObjectType.WORMHOLE, size }),
+    new GameObject({ type: ObjectType.WORMHOLE, size }),
     // 4
-    new GameObject(ObjectType.SYNTH, size),
-    new GameObject(ObjectType.TRAP, size),
+    new GameObject({ type: ObjectType.SYNTH, size }),
+    new GameObject({ type: ObjectType.TRAP, size }),
     // 5
-    new GameObject(ObjectType.ATTACK, size),
-    new GameObject(ObjectType.ROCKET, size),
+    new GameObject({ type: ObjectType.ATTACK, size }),
+    new GameObject({ type: ObjectType.ROCKET, size }),
     // 6
-    new GameObject(ObjectType.SHUFFLE, size),
-    new GameObject(ObjectType.ROCKET, size),
+    new GameObject({ type: ObjectType.SHUFFLE, size }),
+    new GameObject({ type: ObjectType.ROCKET, size }),
     // 7
-    new GameObject(ObjectType.DEATH, size),
-    new GameObject(ObjectType.TRAP, size),
+    new GameObject({ type: ObjectType.DEATH, size }),
+    new GameObject({ type: ObjectType.TRAP, size }),
     // 8
-    new GameObject(ObjectType.WORMHOLE, size),
-    new GameObject(ObjectType.SYNTH, size),
+    new GameObject({ type: ObjectType.WORMHOLE, size }),
+    new GameObject({ type: ObjectType.SYNTH, size }),
     // 9
-    new GameObject(ObjectType.ROCKET, size),
-    new GameObject(ObjectType.DEATH, size),
+    new GameObject({ type: ObjectType.ROCKET, size }),
+    new GameObject({ type: ObjectType.DEATH, size }),
   ].slice(0, level * 2 - 1);
 }

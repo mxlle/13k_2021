@@ -89,11 +89,11 @@ function getGameLoop() {
             break;
           case ObjectType.ATTACK:
             // ATTACK
-            swapControls(cat, obj);
+            attackOthers(cat, obj);
             break;
           case ObjectType.TRAP:
             // OOPS
-            cat.swapControls();
+            cat.confuse();
             obj.wormhole();
             break;
           case ObjectType.DEATH:
@@ -133,7 +133,7 @@ export function startGame() {
   preparationMode = false;
   gameStarted = true;
   addBodyClasses(GameState.STARTED);
-  cats.forEach((cat) => cat.startMoving());
+  cats.forEach((cat) => cat.start());
   // reset result after timeout to have it while css transition
   setTimeout(() => {
     removeBodyClasses(GameState.PREPARATION);
@@ -162,10 +162,6 @@ function endGame() {
   removeBodyClasses(GameState.STARTED);
 }
 
-export function getFirstCat() {
-  return cats[0];
-}
-
 export function shuffleAll() {
   allObjects.forEach((obj) => obj.wormhole());
 }
@@ -176,10 +172,10 @@ function shuffleObjects() {
   });
 }
 
-function swapControls(cat, attack) {
+function attackOthers(cat, attack) {
   const otherCats = cats.filter((c) => c.id !== cat.id);
   otherCats.forEach((c) => {
-    c.swapControls();
+    c.confuse();
   });
   attack.hideForTime(SWAP_TIME);
 }
@@ -213,7 +209,7 @@ function getCollisions(objs) {
         continue;
       }
 
-      if (collides(cat.collisionDetector, obj.collisionDetector)) {
+      if (collides(cat, obj)) {
         collisions.push({ cat, obj });
       }
     }
