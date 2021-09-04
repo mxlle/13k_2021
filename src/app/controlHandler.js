@@ -125,7 +125,6 @@ export class ControlHandler {
   }
 
   setupClickHandler() {
-    console.log('SETUP CLICK HANDLER', this._cat._character);
     document.addEventListener('click', (event) => {
       this._cat.controlManually();
 

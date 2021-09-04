@@ -29,8 +29,15 @@ canvas {
   font-size: 37px;
   display: block;
   position: fixed;
-  bottom: 11px;
-  left: 11px;
+  bottom: 0;
+  left: 0;
+  padding: 11px;
+  > ::after, ::before {
+    display: block;
+  }
+  .d1::before {
+    content: 'Bring your cat to a synthesizer.';
+  }
 }
 
 #sky {
@@ -120,12 +127,27 @@ body {
 
     &.won {
       background: darkslategray;
+      .d1::before {
+        content: 'You won!';
+      }
     }
     &.lost {
       background: darkred;
+      .d1::before {
+        content: 'You lost!';
+      }
     }
     &.bots {
       background: darkslateblue;
+    }
+
+    .d1 {
+      &::before {
+        content: initial;
+      }
+      &::after {
+        content: 'Hit SPACE to continue.';
+      }
     }
   }
 
@@ -147,14 +169,31 @@ body {
     }
   }
 
-  &.prepare {
-    &:not(.started)::after {
+  &.prepare[data-level] {
+    &::after {
+      content: '🐱🚀🎹\ALevel ' attr(data-level);
+    }
+  }
+
+  &.prepare:not(.started) {
+    &::after {
       opacity: 0.2; /* fade in logo */
     }
 
-    &[data-level] {
+    .d1 {
       &::after {
-        content: '🐱🚀🎹\ALevel ' attr(data-level);
+        content: 'Hit SPACE to start.';
+      }
+    }
+
+    &.expert .d2 {
+      color: gold;
+
+      &::before {
+        content: 'Wow! You are an expert. ';
+      }
+      &::after {
+        content: 'Press 1-9 to choose your level of chaos.';
       }
     }
   }
@@ -171,9 +210,11 @@ body {
     }
   }
 
-  &:not(.started) #score {
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+  &:not(.started) {
+    #score, .desc {
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
   }
 
   &.click-mode {
@@ -183,7 +224,7 @@ body {
       }
     }
 
-    .keys {
+    .keys, .d2 {
       display: none;
     }
 
