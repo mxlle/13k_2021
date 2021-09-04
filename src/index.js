@@ -59,6 +59,7 @@ function setupEventListeners() {
 
 export function setupExpertMode() {
   if (getStoredNumber(StoreKey.EXPERT) && !expertMode) {
+    addBodyClasses('expert');
     bindKeys(getAvailableLevelsAsString(), (event) => {
       if (isPreparationMode()) {
         storeNumber(StoreKey.LEVEL, event.key);

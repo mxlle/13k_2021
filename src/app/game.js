@@ -163,8 +163,9 @@ function endGame() {
 }
 
 export function shuffleAll() {
-  allObjects.forEach((obj) => obj.wormhole());
+  allObjects.forEach((obj) => obj.moveToRandomPlace());
 }
+
 function shuffleObjects() {
   objects.forEach((obj, index) => {
     obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => console.log('new spin during shuffle'));
