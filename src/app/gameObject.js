@@ -1,7 +1,6 @@
-import { Text, randInt, Sprite } from 'kontra';
+import { Text } from 'kontra';
 import { AnimationHandler } from './animationHandler';
-
-let idGen = 0;
+import { CollisionDetector } from './collisionDetector';
 
 const PRE_WORMHOLE_TIME = 500;
 const PRE_WORMHOLE_TIME_OBJ = 250;
@@ -18,34 +17,18 @@ export const ObjectType = {
   DEATH: '☠️',
 };
 
-export const ObjectSize = {
-  SMALL: 50,
-  MEDIUM: 60,
-  LARGE: 70,
-  XL: 100,
-};
-
-export class GameObject {
-  id;
-  collisionDetector;
+export class GameObject extends CollisionDetector {
   obj;
   type;
-  defaultSize;
   size;
-  canCollide = true;
   animationHandler;
 
-  constructor(type, size, character) {
-    this.id = idGen++;
+  constructor(properties) {
+    super(properties);
+
+    const { type, character, size } = properties;
+
     this.type = type;
-
-    this.defaultSize = size;
-
-    this.collisionDetector = new Sprite({
-      width: size,
-      height: size,
-      //color: 'blue',
-    });
 
     this.obj = Text({
       text: character || type,
@@ -56,15 +39,11 @@ export class GameObject {
 
     this.setSize(size);
 
-    this.collisionDetector.children.push(this.obj);
+    this.children.push(this.obj);
 
-    this.animationHandler = new AnimationHandler(this.obj, this.defaultSize);
+    this.animationHandler = new AnimationHandler(this.obj, size);
 
     this.moveToRandomPlace();
-  }
-
-  render() {
-    this.collisionDetector.render();
   }
 
   update() {
@@ -79,18 +58,12 @@ export class GameObject {
 
     // continue moving object if not rotating or during inner bit of shrinking/growing (with threshold)
     if (this.isCat() && rotation === null && this.size / this.defaultSize > 0.5) {
-      this.collisionDetector.update();
-      wrapObjectOnEdge(this.collisionDetector);
+      super.update();
     }
   }
 
   isCat() {
     return this.type === ObjectType.CAT;
-  }
-
-  moveToRandomPlace() {
-    this.collisionDetector.x = randInt(0, window.innerWidth - this.collisionDetector.width);
-    this.collisionDetector.y = randInt(0, window.innerHeight - this.collisionDetector.height);
   }
 
   wormhole() {
@@ -105,42 +78,10 @@ export class GameObject {
       .catch(() => console.log('new size animation'));
   }
 
-  hide() {
-    this.collisionDetector.x = -1000;
-    this.collisionDetector.y = -1000;
-  }
-
-  hideForTime(timeout) {
-    this.hide();
-    setTimeout(() => {
-      this.wormhole();
-    }, timeout);
-  }
-
-  setDxDy(dx, dy) {
-    this.collisionDetector.dx = dx;
-    this.collisionDetector.dy = dy;
-  }
-
   setSize(size) {
     if (this.size !== size) {
       this.size = size;
       this.obj.font = `${size}px sans-serif`;
     }
-  }
-}
-
-function wrapObjectOnEdge(obj) {
-  if (obj.x > window.innerWidth) {
-    obj.x = -obj.width;
-  }
-  if (obj.x < -obj.width) {
-    obj.x = window.innerWidth;
-  }
-  if (obj.y > window.innerHeight) {
-    obj.y = -obj.height;
-  }
-  if (obj.y < -obj.height) {
-    obj.y = window.innerHeight;
   }
 }
