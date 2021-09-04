@@ -196,6 +196,13 @@ body {
         content: 'Press 1-9 to choose your level of chaos.';
       }
     }
+
+    &[data-level="13"] .d2 {
+      &::before {
+        animation: rainbow 1s infinite;
+        content: 'Bonus level!';
+      }
+    }
   }
 
   &.started {
@@ -232,6 +239,10 @@ body {
       content: '🧑‍🚀';
       font-size: 14px;
     }
+  }
+
+  &[data-level="13"] #sky {
+    animation-duration: 5s;
   }
 }
 

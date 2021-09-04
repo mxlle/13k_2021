@@ -60,9 +60,10 @@ function setupEventListeners() {
 export function setupExpertMode() {
   if (getStoredNumber(StoreKey.EXPERT) && !expertMode) {
     addBodyClasses('expert');
-    bindKeys(getAvailableLevelsAsString(), (event) => {
+    bindKeys(getAvailableLevelsAsString().concat('0'), (event) => {
       if (isPreparationMode()) {
-        storeNumber(StoreKey.LEVEL, event.key);
+        const level = event.key === '0' ? 13 : event.key;
+        storeNumber(StoreKey.LEVEL, level);
         prepareGame();
       }
     });

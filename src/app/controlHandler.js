@@ -22,6 +22,7 @@ export class ControlHandler {
 
   constructor(cat, leftKey, rightKey) {
     this._cat = cat;
+    this.startMoving();
     this.setupKeys(leftKey, rightKey);
 
     // setup click handler for the cat with the left and right key
@@ -30,15 +31,13 @@ export class ControlHandler {
     }
   }
 
-  startMoving(velocity) {
-    this._velocity = velocity ?? DEFAULT_VELOCITY;
+  startMoving() {
+    this._velocity = DEFAULT_VELOCITY;
     this._direction = randInt(0, 3);
     this.onDirectionOrVelocityUpdate();
   }
 
-  stopMoving() {
-    this._velocity = 0;
-    this.onDirectionOrVelocityUpdate();
+  reset() {
     clearTimeout(this._swapTimeout);
     this.restoreControls();
   }

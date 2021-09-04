@@ -133,7 +133,6 @@ export function startGame() {
   preparationMode = false;
   gameStarted = true;
   addBodyClasses(GameState.STARTED);
-  cats.forEach((cat) => cat.start());
   // reset result after timeout to have it while css transition
   setTimeout(() => {
     removeBodyClasses(GameState.PREPARATION);
@@ -142,7 +141,7 @@ export function startGame() {
 
 function endGame() {
   gameStarted = false;
-  cats.forEach((cat) => cat.stop());
+  cats.forEach((cat) => cat.reset());
 
   // check who won
   if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
@@ -168,7 +167,7 @@ export function shuffleAll() {
 
 function shuffleObjects() {
   objects.forEach((obj, index) => {
-    obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => console.log('new spin during shuffle'));
+    obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => {});
     obj.wormhole();
   });
 }
