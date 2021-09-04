@@ -24,6 +24,7 @@ export class Cat extends GameObject {
     this.setupMarkers();
 
     this._controls = new ControlHandler(this, leftKey, rightKey);
+    this._controls.startMoving();
   }
 
   update() {
@@ -35,12 +36,8 @@ export class Cat extends GameObject {
     }
   }
 
-  start() {
-    this._controls.startMoving();
-  }
-
-  stop() {
-    this._controls.stopMoving();
+  reset() {
+    this._controls.reset();
     this.obj.opacity = 1;
   }
 
@@ -63,7 +60,7 @@ export class Cat extends GameObject {
       .then(() => {
         this._controls.startMoving(); // move in a random direction with default speed
       })
-      .catch(() => console.log('new crash'));
+      .catch(() => {});
   }
 
   handleWormhole(wormhole) {
@@ -96,11 +93,12 @@ export class Cat extends GameObject {
   }
 
   getScoreOutput() {
+    const score = getGoal() <= 9 || this._score > 9 ? this._score : '0' + this._score;
     const keys = this._controls.getKeysString(this._random);
     return `<div class="result ${this._random ? 'bot' : 'human'}">
                 ${keys}
                 <span class="cat">${this._character}</span>
-                <span>Score:&nbsp;${this._score}</span>
+                <span>Score:&nbsp;${score}</span>
             </div>`;
   }
 

@@ -74,6 +74,6 @@ export class GameObject extends CollisionDetector {
         this.moveToRandomPlace();
         return this.animationHandler.grow(POST_WORMHOLE_TIME).then(() => (this.canCollide = true));
       })
-      .catch(() => console.log('new size animation'));
+      .catch(() => {});
   }
 }

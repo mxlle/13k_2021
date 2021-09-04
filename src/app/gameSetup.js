@@ -11,7 +11,7 @@ const ObjectSize = {
 };
 
 export function isLastLevel(level) {
-  return level === LEVEL_NUMBERS.length;
+  return level >= LEVEL_NUMBERS.length;
 }
 
 export function getNextLevel(level) {
@@ -24,6 +24,7 @@ export function getAvailableLevelsAsString() {
 
 export function getLevelConfig(_level) {
   const level = Number(_level);
+  if (level === 13) return getBonusLevel();
   const objectSize = level === 1 ? ObjectSize.XL : level < 4 ? ObjectSize.LARGE : level < 7 ? ObjectSize.MEDIUM : ObjectSize.SMALL;
   const catSize = objectSize * 1.5;
 
@@ -31,6 +32,16 @@ export function getLevelConfig(_level) {
     cats: getCats(level, catSize),
     objects: getObjects(level, objectSize),
     goal: level,
+  };
+}
+
+function getBonusLevel() {
+  const aliens = [1, 2, 3, 4].map(() => new Cat({ character: '👽', size: 45 }));
+
+  return {
+    cats: getCats(9, 45),
+    objects: [...getObjects(9, 30), ...getObjects(9, 30), ...aliens],
+    goal: 13,
   };
 }
 
