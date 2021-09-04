@@ -1,11 +1,9 @@
 export class AnimationHandler {
   obj;
-  defaultSize;
   timing = {};
 
-  constructor(obj, defaultSize) {
+  constructor(obj) {
     this.obj = obj;
-    this.defaultSize = defaultSize;
   }
 
   getRotation() {
@@ -23,16 +21,16 @@ export class AnimationHandler {
     }
   }
 
-  getSize() {
-    if (this.timing.size) {
-      const { value, percentage } = this.getValueAndPercentage(this.timing.size);
+  getScale() {
+    if (this.timing.scale) {
+      const { value, percentage } = this.getValueAndPercentage(this.timing.scale);
 
       if (percentage === 1) {
-        this.timing.size.resolve();
-        delete this.timing.size;
+        this.timing.scale.resolve();
+        delete this.timing.scale;
       }
 
-      return Math.round(value);
+      return value;
     } else {
       return null;
     }
@@ -50,18 +48,18 @@ export class AnimationHandler {
   }
 
   shrink(duration) {
-    return this.changeSize(duration, this.defaultSize, 0);
+    return this.changeScale(duration, 1, 0);
   }
 
   grow(duration) {
-    return this.changeSize(duration, 0, this.defaultSize);
+    return this.changeScale(duration, 0, 1);
   }
 
-  changeSize(duration, startValue, endValue) {
-    if (this.timing.size) this.timing.size.reject();
+  changeScale(duration, startValue, endValue) {
+    if (this.timing.scale) this.timing.scale.reject();
 
     return new Promise((resolve, reject) => {
-      this.timing.size = { startTime: new Date(), duration, startValue, endValue, resolve, reject };
+      this.timing.scale = { startTime: new Date(), duration, startValue, endValue, resolve, reject };
     });
   }
 

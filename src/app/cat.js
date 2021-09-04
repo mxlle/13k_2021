@@ -66,12 +66,9 @@ export class Cat extends GameObject {
       .catch(() => console.log('new crash'));
   }
 
-  async handleWormhole(wormhole) {
-    this.hideAllMarkers(); // better for animation // todo scale?
+  handleWormhole(wormhole) {
     wormhole.wormhole();
-    this.wormhole().then(() => {
-      this.showAllMarkers();
-    });
+    this.wormhole();
   }
 
   confuse() {
@@ -115,18 +112,6 @@ export class Cat extends GameObject {
 
   isHuman() {
     return !this._random;
-  }
-
-  hideAllMarkers() {
-    this._markers.human?.hide();
-    this._markers.trophy?.hide();
-    this._markers.swap?.hide();
-  }
-
-  showAllMarkers() {
-    if (this.isHuman()) this._markers.human?.show();
-    if (this.hasWon()) this._markers.trophy?.show();
-    else if (this._controls.areSwapped()) this._markers.swap?.show();
   }
 
   setupMarkers() {

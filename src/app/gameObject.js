@@ -20,7 +20,6 @@ export const ObjectType = {
 export class GameObject extends CollisionDetector {
   obj;
   type;
-  size;
   animationHandler;
 
   constructor(properties) {
@@ -33,11 +32,10 @@ export class GameObject extends CollisionDetector {
     this.obj = Text({
       text: character || type,
       anchor: { x: 0.5, y: 0.5 },
+      font: `${size}px sans-serif`,
       x: size / 2,
       y: size / 2,
     });
-
-    this.setSize(size);
 
     this.children.push(this.obj);
 
@@ -54,10 +52,11 @@ export class GameObject extends CollisionDetector {
     }
 
     // handle size animation
-    this.setSize(this.animationHandler.getSize() ?? this.defaultSize);
+    const scale = this.animationHandler.getScale() ?? 1;
+    this.obj.setScale(scale, scale);
 
     // continue moving object if not rotating or during inner bit of shrinking/growing (with threshold)
-    if (this.isCat() && rotation === null && this.size / this.defaultSize > 0.5) {
+    if (this.isCat() && rotation === null && scale > 0.5) {
       super.update();
     }
   }
@@ -71,17 +70,10 @@ export class GameObject extends CollisionDetector {
     return this.animationHandler
       .shrink(this.isCat() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
       .then(() => {
-        this.setSize(0);
+        this.obj.setScale(0, 0);
         this.moveToRandomPlace();
         return this.animationHandler.grow(POST_WORMHOLE_TIME).then(() => (this.canCollide = true));
       })
       .catch(() => console.log('new size animation'));
-  }
-
-  setSize(size) {
-    if (this.size !== size) {
-      this.size = size;
-      this.obj.font = `${size}px sans-serif`;
-    }
   }
 }
