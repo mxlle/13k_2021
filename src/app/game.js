@@ -1,7 +1,7 @@
 import { collides, GameLoop } from 'kontra';
 import { GameObject, ObjectType } from './gameObject';
 import { initScoreboard } from './score';
-import { loadGame, setupExpertMode, StoreKey } from '../index';
+import { FPS, loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
 import { addBodyClasses, removeBodyClasses, storeNumber } from './utils';
 
@@ -48,6 +48,7 @@ export function initGame(_cats, _objects, goal) {
 function getGameLoop() {
   return GameLoop({
     // create the main game loop
+    fps: FPS,
     update: function () {
       if (!gameStarted) return;
 
@@ -114,7 +115,7 @@ function getGameLoop() {
       }
     },
     render: function () {
-      getAllObjects().forEach((obj) => obj.render());
+      getAllObjects().forEach((obj) => !obj.hidden && obj.render());
       gameInitialized = true;
     },
   });
@@ -208,7 +209,7 @@ function getCollisions(objs) {
       let o1 = objs[i];
       let o2 = objs[j];
 
-      if (!o1.canCollide || !o2.canCollide) {
+      if (!o1.canCollide || !o2.canCollide || o1.hidden || o2.hidden) {
         continue;
       }
 

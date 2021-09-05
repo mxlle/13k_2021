@@ -48,7 +48,7 @@ export default {
       target: `${outputDir}/index.html`,
     }),
     !production && serve({ contentBase: outputDir, open: true }),
-    !production && livereload(),
+    !production && livereload(outputDir),
   ],
   watch: {
     exclude: ['node_modules/**'],
