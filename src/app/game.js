@@ -29,6 +29,7 @@ let currentLevel;
 
 let gameInitialized = false;
 let gameStarted = false;
+let gameEnded = false;
 let preparationMode = false;
 
 export const isGameInitialized = () => gameInitialized;
@@ -60,6 +61,8 @@ function getGameLoop() {
       // update objects (for animations)
       objects.forEach((object) => object.update());
       oneTimeObjects.forEach((object) => object.update());
+
+      if (gameEnded) return; // let objects move, but do not handle collisions once game has ended
 
       // check for collisions
       const collisions = getCollisions(getAllObjects());
@@ -126,6 +129,7 @@ function getGameLoop() {
 
 export function prepareGame() {
   preparationMode = true;
+  gameEnded = false;
   if (document.body.classList.contains(Result.WON)) {
     loadGame(getNextLevel(currentLevel));
   } else {
@@ -146,12 +150,13 @@ export function startGame() {
 }
 
 function endGame() {
-  gameStarted = false;
-  cats.forEach((cat) => cat.reset());
+  gameEnded = true;
+  let won = false;
 
   // check who won
   if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
     addBodyClasses(Result.WON);
+    won = true;
     // check all levels finished
     if (isLastLevel(currentLevel)) {
       storeNumber(StoreKey.EXPERT, 1);
@@ -163,6 +168,11 @@ function endGame() {
 
   addBodyClasses(GameState.ENDED);
   removeBodyClasses(GameState.STARTED);
+
+  spinAllRandomly(won ? 2 : 1).then(() => {
+    gameStarted = false;
+    cats.forEach((cat) => cat.reset());
+  });
 }
 
 export function shuffleAll() {
@@ -175,6 +185,15 @@ function shuffleObjects() {
     obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => {});
     obj.wormhole();
   });
+}
+
+async function spinAllRandomly(turns) {
+  const all = getAllObjects();
+  const promises = [];
+  for (let i = 0; i < all.length; i++) {
+    promises.push(all[i].animationHandler.spinAround(1000, i % 2 === 0 ? -1 : 1, turns).catch(() => {}));
+  }
+  return Promise.all(promises);
 }
 
 function attackOthers(cat, attack) {

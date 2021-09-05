@@ -93,10 +93,8 @@ canvas {
 
 /* modification for different game states */
 .ended {
-  #sky {
-    opacity: 0.05;
-    color: gold;
-    animation: none;
+  &[data-color] #sky {
+    color: rgba(gold, 0.1);
   }
 
   &::after {
