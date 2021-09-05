@@ -2,10 +2,12 @@ import { init, initKeys, bindKeys } from 'kontra';
 
 import './index.scss';
 
-import { addBackgroundScene } from './app/scene';
-import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './app/game';
-import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
-import { addBodyClasses, getStoredNumber, removeBodyClasses, storeNumber } from './app/utils';
+import { addBackgroundScene } from './game/scene/scene';
+import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './game/game';
+import { getAvailableLevelsAsString, getLevelConfig } from './game/gameSetup';
+import { addBodyClasses, addCanvasToBody, getStoredNumber, removeBodyClasses, storeNumber } from './game/utils';
+import { initHints, updateHints } from './game/hints/hints';
+import { initScreenControls } from './game/screenControls/screenControls';
 
 export const FPS = 60;
 
@@ -15,14 +17,16 @@ export const StoreKey = {
 };
 const CLICK_MODE = 'click-mode';
 
-let clickCount = 0;
 let expertMode = false;
 
 // ---------------------------
 // setup environment
+addCanvasToBody();
+addBackgroundScene();
+initHints();
+initScreenControls();
 let { canvas } = init();
 resizeCanvas();
-addBackgroundScene();
 setupEventListeners();
 setupExpertMode();
 
@@ -38,6 +42,7 @@ export function loadGame(nextLevel) {
   const level = getStoredNumber(StoreKey.LEVEL) || 1;
   const { cats, objects, goal } = getLevelConfig(level);
   initGame(cats, objects, goal);
+  updateHints();
 }
 
 function setupEventListeners() {
@@ -50,19 +55,6 @@ function setupEventListeners() {
   bindKeys('space', () => {
     deactivateClickMode();
     onSpace();
-  });
-
-  document.addEventListener('click', (event) => {
-    activateClickMode();
-
-    // unlock bonus level
-    if (expertMode && isPreparationMode()) {
-      clickCount++;
-      setTimeout(() => clickCount--, 1000);
-      if (clickCount > 4) loadGame(13);
-    }
-
-    if (event.target.id === 'space') onSpace();
   });
 }
 
@@ -79,7 +71,7 @@ export function setupExpertMode() {
   }
 }
 
-function onSpace() {
+export function onSpace() {
   if (!isGameStarted()) {
     if (isPreparationMode()) {
       startGame();
@@ -96,10 +88,14 @@ function resizeCanvas() {
   if (isGameInitialized()) shuffleAll();
 }
 
-function activateClickMode() {
+export function activateClickMode() {
   addBodyClasses(CLICK_MODE);
 }
 
 export function deactivateClickMode() {
   removeBodyClasses(CLICK_MODE);
+}
+
+export function isExpertMode() {
+  return expertMode;
 }

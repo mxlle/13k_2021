@@ -1,7 +1,8 @@
 import { bindKeys, randInt } from 'kontra';
-import { isGameStarted, SWAP_TIME } from './game';
-import { FPS, deactivateClickMode } from '../index';
-import { updateScoreboard } from './score';
+import { isGameStarted, SWAP_TIME } from '../../game';
+import { FPS, deactivateClickMode } from '../../../index';
+import { updateScoreboard } from '../../score/score';
+import { registerCatForScreenControls } from '../../screenControls/screenControls';
 
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
@@ -34,7 +35,7 @@ export class ControlHandler {
 
     // setup click handler for the cat with the left and right key
     if (leftKey === 'left') {
-      this.setupClickHandler();
+      registerCatForScreenControls(cat);
     }
   }
 
@@ -128,18 +129,5 @@ export class ControlHandler {
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
     this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
-  }
-
-  setupClickHandler() {
-    document.addEventListener('click', (event) => {
-      this._cat.controlManually();
-
-      if (event.target.id === 'left') {
-        this.turnLeft();
-      }
-      if (event.target.id === 'right') {
-        this.turnRight();
-      }
-    });
   }
 }

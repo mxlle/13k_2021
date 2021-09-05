@@ -1,5 +1,5 @@
-import { Cat } from './cat';
-import { GameObject, ObjectType } from './gameObject';
+import { Cat } from './gameObjects/cat';
+import { GameObject, ObjectType } from './gameObjects/gameObject';
 
 const LEVEL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 

@@ -1,5 +1,5 @@
 import { Text } from 'kontra';
-import { AnimationHandler } from './animationHandler';
+import { AnimationHandler } from './handlers/animationHandler';
 import { CollisionDetector } from './collisionDetector';
 
 const PRE_WORMHOLE_TIME = 500;
