@@ -1,5 +1,7 @@
 import { randInt } from 'kontra';
 
+let skyColor = 4;
+
 const texts = [
   ' ★ ° . .　 　 .　☾ °☆ 　.  * ¸ 　 . 　 .　 . ● 　 　 ★ 　° : .　 . 　 •  ○ ° ★　 .  　 * 　. . 　 ° ',
   '. .　  　 :.　 . • ° ★　 . 　 * .  ★ ° 　 　.　 ☾ ° ☆ 　. *  ¸ .　 　 　 　. 　 ° 　. ● ★ ° ',
@@ -11,4 +13,9 @@ export function addBackgroundScene() {
     const textNode = document.createTextNode(texts[randInt(0, 2)]);
     document.getElementById('sky').appendChild(textNode);
   }
+}
+
+export function updateSkyColor() {
+  skyColor = (skyColor + 1) % 5;
+  document.body.setAttribute('data-color', skyColor);
 }

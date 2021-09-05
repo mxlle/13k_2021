@@ -10,7 +10,7 @@ body {
 
 body {
   color: white;
-  transition: background-color 0.5s;
+  transition: background-color 0.5s ease-out;
 
   &::after {
     opacity: 0; /* fade out loading banner */
@@ -42,7 +42,7 @@ canvas {
 
 #sky {
   position: absolute;
-  animation: rainbow 20s infinite;
+  color: darkslateblue;
 }
 
 #score {
@@ -238,8 +238,20 @@ body:not(.started) {
   }
 }
 
-[data-level="13"] #sky {
-  animation-duration: 5s;
+[data-color="0"] #sky {
+  color: darkslateblue;
+}
+[data-color="1"] #sky {
+  color: indigo;
+}
+[data-color="2"] #sky {
+  color: purple;
+}
+[data-color="3"] #sky {
+  color: saddlebrown;
+}
+[data-color="4"] #sky {
+  color: darkslategray;
 }
 
 @keyframes rainbow {

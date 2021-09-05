@@ -7,7 +7,7 @@ import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareG
 import { getAvailableLevelsAsString, getLevelConfig } from './app/gameSetup';
 import { addBodyClasses, getStoredNumber, removeBodyClasses, storeNumber } from './app/utils';
 
-export const FPS = 45;
+export const FPS = 60;
 
 export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',

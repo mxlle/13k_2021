@@ -4,6 +4,7 @@ import { initScoreboard } from './score';
 import { FPS, loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
 import { addBodyClasses, removeBodyClasses, storeNumber } from './utils';
+import { updateSkyColor } from './scene';
 
 export const SWAP_TIME = 5000;
 
@@ -38,6 +39,7 @@ export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
   updateLevel(goal);
+  updateSkyColor();
   initScoreboard(goal, cats);
   if (!loop) {
     loop = getGameLoop();
@@ -75,6 +77,7 @@ function getGameLoop() {
             // SCORE
             cat.incScore();
             wormholeLater.push(obj);
+            updateSkyColor();
             break;
           case ObjectType.ROCKET:
             // ACCELERATE
@@ -167,6 +170,7 @@ export function shuffleAll() {
 }
 
 function shuffleObjects() {
+  updateSkyColor();
   objects.forEach((obj, index) => {
     obj.animationHandler.spinAround(1000, index % 2 === 0 ? -1 : 1, 2).catch(() => {});
     obj.wormhole();
