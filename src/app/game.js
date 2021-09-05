@@ -234,5 +234,5 @@ function getCollisions(objs) {
 }
 
 function getAllObjects() {
-  return [...cats, ...objects, ...oneTimeObjects];
+  return [...objects, ...oneTimeObjects, ...cats];
 }
