@@ -1,0 +1,56 @@
+.controls {
+  display: none;
+}
+
+.click-mode {
+  .controls {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .space {
+      color: gold;
+      border: 1px solid gold;
+      padding: 7px 37px;
+      font-size: 37px;
+      cursor: pointer;
+    }
+
+    .arrow {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 91px;
+      margin: 13px;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.3);
+      width: 50%;
+      height: 100%;
+      cursor: pointer;
+      &:first-child {
+        cursor: w-resize;
+      }
+      &:nth-child(2) {
+        cursor: e-resize;
+      }
+    }
+  }
+
+  &.started {
+    .arrow {
+      display: flex;
+    }
+    .space {
+      display: none;
+    }
+  }
+
+  .keys {
+    display: none;
+  }
+}

@@ -1,0 +1,36 @@
+.ended {
+  &::after {
+    opacity: 0.15; /* slightly fade in logo */
+  }
+
+  &.won {
+    background: darkslategray;
+  }
+  &.lost {
+    background: darkred;
+  }
+}
+
+.won {
+  &::after {
+    content: '🏆️🐱🏆️\Ameow';
+  }
+}
+
+.lost {
+  &::after {
+    content: '☠️🙀🔫\A#!$§#';
+  }
+}
+
+.prepare[data-level] {
+  &::after {
+    content: '🐱🚀🎹\ALevel ' attr(data-level);
+  }
+}
+
+.prepare:not(.started) {
+  &::after {
+    opacity: 0.2; /* fade in logo */
+  }
+}

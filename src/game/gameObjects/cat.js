@@ -1,7 +1,7 @@
 import { GameObject, ObjectType } from './gameObject';
-import { getGoal, updateScoreboard } from './score';
+import { getGoal, updateScoreboard } from '../score/score';
 import { Marker } from './marker';
-import { ControlHandler } from './controlHandler';
+import { ControlHandler } from './handlers/controlHandler';
 
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
@@ -51,6 +51,14 @@ export class Cat extends GameObject {
 
   speedUp() {
     this._controls.speedUp();
+  }
+
+  turnLeft() {
+    this._controls.turnLeft();
+  }
+
+  turnRight() {
+    this._controls.turnRight();
   }
 
   handleCrash(direction) {

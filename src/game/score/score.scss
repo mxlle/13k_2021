@@ -1,0 +1,70 @@
+.score {
+  font-size: 37px;
+  position: absolute;
+  right: 0;
+  padding: 7px 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: -1;
+
+  span {
+    vertical-align: top;
+  }
+}
+
+.goal {
+  font-weight: bold;
+}
+
+.result {
+  &.bot {
+    color: #bbb;
+  }
+
+  &.human {
+    .cat {
+      position: relative;
+
+      &::after {
+        content: '🧑‍🚀';
+        font-size: 14px;
+        position: absolute;
+        bottom: 0;
+        left: -7px;
+      }
+    }
+
+    .swapped {
+      animation: danger .5s infinite;
+    }
+  }
+}
+
+.started {
+  .score {
+    span:not(.swapped) {
+      opacity: 0.5;
+    }
+  }
+}
+
+body:not(.started) {
+   .score {
+     background: rgba(0, 0, 0, 0.5);
+     z-index: 1;
+   }
+ }
+
+@keyframes danger {
+  0% {
+    color: white;
+  }
+  50% {
+    color: orange;
+  }
+  100% {
+    color: white;
+  }
+}
+

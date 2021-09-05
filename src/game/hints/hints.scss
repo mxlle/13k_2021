@@ -1,0 +1,51 @@
+.hints {
+  font-size: 37px;
+  display: block;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 11px;
+  z-index: -1;
+}
+
+.started {
+  .hints {
+    opacity: 0.5;
+  }
+}
+
+body:not(.started) {
+  .hints {
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+}
+
+.expertHint {
+  color: gold;
+}
+
+.bonusLevelHint {
+  animation: rainbow 1s infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    color: indigo;
+  }
+  20% {
+    color: purple;
+  }
+  40% {
+    color: saddlebrown;
+  }
+  60% {
+    color: darkslategray;
+  }
+  80% {
+    color: darkslateblue;
+  }
+  100% {
+    color: indigo;
+  }
+}

@@ -1,0 +1,29 @@
+.sky {
+  position: absolute;
+  color: darkslateblue;
+  z-index: -1;
+}
+
+.sky {
+  &[data-color="0"] {
+    color: darkslateblue;
+  }
+  &[data-color="1"] {
+    color: indigo;
+  }
+  &[data-color="2"] {
+    color: purple;
+  }
+  &[data-color="3"] {
+    color: saddlebrown;
+  }
+  &[data-color="4"]  {
+    color: darkslategray;
+  }
+}
+
+.ended {
+  .sky[data-color] {
+    color: rgba(gold, 0.1);
+  }
+}

@@ -1,10 +1,13 @@
+import './game.scss';
+
 import { collides, GameLoop } from 'kontra';
-import { GameObject, ObjectType } from './gameObject';
-import { initScoreboard } from './score';
+import { GameObject, ObjectType } from './gameObjects/gameObject';
+import { initScoreboard } from './score/score';
 import { FPS, loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
 import { addBodyClasses, removeBodyClasses, storeNumber } from './utils';
-import { updateSkyColor } from './scene';
+import { updateSkyColor } from './scene/scene';
+import { updateHints } from './hints/hints';
 
 export const SWAP_TIME = 5000;
 
@@ -34,14 +37,15 @@ let preparationMode = false;
 
 export const isGameInitialized = () => gameInitialized;
 export const isGameStarted = () => gameStarted;
+export const isGameEnded = () => gameEnded;
 export const isPreparationMode = () => preparationMode;
 
-export function initGame(_cats, _objects, goal) {
+export function initGame(_cats, _objects, level) {
   cats = _cats;
   objects = _objects;
-  updateLevel(goal);
+  updateLevel(level);
   updateSkyColor();
-  initScoreboard(goal, cats);
+  initScoreboard(level, cats);
   if (!loop) {
     loop = getGameLoop();
     loop.start();
@@ -147,6 +151,7 @@ export function startGame() {
   setTimeout(() => {
     removeBodyClasses(GameState.PREPARATION);
   }, 2000);
+  updateHints();
 }
 
 function endGame() {
@@ -169,10 +174,16 @@ function endGame() {
   addBodyClasses(GameState.ENDED);
   removeBodyClasses(GameState.STARTED);
 
+  updateHints(won);
+
   spinAllRandomly(won ? 2 : 1).then(() => {
     gameStarted = false;
     cats.forEach((cat) => cat.reset());
   });
+}
+
+export function getCurrentLevel() {
+  return currentLevel;
 }
 
 export function shuffleAll() {
