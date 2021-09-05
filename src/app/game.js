@@ -1,5 +1,5 @@
 import { collides, GameLoop } from 'kontra';
-import { ObjectType } from './gameObject';
+import { GameObject, ObjectType } from './gameObject';
 import { initScoreboard } from './score';
 import { loadGame, setupExpertMode, StoreKey } from '../index';
 import { getNextLevel, isLastLevel } from './gameSetup';
@@ -20,7 +20,9 @@ export const GameState = {
 
 let loop;
 
-let cats, objects, allObjects;
+let cats = [],
+  objects = [],
+  oneTimeObjects = [];
 
 let currentLevel;
 
@@ -35,7 +37,6 @@ export const isPreparationMode = () => preparationMode;
 export function initGame(_cats, _objects, goal) {
   cats = _cats;
   objects = _objects;
-  allObjects = [...objects, ...cats];
   updateLevel(goal);
   initScoreboard(goal, cats);
   if (!loop) {
@@ -55,9 +56,10 @@ function getGameLoop() {
 
       // update objects (for animations)
       objects.forEach((object) => object.update());
+      oneTimeObjects.forEach((object) => object.update());
 
       // check for collisions
-      const collisions = getCollisions(allObjects);
+      const collisions = getCollisions(getAllObjects());
       const wormholeLater = [];
       collisions.forEach(({ cat, obj }) => {
         switch (obj.type) {
@@ -93,7 +95,8 @@ function getGameLoop() {
           case ObjectType.TRAP:
             // OOPS
             cat.confuse();
-            obj.wormhole();
+            if (obj.oneTime) removeOneTimeObject(obj);
+            else obj.wormhole();
             break;
           case ObjectType.DEATH:
             // BYE-BYE SCORE
@@ -111,7 +114,7 @@ function getGameLoop() {
       }
     },
     render: function () {
-      allObjects.forEach((obj) => obj.render());
+      getAllObjects().forEach((obj) => obj.render());
       gameInitialized = true;
     },
   });
@@ -159,7 +162,7 @@ function endGame() {
 }
 
 export function shuffleAll() {
-  allObjects.forEach((obj) => obj.moveToRandomPlace());
+  getAllObjects().forEach((obj) => obj.moveToRandomPlace());
 }
 
 function shuffleObjects() {
@@ -172,9 +175,24 @@ function shuffleObjects() {
 function attackOthers(cat, attack) {
   const otherCats = cats.filter((c) => c.id !== cat.id);
   otherCats.forEach((c) => {
-    c.confuse();
+    const trap = new GameObject({ type: ObjectType.TRAP, size: c.defaultSize / 1.5 });
+    trap.x = c.x + c.dx * 45;
+    trap.y = c.y + c.dy * 45;
+    addOneTimeObject(trap);
   });
   attack.hideForTime(SWAP_TIME);
+}
+
+function addOneTimeObject(obj) {
+  obj.oneTime = true;
+  obj.appear(300);
+  obj.animationHandler.spinAround(300, 1, 1);
+  oneTimeObjects.push(obj);
+}
+
+function removeOneTimeObject(obj) {
+  const index = oneTimeObjects.findIndex((o) => o.id === obj.id);
+  if (index >= 0) oneTimeObjects.splice(index, 1);
 }
 
 function updateLevel(newLevel) {
@@ -213,4 +231,8 @@ function getCollisions(objs) {
   }
 
   return collisions;
+}
+
+function getAllObjects() {
+  return [...cats, ...objects, ...oneTimeObjects];
 }

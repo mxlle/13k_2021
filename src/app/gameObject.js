@@ -21,6 +21,7 @@ export class GameObject extends CollisionDetector {
   obj;
   type;
   animationHandler;
+  oneTime;
 
   constructor(properties) {
     super(properties);
@@ -70,10 +71,14 @@ export class GameObject extends CollisionDetector {
     return this.animationHandler
       .shrink(this.isCat() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
       .then(() => {
-        this.obj.setScale(0, 0);
         this.moveToRandomPlace();
-        return this.animationHandler.grow(POST_WORMHOLE_TIME).then(() => (this.canCollide = true));
+        return this.appear(POST_WORMHOLE_TIME).then(() => (this.canCollide = true));
       })
       .catch(() => {});
+  }
+
+  appear(time) {
+    this.obj.setScale(0, 0);
+    return this.animationHandler.grow(time).catch(() => {});
   }
 }
