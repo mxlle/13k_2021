@@ -10,7 +10,6 @@ export const SWAP_TIME = 5000;
 export const Result = {
   WON: 'won',
   LOST: 'lost',
-  BOTS: 'bots',
 };
 
 export const GameState = {
@@ -125,7 +124,7 @@ export function prepareGame() {
   } else {
     loadGame();
   }
-  removeBodyClasses(GameState.ENDED, Result.WON, Result.BOTS, Result.LOST);
+  removeBodyClasses(GameState.ENDED, Result.WON, Result.LOST);
   addBodyClasses(GameState.PREPARATION);
 }
 
@@ -151,8 +150,6 @@ function endGame() {
       storeNumber(StoreKey.EXPERT, 1);
       setupExpertMode();
     }
-  } else if (cats.every((cat) => !cat.isHuman())) {
-    addBodyClasses(Result.BOTS);
   } else {
     addBodyClasses(Result.LOST);
   }
