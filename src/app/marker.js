@@ -2,6 +2,7 @@ import { Text } from 'kontra';
 
 export class Marker {
   obj;
+  parent;
 
   constructor(symbol, parent, isBottom) {
     const markerSize = parent.defaultSize / 2.5;
@@ -22,15 +23,16 @@ export class Marker {
     }
 
     this.obj = new Text({ text: symbol, font, ...position });
-    this.hide();
-    parent.obj.children.push(this.obj);
+    this.parent = parent;
   }
 
   hide() {
-    this.obj.opacity = 0;
+    this.parent.obj.removeChild(this.obj);
   }
 
   show() {
-    this.obj.opacity = 1;
+    if (!this.parent.obj.children.includes(this.obj)) {
+      this.parent.obj.addChild(this.obj);
+    }
   }
 }

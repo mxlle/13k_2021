@@ -6,6 +6,7 @@ export class CollisionDetector extends Sprite.class {
   id;
   defaultSize;
   canCollide = true;
+  hidden;
 
   constructor(properties) {
     super({
@@ -42,13 +43,17 @@ export class CollisionDetector extends Sprite.class {
   }
 
   hide() {
-    this.x = -999;
-    this.y = -999;
+    this.hidden = true;
+  }
+
+  show() {
+    this.hidden = false;
   }
 
   hideForTime(timeout) {
     this.hide();
     setTimeout(() => {
+      this.show();
       this.wormhole();
     }, timeout);
   }

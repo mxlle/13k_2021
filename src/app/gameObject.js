@@ -71,6 +71,7 @@ export class GameObject extends CollisionDetector {
     return this.animationHandler
       .shrink(this.isCat() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
       .then(() => {
+        this.obj.setScale(0, 0); // also before jump
         this.moveToRandomPlace();
         return this.appear(POST_WORMHOLE_TIME).then(() => (this.canCollide = true));
       })

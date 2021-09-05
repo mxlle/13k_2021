@@ -1,15 +1,22 @@
 import { bindKeys, randInt } from 'kontra';
 import { isGameStarted, SWAP_TIME } from './game';
-import { deactivateClickMode } from '../index';
+import { FPS, deactivateClickMode } from '../index';
 import { updateScoreboard } from './score';
 
-const DEFAULT_VELOCITY = 3;
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
   { x: 1, y: 0 }, /// RIGHT
   { x: 0, y: 1 }, /// DOWN
   { x: -1, y: 0 }, // LEFT
 ];
+
+function getDefaultVelocity() {
+  return 180 / FPS; // 180px/s
+}
+
+function getVelocityIncrease() {
+  return 60 / FPS; // +60px/s
+}
 
 export class ControlHandler {
   _cat;
@@ -32,7 +39,7 @@ export class ControlHandler {
   }
 
   startMoving() {
-    this._velocity = DEFAULT_VELOCITY;
+    this._velocity = getDefaultVelocity();
     this._direction = randInt(0, 3);
     this.onDirectionOrVelocityUpdate();
   }
@@ -69,7 +76,7 @@ export class ControlHandler {
   }
 
   speedUp() {
-    this._velocity = Math.max(this._velocity + 1, DEFAULT_VELOCITY);
+    this._velocity = Math.max(this._velocity + getVelocityIncrease(), getDefaultVelocity());
     this.onDirectionOrVelocityUpdate();
   }
 
@@ -134,9 +141,5 @@ export class ControlHandler {
         this.turnRight();
       }
     });
-  }
-
-  areSwapped() {
-    return this._swappedControls;
   }
 }
