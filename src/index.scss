@@ -88,152 +88,158 @@ canvas {
 }
 
 .controls {
-  position: fixed;
   display: none;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 91px;
-    margin: 13px;
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.3);
-    width: 50%;
-  }
 }
 
-/* modification for different ame states */
-body {
-  &.ended {
-    #sky {
-      opacity: 0.05;
-      color: gold;
-      animation: none;
-    }
+/* modification for different game states */
+.ended {
+  #sky {
+    opacity: 0.05;
+    color: gold;
+    animation: none;
+  }
 
-    &::after {
-      opacity: 0.15; /* slightly fade in logo */
-    }
-
-    &.won {
-      background: darkslategray;
-      .d1::before {
-        content: 'You won!';
-      }
-    }
-    &.lost {
-      background: darkred;
-      .d1::before {
-        content: 'You lost!';
-      }
-    }
-    &.bots {
-      background: darkslateblue;
-    }
-
-    .d1 {
-      &::before {
-        content: initial;
-      }
-      &::after {
-        content: 'Hit SPACE to continue.';
-      }
-    }
+  &::after {
+    opacity: 0.15; /* slightly fade in logo */
   }
 
   &.won {
-    &::after {
-      content: '🏆️🐱🏆️\Ameow';
+    background: darkslategray;
+    .d1::before {
+      content: 'You won!';
     }
   }
-
   &.lost {
-    &::after {
-      content: '☠️🙀🔫\A#!$§#';
+    background: darkred;
+    .d1::before {
+      content: 'You lost!';
     }
   }
 
-  &.bots {
+  .d1 {
+    &::before {
+      content: initial;
+    }
     &::after {
-      content: '🚀😹🎲\A?!?!?';
+      content: 'Hit SPACE to continue.';
+    }
+  }
+}
+
+.won {
+  &::after {
+    content: '🏆️🐱🏆️\Ameow';
+  }
+}
+
+.lost {
+  &::after {
+    content: '☠️🙀🔫\A#!$§#';
+  }
+}
+
+.prepare[data-level] {
+  &::after {
+    content: '🐱🚀🎹\ALevel ' attr(data-level);
+  }
+}
+
+.prepare:not(.started) {
+  &::after {
+    opacity: 0.2; /* fade in logo */
+  }
+
+  .d1 {
+    &::after {
+      content: 'Hit SPACE to start.';
     }
   }
 
-  &.prepare[data-level] {
+  &.expert .d2 {
+    color: gold;
+
+    &::before {
+      content: 'Wow! You are an expert. ';
+    }
     &::after {
-      content: '🐱🚀🎹\ALevel ' attr(data-level);
+      content: 'Press 1-9 to choose your level of chaos.';
     }
   }
 
-  &.prepare:not(.started) {
-    &::after {
-      opacity: 0.2; /* fade in logo */
+  &[data-level="13"] .d2 {
+    &::before {
+      animation: rainbow 1s infinite;
+      content: 'Bonus level!';
     }
+  }
+}
 
-    .d1 {
-      &::after {
-        content: 'Hit SPACE to start.';
-      }
+.started {
+  .desc {
+    opacity: 0.5;
+  }
+
+  #score {
+    span:not(.swapped) {
+      opacity: 0.5;
     }
+  }
+}
 
-    &.expert .d2 {
+body:not(.started) {
+  #score, .desc {
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+}
+
+.click-mode {
+  .controls {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    #space {
       color: gold;
-
-      &::before {
-        content: 'Wow! You are an expert. ';
-      }
-      &::after {
-        content: 'Press 1-9 to choose your level of chaos.';
-      }
+      border: 1px solid gold;
+      padding: 7px 37px;
+      font-size: 37px;
     }
 
-    &[data-level="13"] .d2 {
-      &::before {
-        animation: rainbow 1s infinite;
-        content: 'Bonus level!';
-      }
+    >:not(#space) {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 91px;
+      margin: 13px;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.3);
+      width: 50%;
+      height: 100%;
     }
   }
 
   &.started {
-    .desc {
-      opacity: 0.5;
+    #left, #right {
+      display: flex;
     }
-
-    #score {
-      span:not(.swapped) {
-        opacity: 0.5;
-      }
-    }
-  }
-
-  &:not(.started) {
-    #score, .desc {
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-  }
-
-  &.click-mode {
-    &.started {
-      .controls {
-        display: flex;
-      }
-    }
-
-    .keys, .d2 {
+    #space {
       display: none;
     }
   }
 
-  &[data-level="13"] #sky {
-    animation-duration: 5s;
+  .keys, .d2::after {
+    display: none;
   }
+}
+
+[data-level="13"] #sky {
+  animation-duration: 5s;
 }
 
 @keyframes rainbow {

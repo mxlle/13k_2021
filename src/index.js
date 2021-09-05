@@ -13,7 +13,7 @@ export const StoreKey = {
 };
 const CLICK_MODE = 'click-mode';
 
-let clickMode = false;
+let clickCount = 0;
 let expertMode = false;
 
 // ---------------------------
@@ -46,14 +46,21 @@ function setupEventListeners() {
 
   // space key to start game
   bindKeys('space', () => {
-    if (clickMode) deactivateClickMode();
+    deactivateClickMode();
     onSpace();
   });
 
-  document.addEventListener('click', () => {
-    if (!clickMode) activateClickMode();
+  document.addEventListener('click', (event) => {
+    activateClickMode();
 
-    onSpace();
+    // unlock bonus level
+    if (expertMode && isPreparationMode()) {
+      clickCount++;
+      setTimeout(() => clickCount--, 1000);
+      if (clickCount > 4) loadGame(13);
+    }
+
+    if (event.target.id === 'space') onSpace();
   });
 }
 
@@ -63,8 +70,7 @@ export function setupExpertMode() {
     bindKeys(getAvailableLevelsAsString().concat('0'), (event) => {
       if (isPreparationMode()) {
         const level = event.key === '0' ? 13 : event.key;
-        storeNumber(StoreKey.LEVEL, level);
-        prepareGame();
+        loadGame(level);
       }
     });
     expertMode = true;
@@ -84,15 +90,14 @@ function onSpace() {
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  if (window.outerWidth < 600) activateClickMode();
   if (isGameInitialized()) shuffleAll();
 }
 
 function activateClickMode() {
-  clickMode = true;
   addBodyClasses(CLICK_MODE);
 }
 
 export function deactivateClickMode() {
-  clickMode = false;
   removeBodyClasses(CLICK_MODE);
 }
