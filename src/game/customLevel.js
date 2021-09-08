@@ -4,12 +4,8 @@ import { ALL_PLAYERS, getCatsString, getIncludedCatsString } from './players';
 import { LEVEL_OBJECTS } from './levels';
 import { StoreKey } from '../index';
 
-const validObjectTypes = Object.values(ObjectType).filter((o) => o !== CatType);
-const reservedEmojis = ALL_PLAYERS.map((p) => p.character);
-
-const BONUS_LEVEL_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
-
 export function getCustomLevelFromStore() {
+  const BONUS_LEVEL_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
   return localStorage.getItem(StoreKey.CUSTOM_LEVEL) || BONUS_LEVEL_CONFIG;
 }
 
@@ -22,7 +18,7 @@ export function getSupportedLevelConfig(levelConfig) {
   if (!validConfig?.length) validConfig = ALL_PLAYERS[0].character; // at least one cat
 
   for (const c of levelConfig) {
-    if (!reservedEmojis.includes(c) && characterIsEmoji(c)) {
+    if (!getCatsString().includes(c) && characterIsEmoji(c)) {
       validConfig += c;
     }
   }
@@ -49,6 +45,7 @@ export function getObjectCountFromValidLevelConfig(levelConfig) {
 
 export function getGameObjectsFromString(objectsString, size) {
   const gameObjects = [];
+  const validObjectTypes = Object.values(ObjectType).filter((o) => o !== CatType);
 
   // special handling for death which is 2 characters
   const { deathObjects, remainingObjectsString } = deathEmojiHandling(objectsString, size);
@@ -57,7 +54,7 @@ export function getGameObjectsFromString(objectsString, size) {
   for (const o of remainingObjectsString) {
     if (validObjectTypes.includes(o)) {
       gameObjects.push(new GameObject({ type: o, size }));
-    } else if (!reservedEmojis.includes(o) && characterIsEmoji(o)) {
+    } else if (!getCatsString().includes(o) && characterIsEmoji(o)) {
       if (emojiLives(o)) {
         gameObjects.push(new Cat({ character: o, size, isCustom: true }));
       } else {
