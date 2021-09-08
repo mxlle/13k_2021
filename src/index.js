@@ -3,11 +3,12 @@ import { init, initKeys, bindKeys } from 'kontra';
 import './index.scss';
 
 import { addBackgroundScene } from './game/scene/scene';
-import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAll, startGame } from './game/game';
+import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAndScaleAll, startGame } from './game/game';
 import { getAvailableLevelsAsString, getLevelConfig } from './game/gameSetup';
-import { addBodyClasses, addCanvasToBody, getStoredNumber, removeBodyClasses, storeNumber } from './game/utils';
+import { addBodyClasses, addCanvasToBody, getStoredNumber, getWidthHeightScale, removeBodyClasses, storeNumber } from './game/utils';
 import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
+import { setObjectScale } from './game/gameObjects/collisionDetector';
 
 export const FPS = 60;
 
@@ -82,10 +83,12 @@ export function onSpace() {
 }
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const { width, height, scale } = getWidthHeightScale();
+  canvas.width = width;
+  canvas.height = height;
+  setObjectScale(scale); // adapt object size based on screen size
   if (window.outerWidth < 600) activateClickMode();
-  if (isGameInitialized()) shuffleAll();
+  if (isGameInitialized()) shuffleAndScaleAll();
 }
 
 export function activateClickMode() {
