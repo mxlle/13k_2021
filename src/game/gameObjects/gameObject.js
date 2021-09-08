@@ -22,15 +22,17 @@ export const CatType = ObjectType.CAT;
 export class GameObject extends CollisionDetector {
   obj;
   type;
+  isCustom;
   animationHandler;
   oneTime;
 
   constructor(properties) {
     super(properties);
 
-    const { type, character, size } = properties;
+    const { type, character, size, isCustom } = properties;
 
     this.type = type;
+    this.isCustom = isCustom;
 
     this.obj = Text({
       text: character || type,

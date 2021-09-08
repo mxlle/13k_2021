@@ -114,6 +114,11 @@ function getGameLoop() {
             cat.resetScore();
             obj.wormhole();
             break;
+          default:
+            // bumping into custom object
+            if (!cat.crashSafety) {
+              cat.handleCrash(1);
+            }
         }
       });
 

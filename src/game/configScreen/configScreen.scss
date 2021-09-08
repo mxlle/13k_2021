@@ -1,0 +1,32 @@
+.config {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  font-size: 37px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.close-btn {
+  cursor: pointer;
+  color: gold;
+  border: 1px solid gold;
+  padding: 13px 26px;
+}
+
+textarea {
+  background: black;
+  width: 40vw;
+  height: 40vh;
+  font-size: 37px;
+  letter-spacing: 10px;
+  padding: 13px;
+  margin: 37px;
+}
