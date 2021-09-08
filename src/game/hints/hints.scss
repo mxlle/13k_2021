@@ -21,12 +21,18 @@ body:not(.started) {
   }
 }
 
-.expertHint {
+.expert-hint, .expert-state {
   color: gold;
 }
 
-.bonusLevelHint {
+.bonus-level-hint {
   animation: rainbow 1s infinite;
+}
+
+.click-mode {
+  .expert-hint {
+    display: none;
+  }
 }
 
 @keyframes rainbow {

@@ -3,18 +3,21 @@ import './screenControls.scss';
 import { createElement } from '../utils';
 import { activateClickMode, isExpertMode, loadGame, onSpace } from '../../index';
 import { isPreparationMode } from '../game';
+import { showConfigScreen } from '../configScreen/configScreen';
 
-let controlsContainer, leftBtn, rightBtn, spaceBtn, catToControl;
+let catToControl;
 let clickCount = 0;
 
 export function initScreenControls() {
-  controlsContainer = createElement({ cssClass: 'controls' });
-  leftBtn = createElement({ cssClass: 'arrow', text: '←', onClick: leftClick });
-  rightBtn = createElement({ cssClass: 'arrow', text: '→', onClick: rightClick });
-  spaceBtn = createElement({ cssClass: 'space', text: 'SPACE', onClick: spaceClick });
+  const controlsContainer = createElement({ cssClass: 'controls' });
+  const leftBtn = createElement({ cssClass: 'arrow', text: '←', onClick: leftClick });
+  const rightBtn = createElement({ cssClass: 'arrow', text: '→', onClick: rightClick });
+  const spaceBtn = createElement({ cssClass: 'space', text: 'SPACE', onClick: spaceClick });
+  const enterBtn = createElement({ cssClass: 'enter', text: 'Configure', onClick: enterClick });
   controlsContainer.appendChild(leftBtn);
   controlsContainer.appendChild(rightBtn);
   controlsContainer.appendChild(spaceBtn);
+  controlsContainer.appendChild(enterBtn);
   document.body.appendChild(controlsContainer);
 
   document.addEventListener('click', () => {
@@ -45,4 +48,8 @@ function rightClick() {
 
 function spaceClick() {
   onSpace();
+}
+
+function enterClick() {
+  showConfigScreen();
 }

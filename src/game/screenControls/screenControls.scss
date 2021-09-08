@@ -8,17 +8,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 
-    .space {
+    .space, .enter {
       color: gold;
       border: 1px solid gold;
       padding: 7px 37px;
       font-size: 37px;
       cursor: pointer;
+      margin: 37px;
+    }
+
+    .enter {
+      color: white;
+      border-color: white;
+      font-size: 26px;
     }
 
     .arrow {
@@ -42,6 +50,10 @@
   }
 
   &.started {
+    .controls {
+      flex-direction: row;
+    }
+
     .arrow {
       display: flex;
     }
@@ -52,5 +64,11 @@
 
   .keys {
     display: none;
+  }
+
+  &:not(.expert) {
+    .enter {
+      display: none;
+    }
   }
 }
