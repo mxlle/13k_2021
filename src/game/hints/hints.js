@@ -4,7 +4,7 @@ import { getCurrentLevel, isGameEnded, isPreparationMode } from '../game';
 import { createElement } from '../utils';
 import { isExpertMode } from '../../index';
 
-let hintContainer, startHint, continueHint, goalHint, expertHint, expertState, bonusLevel, youWon, youLost;
+let hintContainer, startHint, continueHint, goalHint, expertHint, expertState, expertConfigHint, bonusLevel, youWon, youLost;
 
 export function initHints() {
   hintContainer = createElement({ cssClass: 'hints' });
@@ -17,6 +17,7 @@ export function initHints() {
   youLost = createElement({ text: 'You lost!' });
   expertHint = createElement({ text: 'Press 1-9 to choose your level of chaos.', cssClass: 'expertHint' });
   expertState = createElement({ text: 'Wow! You are an expert.', cssClass: 'expertHint' });
+  expertConfigHint = createElement({ text: 'Press ENTER to configure.', cssClass: 'expertHint' });
   bonusLevel = createElement({ text: 'Bonus level!', cssClass: 'bonusLevelHint' });
 }
 
@@ -24,7 +25,12 @@ export function updateHints(hasWon) {
   hintContainer.innerHTML = '';
   if (isPreparationMode()) {
     if (isExpertMode()) {
-      hintContainer.appendChild(getCurrentLevel() === 13 ? bonusLevel : expertState);
+      if (getCurrentLevel() === 13) {
+        hintContainer.appendChild(bonusLevel);
+        hintContainer.appendChild(expertConfigHint);
+      } else {
+        hintContainer.appendChild(expertState);
+      }
       hintContainer.appendChild(expertHint);
     }
     hintContainer.appendChild(goalHint);

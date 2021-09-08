@@ -9,12 +9,15 @@ import { addBodyClasses, addCanvasToBody, getStoredNumber, getWidthHeightScale, 
 import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
 import { setObjectScale } from './game/gameObjects/collisionDetector';
+import { initConfigScreen } from './game/configScreen/configScreen';
 
 export const FPS = 60;
 
 export const StoreKey = {
   LEVEL: '🐱🚀🎹.level',
   EXPERT: '🐱🚀🎹.expert',
+  CUSTOM_LEVEL: '🐱🚀🎹.customLevel',
+  CUSTOM_GOAL: '🐱🚀🎹.customGoal',
 };
 const CLICK_MODE = 'click-mode';
 
@@ -68,6 +71,7 @@ export function setupExpertMode() {
         loadGame(level);
       }
     });
+    initConfigScreen();
     expertMode = true;
   }
 }
