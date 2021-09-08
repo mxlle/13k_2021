@@ -186,8 +186,11 @@ export function getCurrentLevel() {
   return currentLevel;
 }
 
-export function shuffleAll() {
-  getAllObjects().forEach((obj) => obj.moveToRandomPlace());
+export function shuffleAndScaleAll() {
+  getAllObjects().forEach((obj) => {
+    obj.updateScale();
+    obj.moveToRandomPlace();
+  });
 }
 
 function shuffleObjects() {

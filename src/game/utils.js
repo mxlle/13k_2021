@@ -31,3 +31,13 @@ export function getStoredNumber(id) {
 export function storeNumber(id, num) {
   localStorage.setItem(id, `${num}`);
 }
+
+export function getWidthHeightScale() {
+  const BASE_RESOLUTION = 1500 * 1000;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const resolution = width * height;
+  // adapt object size based on screen size
+  const scale = Math.sqrt(resolution) / Math.sqrt(BASE_RESOLUTION);
+  return { width, height, scale };
+}

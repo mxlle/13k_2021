@@ -1,5 +1,10 @@
 import { randInt, Sprite } from 'kontra';
 
+let objectScale = 1;
+export function setObjectScale(scale) {
+  objectScale = scale;
+}
+
 let idGen = 0;
 
 export class CollisionDetector extends Sprite.class {
@@ -12,6 +17,8 @@ export class CollisionDetector extends Sprite.class {
     super({
       height: properties.size,
       width: properties.size,
+      scaleX: objectScale,
+      scaleY: objectScale,
       // color: 'blue',
     });
 
@@ -56,5 +63,9 @@ export class CollisionDetector extends Sprite.class {
       this.show();
       this.wormhole();
     }, timeout);
+  }
+
+  updateScale() {
+    this.setScale(objectScale, objectScale);
   }
 }
