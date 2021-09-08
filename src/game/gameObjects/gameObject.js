@@ -17,6 +17,8 @@ export const ObjectType = {
   DEATH: '☠️',
 };
 
+export const CatType = ObjectType.CAT;
+
 export class GameObject extends CollisionDetector {
   obj;
   type;
@@ -63,7 +65,7 @@ export class GameObject extends CollisionDetector {
   }
 
   isCat() {
-    return this.type === ObjectType.CAT;
+    return this.type === CatType;
   }
 
   wormhole() {

@@ -1,9 +1,11 @@
-import { Cat } from './gameObjects/cat';
-import { GameObject, ObjectType } from './gameObjects/gameObject';
+import { getCats, getCatsFromString } from './players';
+import { getLevelObjects } from './levels';
+import { BONUS_LEVEL_CONFIG, getGameObjectsFromString, getObjectCountFromValidLevelConfig, getSupportedLevelConfig } from './customLevel';
 
 const LEVEL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const ObjectSize = {
+  XS: 30,
   SMALL: 50,
   MEDIUM: 60,
   LARGE: 70,
@@ -25,72 +27,41 @@ export function getAvailableLevelsAsString() {
 export function getLevelConfig(_level) {
   const level = Number(_level);
   if (level === 13) return getBonusLevel();
-  const objectSize = level === 1 ? ObjectSize.XL : level < 4 ? ObjectSize.LARGE : level < 7 ? ObjectSize.MEDIUM : ObjectSize.SMALL;
-  const catSize = objectSize * 1.5;
+  const size = getBaseObjectSizeFromAmountOfObjects(level + level * 2 - 1); // cats + objects
+  const cats = getCats(level, size);
+  const objects = getLevelObjects(level, size);
 
   return {
-    cats: getCats(level, catSize),
-    objects: getObjects(level, objectSize),
+    cats,
+    objects,
     goal: level,
   };
 }
 
 function getBonusLevel() {
-  const aliens = [1, 2, 3, 4].map(() => new Cat({ character: '👽', size: 45 }));
-
-  return {
-    cats: getCats(9, 45),
-    objects: [...getObjects(9, 30), ...getObjects(9, 30), ...aliens],
-    goal: 13,
-  };
+  return getCustomLevel(BONUS_LEVEL_CONFIG, 13);
 }
 
-function getCats(level, size) {
-  const getNewCat = (character, leftKey, rightKey) => new Cat({ character, leftKey, rightKey, size });
+function getCustomLevel(levelConfig, goal) {
+  const validLevelConfig = getSupportedLevelConfig(levelConfig);
+  const objectCount = getObjectCountFromValidLevelConfig(validLevelConfig);
+  const size = getBaseObjectSizeFromAmountOfObjects(objectCount);
+  const cats = getCatsFromString(validLevelConfig, size);
+  const objects = getGameObjectsFromString(validLevelConfig, size);
 
-  return [
-    // players
-    getNewCat('😻', 'left', 'right'),
-    getNewCat('😸', 'a', 'd'),
-    getNewCat('🙀', 'v', 'b'),
-    getNewCat('😼', 'k', 'l'),
-    getNewCat('😹', 'r', 't'),
-    getNewCat('😽', 'u', 'i'),
-    getNewCat('😿', 'n', 'm'),
-    getNewCat('😺', 'x', 'c'),
-    getNewCat('😾', 'g', 'h'),
-  ].slice(0, level);
+  return { cats, objects, goal };
 }
 
-function getObjects(level, size) {
-  const getNewGameObject = (type) => new GameObject({ type, size });
-
-  return [
-    // 1
-    getNewGameObject(ObjectType.SYNTH),
-    // 2
-    getNewGameObject(ObjectType.ROCKET),
-    getNewGameObject(ObjectType.ROCKET),
-    // 3
-    getNewGameObject(ObjectType.WORMHOLE),
-    getNewGameObject(ObjectType.WORMHOLE),
-    // 4
-    getNewGameObject(ObjectType.SYNTH),
-    getNewGameObject(ObjectType.TRAP),
-    // 5
-    getNewGameObject(ObjectType.ATTACK),
-    getNewGameObject(ObjectType.ROCKET),
-    // 6
-    getNewGameObject(ObjectType.SHUFFLE),
-    getNewGameObject(ObjectType.ROCKET),
-    // 7
-    getNewGameObject(ObjectType.DEATH),
-    getNewGameObject(ObjectType.TRAP),
-    // 8
-    getNewGameObject(ObjectType.WORMHOLE),
-    getNewGameObject(ObjectType.SYNTH),
-    // 9
-    getNewGameObject(ObjectType.ROCKET),
-    getNewGameObject(ObjectType.DEATH),
-  ].slice(0, level * 2 - 1);
+function getBaseObjectSizeFromAmountOfObjects(amount) {
+  if (amount < 5) {
+    return ObjectSize.XL;
+  } else if (amount < 5) {
+    return ObjectSize.LARGE;
+  } else if (amount < 18) {
+    return ObjectSize.MEDIUM;
+  } else if (amount < 30) {
+    return ObjectSize.SMALL;
+  } else {
+    return ObjectSize.XS;
+  }
 }

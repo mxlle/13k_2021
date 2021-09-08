@@ -6,6 +6,8 @@ import { ControlHandler } from './handlers/controlHandler';
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
 
+const CAT_SCALE = 1.5;
+
 export class Cat extends GameObject {
   crashSafety = false;
   _character;
@@ -15,7 +17,7 @@ export class Cat extends GameObject {
   _markers = {};
 
   constructor(properties) {
-    super({ type: ObjectType.CAT, ...properties });
+    super({ type: ObjectType.CAT, ...properties, size: properties.size * CAT_SCALE });
 
     const { character, leftKey, rightKey } = properties;
 
