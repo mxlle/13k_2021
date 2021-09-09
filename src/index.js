@@ -3,21 +3,24 @@ import { bindKeys, init, initKeys } from 'kontra';
 import './index.scss';
 
 import { addBackgroundScene } from './game/scene/scene';
-import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAndScaleAll, startGame } from './game/game';
-import { getAvailableLevelsAsString, getLevelConfig } from './game/config/gameSetup';
-import { addBodyClasses, addCanvasToBody, getWidthHeightScale, removeBodyClasses } from './game/utils';
+import { initGame, prepareGame, shuffleAndScaleAll, startGame } from './game/game';
+import { addCanvasToBody, getWidthHeightScale } from './game/utils';
 import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
 import { setObjectScale } from './game/gameObjects/collisionDetector';
-import { configureIsShown, initConfigScreen } from './game/configScreen/configScreen';
-import { CUSTOM_LEVEL_ID } from './game/config/levelConfig';
-import { getStoredExportMode, getStoredLevel, storeLevel } from './game/store';
-
-export const FPS = 60;
-
-const CLICK_MODE = 'click-mode';
-
-let expertMode = false;
+import { setupExpertMode } from './game/config/expertMode';
+import {
+  activateClickMode,
+  deactivateClickMode,
+  initLoadGameHandler,
+  initOnSpaceHandler,
+  isGameInitialized,
+  isGameStarted,
+  isPreparationMode,
+} from './game/globals';
+import { getStoredLevel, storeLevel } from './game/store';
+import { getLevelConfig } from './game/config/gameSetup';
+import { configureIsShown } from './game/configScreen/configScreen';
 
 // ---------------------------
 // setup environment
@@ -31,11 +34,13 @@ setupEventListeners();
 setupExpertMode();
 
 // initialize game
+initOnSpaceHandler(onSpace);
+initLoadGameHandler(loadGame);
 prepareGame();
 
 // ---------------------------
 
-export function loadGame(nextLevel) {
+function loadGame(nextLevel) {
   if (nextLevel) {
     storeLevel(nextLevel);
   }
@@ -58,21 +63,7 @@ function setupEventListeners() {
   });
 }
 
-export function setupExpertMode() {
-  if (getStoredExportMode() && !expertMode) {
-    addBodyClasses('expert');
-    bindKeys(getAvailableLevelsAsString().concat('0'), (event) => {
-      if (isPreparationMode() && !configureIsShown()) {
-        const level = event.key === '0' ? CUSTOM_LEVEL_ID : event.key;
-        loadGame(level);
-      }
-    });
-    initConfigScreen();
-    expertMode = true;
-  }
-}
-
-export function onSpace() {
+function onSpace() {
   if (!isGameStarted() && !configureIsShown()) {
     if (isPreparationMode()) {
       startGame();
@@ -89,16 +80,4 @@ function resizeCanvas() {
   setObjectScale(scale); // adapt object size based on screen size
   if (window.outerWidth < 600) activateClickMode();
   if (isGameInitialized()) shuffleAndScaleAll();
-}
-
-export function activateClickMode() {
-  addBodyClasses(CLICK_MODE);
-}
-
-export function deactivateClickMode() {
-  removeBodyClasses(CLICK_MODE);
-}
-
-export function isExpertMode() {
-  return expertMode;
 }

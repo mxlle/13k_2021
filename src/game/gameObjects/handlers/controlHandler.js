@@ -1,8 +1,7 @@
 import { bindKeys, randInt } from 'kontra';
-import { isGameStarted, SWAP_TIME } from '../../game';
-import { FPS, deactivateClickMode } from '../../../index';
 import { updateScoreboard } from '../../score/score';
 import { registerPlayerForScreenControls } from '../../screenControls/screenControls';
+import { deactivateClickMode, FPS, isGameStarted, TRAP_TIME } from '../../globals';
 
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
@@ -90,7 +89,7 @@ export class ControlHandler {
 
     this._swapTimeout = setTimeout(() => {
       this.restoreControls();
-    }, SWAP_TIME);
+    }, TRAP_TIME);
   }
 
   getKeysString(isRandom) {

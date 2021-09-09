@@ -1,20 +1,6 @@
 import { GameObject, ObjectType } from '../gameObjects/gameObject';
 import { Player } from '../gameObjects/player';
 import { getAllPlayers } from './players';
-import { BASE_ADVENTURE_OBJECTS } from './levels';
-import { getStoredCustomGoal, getStoredCustomLevelConfig } from '../store';
-
-export const CUSTOM_LEVEL_ID = 13;
-
-export function getCurrentCustomLevelConfig() {
-  const BONUS_LEVEL_DEFAULT_CONFIG =
-    getAllPlayers().join('') + BASE_ADVENTURE_OBJECTS.join('') + BASE_ADVENTURE_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
-  return getStoredCustomLevelConfig() || BONUS_LEVEL_DEFAULT_CONFIG;
-}
-
-export function getCurrentCustomGoal() {
-  return getStoredCustomGoal() || CUSTOM_LEVEL_ID;
-}
 
 export function getSupportedLevelConfigArray(levelConfig) {
   let emojiArray = splitEmojis(levelConfig);

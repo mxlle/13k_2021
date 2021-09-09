@@ -1,9 +1,7 @@
 import './hints.scss';
 
-import { getCurrentLevel, isGameEnded, isPreparationMode } from '../game';
 import { createElement } from '../utils';
-import { isExpertMode } from '../../index';
-import { CUSTOM_LEVEL_ID } from '../config/levelConfig';
+import { CUSTOM_LEVEL_ID, getCurrentLevel, isExpertMode, isGameEnded, isPreparationMode } from '../globals';
 
 let hintContainer, startHint, continueHint, goalHint, expertHint, expertState, expertConfigHint, bonusLevel, youWon, youLost;
 

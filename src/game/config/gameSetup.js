@@ -1,12 +1,9 @@
-import { ALL_CATS, getPlayersFromConfigArray } from './players';
+import { ALL_CATS, getAllPlayers, getPlayerConfigs } from './players';
 import { BASE_ADVENTURE_OBJECTS } from './levels';
-import {
-  CUSTOM_LEVEL_ID,
-  getCurrentCustomGoal,
-  getCurrentCustomLevelConfig,
-  getGameObjectsFromConfigArray,
-  getSupportedLevelConfigArray,
-} from './levelConfig';
+import { getGameObjectsFromConfigArray, getSupportedLevelConfigArray } from './levelConfig';
+import { CUSTOM_LEVEL_ID } from '../globals';
+import { getCurrentCustomGoal, getCurrentCustomLevelConfig } from './customLevel';
+import { Player } from '../gameObjects/player';
 
 const LEVEL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -49,6 +46,12 @@ export function getLevelConfig(_level) {
   const objects = getGameObjectsFromConfigArray(validLevelConfigArray, size);
 
   return { players, objects, goal };
+}
+
+function getPlayersFromConfigArray(configArray, size) {
+  return getPlayerConfigs(getAllPlayers())
+    .filter((config) => configArray.includes(config.emoji))
+    .map((config) => new Player({ ...config, size }));
 }
 
 // the more objects the smaller they should be

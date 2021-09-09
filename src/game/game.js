@@ -3,14 +3,25 @@ import './game.scss';
 import { collides, GameLoop } from 'kontra';
 import { GameObject, ObjectType } from './gameObjects/gameObject';
 import { initScoreboard } from './score/score';
-import { FPS, loadGame, setupExpertMode } from '../index';
 import { getNextLevel, isLastLevel } from './config/gameSetup';
 import { addBodyClasses, removeBodyClasses } from './utils';
 import { updateSkyColor } from './scene/scene';
 import { updateHints } from './hints/hints';
 import { storeExportMode } from './store';
-
-export const SWAP_TIME = 5000;
+import {
+  FPS,
+  getCurrentLevel,
+  isGameEnded,
+  isGameStarted,
+  loadGame,
+  setCurrentLevel,
+  setGameEnded,
+  setGameInitialized,
+  setGameStarted,
+  setPreparationMode,
+  TRAP_TIME,
+} from './globals';
+import { setupExpertMode } from './config/expertMode';
 
 export const Result = {
   WON: 'won',
@@ -29,18 +40,6 @@ let players = [],
   objects = [],
   oneTimeObjects = [];
 
-let currentLevel;
-
-let gameInitialized = false;
-let gameStarted = false;
-let gameEnded = false;
-let preparationMode = false;
-
-export const isGameInitialized = () => gameInitialized;
-export const isGameStarted = () => gameStarted;
-export const isGameEnded = () => gameEnded;
-export const isPreparationMode = () => preparationMode;
-
 export function initGame(_players, _objects, goal, level) {
   players = _players;
   objects = _objects;
@@ -58,7 +57,7 @@ function getGameLoop() {
     // create the main game loop
     fps: FPS,
     update: function () {
-      if (!gameStarted) return;
+      if (!isGameStarted()) return;
 
       // move players
       players.forEach((player) => player.update());
@@ -67,7 +66,7 @@ function getGameLoop() {
       objects.forEach((object) => object.update());
       oneTimeObjects.forEach((object) => object.update());
 
-      if (gameEnded) return; // let objects move, but do not handle collisions once game has ended
+      if (isGameEnded()) return; // let objects move, but do not handle collisions once game has ended
 
       // check for collisions
       const collisions = getCollisions(getAllObjects());
@@ -132,16 +131,16 @@ function getGameLoop() {
     },
     render: function () {
       getAllObjects().forEach((obj) => !obj.hidden && obj.render());
-      gameInitialized = true;
+      setGameInitialized(true);
     },
   });
 }
 
 export function prepareGame() {
-  preparationMode = true;
-  gameEnded = false;
+  setPreparationMode(true);
+  setGameEnded(false);
   if (document.body.classList.contains(Result.WON)) {
-    loadGame(getNextLevel(currentLevel));
+    loadGame(getNextLevel(getCurrentLevel()));
   } else {
     loadGame();
   }
@@ -150,8 +149,8 @@ export function prepareGame() {
 }
 
 export function startGame() {
-  preparationMode = false;
-  gameStarted = true;
+  setPreparationMode(false);
+  setGameStarted(true);
   addBodyClasses(GameState.STARTED);
   // reset result after timeout to have it while css transition
   setTimeout(() => {
@@ -161,7 +160,7 @@ export function startGame() {
 }
 
 function endGame() {
-  gameEnded = true;
+  setGameEnded(true);
   let won = false;
 
   // check who won
@@ -169,7 +168,7 @@ function endGame() {
     addBodyClasses(Result.WON);
     won = true;
     // check all levels finished
-    if (isLastLevel(currentLevel)) {
+    if (isLastLevel(getCurrentLevel())) {
       storeExportMode();
       setupExpertMode();
     }
@@ -183,13 +182,9 @@ function endGame() {
   updateHints(won);
 
   spinAllRandomly(won ? 2 : 1).then(() => {
-    gameStarted = false;
+    setGameStarted(false);
     players.forEach((player) => player.reset());
   });
-}
-
-export function getCurrentLevel() {
-  return currentLevel;
 }
 
 export function shuffleAndScaleAll() {
@@ -224,7 +219,7 @@ function attackOthers(player, attack) {
     trap.y = c.y + c.dy * 45;
     addOneTimeObject(trap);
   });
-  attack.hideForTime(SWAP_TIME);
+  attack.hideForTime(TRAP_TIME);
 }
 
 function addOneTimeObject(obj) {
@@ -240,7 +235,7 @@ function removeOneTimeObject(obj) {
 }
 
 function updateLevel(newLevel) {
-  currentLevel = newLevel;
+  setCurrentLevel(newLevel);
   document.body.setAttribute('data-level', newLevel);
 }
 
