@@ -4,15 +4,15 @@ import { createElement } from '../utils';
 let scoreBoard;
 
 let goal = 0;
-let cats = [];
+let players = [];
 
-export function initScoreboard(_goal, _cats) {
+export function initScoreboard(_goal, _players) {
   if (!scoreBoard) {
     scoreBoard = createElement({ cssClass: 'score' });
     document.body.appendChild(scoreBoard);
   }
   goal = _goal;
-  cats = _cats;
+  players = _players;
   updateScoreboard();
 }
 
@@ -21,6 +21,6 @@ export function getGoal() {
 }
 
 export function updateScoreboard() {
-  const catText = cats.map((cat) => `${cat.getScoreOutput()}`).join('');
-  scoreBoard.innerHTML = `${catText}<div class="goal">Goal:&nbsp;${goal}</div>`;
+  const playerText = players.map((player) => `${player.getScoreOutput()}`).join('');
+  scoreBoard.innerHTML = `${playerText}<div class="goal">Goal:&nbsp;${goal}</div>`;
 }

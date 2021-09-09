@@ -7,8 +7,8 @@ const PRE_WORMHOLE_TIME_OBJ = 250;
 const POST_WORMHOLE_TIME = 500;
 
 export const ObjectType = {
-  CAT: '🐱',
-  SYNTH: '🎹',
+  PLAYER: '🐱',
+  TARGET: '🎹',
   ROCKET: '🚀',
   WORMHOLE: '💥',
   SHUFFLE: '🎲',
@@ -17,23 +17,25 @@ export const ObjectType = {
   DEATH: '☠️',
 };
 
-export const CatType = ObjectType.CAT;
+export const PlayerType = ObjectType.PLAYER;
 
 export class GameObject extends CollisionDetector {
   obj;
   type;
+  emoji;
   animationHandler;
   oneTime;
 
   constructor(properties) {
     super(properties);
 
-    const { type, character, size } = properties;
+    const { type, emoji, size } = properties;
 
     this.type = type;
+    this.emoji = emoji || type;
 
     this.obj = Text({
-      text: character || type,
+      text: this.emoji,
       anchor: { x: 0.5, y: 0.5 },
       font: `${size}px sans-serif`,
       x: size / 2,
@@ -59,19 +61,19 @@ export class GameObject extends CollisionDetector {
     this.obj.setScale(scale, scale);
 
     // continue moving object if not rotating or during inner bit of shrinking/growing (with threshold)
-    if (this.isCat() && rotation === null && scale > 0.5) {
+    if (this.isPlayer() && rotation === null && scale > 0.5) {
       super.update();
     }
   }
 
-  isCat() {
-    return this.type === CatType;
+  isPlayer() {
+    return this.type === PlayerType;
   }
 
   wormhole() {
     this.canCollide = false;
     return this.animationHandler
-      .shrink(this.isCat() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
+      .shrink(this.isPlayer() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
       .then(() => {
         this.obj.setScale(0, 0); // also before jump
         this.moveToRandomPlace();

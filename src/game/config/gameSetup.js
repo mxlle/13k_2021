@@ -1,12 +1,12 @@
-import { getCats, getCatsFromConfigArray } from './players';
-import { getLevelObjects } from './levels';
+import { ALL_CATS, getPlayersFromConfigArray } from './players';
+import { BASE_ADVENTURE_OBJECTS } from './levels';
 import {
   CUSTOM_LEVEL_ID,
   getCurrentCustomGoal,
   getCurrentCustomLevelConfig,
   getGameObjectsFromConfigArray,
   getSupportedLevelConfigArray,
-} from './customLevel';
+} from './levelConfig';
 
 const LEVEL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -32,30 +32,23 @@ export function getAvailableLevelsAsString() {
 
 export function getLevelConfig(_level) {
   const level = Number(_level);
+  let levelConfig, goal;
   if (level === CUSTOM_LEVEL_ID) {
     // custom configuration
-    return getCustomLevel(getCurrentCustomLevelConfig(), getCurrentCustomGoal());
+    levelConfig = getCurrentCustomLevelConfig();
+    goal = getCurrentCustomGoal();
   } else {
     // predefined levels 1 - 9
-    const size = getBaseObjectSizeFromAmountOfObjects(level + level * 2 - 1); // cats + objects // TODO
-    const cats = getCats(level, size);
-    const objects = getLevelObjects(level, size);
-
-    return {
-      cats,
-      objects,
-      goal: level,
-    };
+    levelConfig = ALL_CATS.slice(0, level).join('') + BASE_ADVENTURE_OBJECTS.slice(0, level * 2 - 1).join();
+    goal = level;
   }
-}
 
-function getCustomLevel(levelConfig, goal) {
   const validLevelConfigArray = getSupportedLevelConfigArray(levelConfig);
   const size = getBaseObjectSizeFromAmountOfObjects(validLevelConfigArray.length);
-  const cats = getCatsFromConfigArray(validLevelConfigArray, size);
+  const players = getPlayersFromConfigArray(validLevelConfigArray, size);
   const objects = getGameObjectsFromConfigArray(validLevelConfigArray, size);
 
-  return { cats, objects, goal };
+  return { players, objects, goal };
 }
 
 // the more objects the smaller they should be

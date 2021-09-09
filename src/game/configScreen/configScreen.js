@@ -2,7 +2,7 @@ import './configScreen.scss';
 
 import { createElement } from '../utils';
 import { bindKeys } from 'kontra';
-import { CUSTOM_LEVEL_ID, getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/customLevel';
+import { CUSTOM_LEVEL_ID, getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/levelConfig';
 import { deactivateClickMode, loadGame } from '../../index';
 import { storeCustomGoal, storeCustomLevelConfig } from '../store';
 

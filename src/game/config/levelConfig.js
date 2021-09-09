@@ -1,13 +1,14 @@
 import { GameObject, ObjectType } from '../gameObjects/gameObject';
-import { Cat } from '../gameObjects/cat';
-import { ALL_CATS } from './players';
-import { LEVEL_OBJECTS } from './levels';
+import { Player } from '../gameObjects/player';
+import { getAllPlayers } from './players';
+import { BASE_ADVENTURE_OBJECTS } from './levels';
 import { getStoredCustomGoal, getStoredCustomLevelConfig } from '../store';
 
 export const CUSTOM_LEVEL_ID = 13;
 
 export function getCurrentCustomLevelConfig() {
-  const BONUS_LEVEL_DEFAULT_CONFIG = ALL_CATS.join('') + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
+  const BONUS_LEVEL_DEFAULT_CONFIG =
+    getAllPlayers().join('') + BASE_ADVENTURE_OBJECTS.join('') + BASE_ADVENTURE_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
   return getStoredCustomLevelConfig() || BONUS_LEVEL_DEFAULT_CONFIG;
 }
 
@@ -20,11 +21,11 @@ export function getSupportedLevelConfigArray(levelConfig) {
   emojiArray = filterDuplicatePlayers(emojiArray);
 
   if (!emojiArray.some(isPlayerEmoji)) {
-    emojiArray.unshift(ALL_CATS[0]); // at least one cat
+    emojiArray.unshift(getAllPlayers()[0]); // at least one player
   }
 
-  if (!emojiArray.includes(ObjectType.SYNTH)) {
-    emojiArray.push(ObjectType.SYNTH);
+  if (!emojiArray.includes(ObjectType.TARGET)) {
+    emojiArray.push(ObjectType.TARGET);
   }
 
   return emojiArray;
@@ -33,7 +34,7 @@ export function getSupportedLevelConfigArray(levelConfig) {
 export function getGameObjectsFromConfigArray(configLevelArray, size) {
   return configLevelArray
     .filter(isNotPlayerEmoji)
-    .map((emoji) => (emojiLives(emoji) ? new Cat({ character: emoji, size }) : new GameObject({ type: emoji, size })));
+    .map((emoji) => (emojiLives(emoji) ? new Player({ emoji, size }) : new GameObject({ type: emoji, size })));
 }
 
 function emojiLives(emoji) {
@@ -50,7 +51,7 @@ function filterDuplicatePlayers(emojiArray) {
 }
 
 function isPlayerEmoji(emoji) {
-  return ALL_CATS.includes(emoji);
+  return getAllPlayers().includes(emoji);
 }
 
 function isNotPlayerEmoji(emoji) {
@@ -63,7 +64,7 @@ function splitEmojis(string) {
     const [char] = string.match(
       /^[\u{1F1E6}-\u{1F1FF}]{2}|.[\ufe0e\ufe0f]?[\u{1F3FB}-\u{1F3FF}]?(\u200d\p{Emoji}[\ufe0e\ufe0f]?|[\u{E0020}-\u{E007F}])*[\ufe0e\ufe0f]?/u
     );
-    if (characterIsEmoji(char)) {
+    if (isCharacterEmoji(char)) {
       list.push(char);
     }
     string = string.slice(char.length);
@@ -71,7 +72,7 @@ function splitEmojis(string) {
   return list;
 }
 
-function characterIsEmoji(char) {
+function isCharacterEmoji(char) {
   const regexExp = /\p{Emoji}/u;
 
   return regexExp.test(char);

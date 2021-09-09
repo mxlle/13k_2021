@@ -10,7 +10,7 @@ import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
 import { setObjectScale } from './game/gameObjects/collisionDetector';
 import { configureIsShown, initConfigScreen } from './game/configScreen/configScreen';
-import { CUSTOM_LEVEL_ID } from './game/config/customLevel';
+import { CUSTOM_LEVEL_ID } from './game/config/levelConfig';
 import { getStoredExportMode, getStoredLevel, storeLevel } from './game/store';
 
 export const FPS = 60;
@@ -40,8 +40,8 @@ export function loadGame(nextLevel) {
     storeLevel(nextLevel);
   }
   const level = getStoredLevel() || 1;
-  const { cats, objects, goal } = getLevelConfig(level);
-  initGame(cats, objects, goal, level);
+  const { players, objects, goal } = getLevelConfig(level);
+  initGame(players, objects, goal, level);
   updateHints();
 }
 

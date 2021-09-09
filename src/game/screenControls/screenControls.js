@@ -4,9 +4,9 @@ import { createElement } from '../utils';
 import { activateClickMode, isExpertMode, loadGame, onSpace } from '../../index';
 import { isPreparationMode } from '../game';
 import { showConfigScreen } from '../configScreen/configScreen';
-import { CUSTOM_LEVEL_ID } from '../config/customLevel';
+import { CUSTOM_LEVEL_ID } from '../config/levelConfig';
 
-let catToControl;
+let playerToControl;
 let clickCount = 0;
 
 export function initScreenControls() {
@@ -33,18 +33,18 @@ export function initScreenControls() {
   });
 }
 
-export function registerCatForScreenControls(cat) {
-  catToControl = cat;
+export function registerPlayerForScreenControls(player) {
+  playerToControl = player;
 }
 
 function leftClick() {
-  catToControl?.controlManually();
-  catToControl?.turnLeft();
+  playerToControl?.controlManually();
+  playerToControl?.turnLeft();
 }
 
 function rightClick() {
-  catToControl?.controlManually();
-  catToControl?.turnRight();
+  playerToControl?.controlManually();
+  playerToControl?.turnRight();
 }
 
 function spaceClick() {

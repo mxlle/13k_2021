@@ -25,7 +25,7 @@ export const GameState = {
 
 let loop;
 
-let cats = [],
+let players = [],
   objects = [],
   oneTimeObjects = [];
 
@@ -41,12 +41,12 @@ export const isGameStarted = () => gameStarted;
 export const isGameEnded = () => gameEnded;
 export const isPreparationMode = () => preparationMode;
 
-export function initGame(_cats, _objects, goal, level) {
-  cats = _cats;
+export function initGame(_players, _objects, goal, level) {
+  players = _players;
   objects = _objects;
   updateLevel(level);
   updateSkyColor();
-  initScoreboard(goal, cats);
+  initScoreboard(goal, players);
   if (!loop) {
     loop = getGameLoop();
     loop.start();
@@ -60,8 +60,8 @@ function getGameLoop() {
     update: function () {
       if (!gameStarted) return;
 
-      // move cats
-      cats.forEach((cat) => cat.update());
+      // move players
+      players.forEach((player) => player.update());
 
       // update objects (for animations)
       objects.forEach((object) => object.update());
@@ -72,29 +72,29 @@ function getGameLoop() {
       // check for collisions
       const collisions = getCollisions(getAllObjects());
       const wormholeLater = [];
-      collisions.forEach(({ cat, obj }) => {
+      collisions.forEach(({ player, obj }) => {
         switch (obj.type) {
-          case ObjectType.CAT:
+          case ObjectType.PLAYER:
             // CRASH
-            if (!cat.crashSafety && !obj.crashSafety) {
-              cat.handleCrash(1);
+            if (!player.crashSafety && !obj.crashSafety) {
+              player.handleCrash(1);
               obj.handleCrash(-1);
             }
             break;
-          case ObjectType.SYNTH:
+          case ObjectType.TARGET:
             // SCORE
-            cat.incScore();
+            player.incScore();
             wormholeLater.push(obj);
             updateSkyColor();
             break;
           case ObjectType.ROCKET:
             // ACCELERATE
-            cat.speedUp();
+            player.speedUp();
             obj.wormhole();
             break;
           case ObjectType.WORMHOLE:
             // WHOOSH
-            cat.handleWormhole(obj);
+            player.handleWormhole(obj);
             break;
           case ObjectType.SHUFFLE:
             // EVERYBODY SHUFFLING
@@ -102,29 +102,29 @@ function getGameLoop() {
             break;
           case ObjectType.ATTACK:
             // ATTACK
-            attackOthers(cat, obj);
+            attackOthers(player, obj);
             break;
           case ObjectType.TRAP:
             // OOPS
-            cat.confuse();
+            player.confuse();
             if (obj.oneTime) removeOneTimeObject(obj);
             else obj.wormhole();
             break;
           case ObjectType.DEATH:
             // BYE-BYE SCORE
-            cat.resetScore();
+            player.resetScore();
             obj.wormhole();
             break;
           default:
             // bumping into custom object
-            if (!cat.crashSafety) {
-              cat.handleCrash(1);
+            if (!player.crashSafety) {
+              player.handleCrash(1);
             }
         }
       });
 
       // check game end condition
-      if (cats.some((cat) => cat.hasWon())) {
+      if (players.some((player) => player.hasWon())) {
         endGame();
       } else {
         wormholeLater.forEach((obj) => obj.wormhole());
@@ -165,7 +165,7 @@ function endGame() {
   let won = false;
 
   // check who won
-  if (cats.some((cat) => cat.isHuman() && cat.hasWon())) {
+  if (players.some((player) => player.isHuman() && player.hasWon())) {
     addBodyClasses(Result.WON);
     won = true;
     // check all levels finished
@@ -184,7 +184,7 @@ function endGame() {
 
   spinAllRandomly(won ? 2 : 1).then(() => {
     gameStarted = false;
-    cats.forEach((cat) => cat.reset());
+    players.forEach((player) => player.reset());
   });
 }
 
@@ -216,9 +216,9 @@ async function spinAllRandomly(turns) {
   return Promise.all(promises);
 }
 
-function attackOthers(cat, attack) {
-  const otherCats = cats.filter((c) => c.id !== cat.id);
-  otherCats.forEach((c) => {
+function attackOthers(player, attack) {
+  const otherPlayers = players.filter((p) => p.id !== player.id);
+  otherPlayers.forEach((c) => {
     const trap = new GameObject({ type: ObjectType.TRAP, size: c.defaultSize / 1.5 });
     trap.x = c.x + c.dx * 45;
     trap.y = c.y + c.dy * 45;
@@ -256,20 +256,20 @@ function getCollisions(objs) {
         continue;
       }
 
-      let cat, obj;
-      if (o1.isCat()) {
-        cat = o1;
+      let player, obj;
+      if (o1.isPlayer()) {
+        player = o1;
         obj = o2;
-      } else if (o2.isCat()) {
-        cat = o2;
+      } else if (o2.isPlayer()) {
+        player = o2;
         obj = o1;
       } else {
-        // no collision if no cat involved
+        // no collision if no player involved
         continue;
       }
 
-      if (collides(cat, obj)) {
-        collisions.push({ cat, obj });
+      if (collides(player, obj)) {
+        collisions.push({ player, obj });
       }
     }
   }
@@ -278,5 +278,5 @@ function getCollisions(objs) {
 }
 
 function getAllObjects() {
-  return [...objects, ...oneTimeObjects, ...cats];
+  return [...objects, ...oneTimeObjects, ...players];
 }

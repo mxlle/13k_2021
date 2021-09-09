@@ -6,22 +6,19 @@ import { ControlHandler } from './handlers/controlHandler';
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
 
-const CAT_SCALE = 1.5;
+const PLAYER_SCALE = 1.5;
 
-export class Cat extends GameObject {
+export class Player extends GameObject {
   crashSafety = false;
-  _character;
   _random = true;
   _score = 0;
   _controls;
   _markers = {};
 
   constructor(properties) {
-    super({ type: ObjectType.CAT, ...properties, size: properties.size * CAT_SCALE });
+    super({ type: ObjectType.PLAYER, ...properties, size: properties.size * PLAYER_SCALE });
 
-    const { character, leftKey, rightKey } = properties;
-
-    this._character = character;
+    const { leftKey, rightKey } = properties;
 
     this.setupMarkers();
 
@@ -33,7 +30,7 @@ export class Cat extends GameObject {
     super.update();
 
     // let bots turn randomly
-    if (this._random && Math.random() < 0.02) {
+    if (this.isBot() && Math.random() < 0.02) {
       Math.random() < 0.5 ? this._controls.turnRight() : this._controls.turnLeft();
     }
   }
@@ -44,7 +41,7 @@ export class Cat extends GameObject {
   }
 
   controlManually() {
-    if (this._random) {
+    if (this.isBot()) {
       this._random = false;
       this._markers.human?.show();
       this.resetScore(); // when switching from bot to human, reset score
@@ -105,9 +102,9 @@ export class Cat extends GameObject {
   getScoreOutput() {
     const score = getGoal() <= 9 || this._score > 9 ? this._score : '0' + this._score;
     const keys = this._controls.getKeysString(this._random);
-    return `<div class="result ${this._random ? 'bot' : 'human'}">
+    return `<div class="result ${this.isBot() ? 'bot' : 'human'}">
                 ${keys}
-                <span class="cat">${this._character}</span>
+                <span class="player">${this.emoji}</span>
                 <span>Score:&nbsp;${score}</span>
             </div>`;
   }
@@ -120,6 +117,10 @@ export class Cat extends GameObject {
 
   isHuman() {
     return !this._random;
+  }
+
+  isBot() {
+    return this._random;
   }
 
   setupMarkers() {

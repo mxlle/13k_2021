@@ -2,7 +2,7 @@ import { bindKeys, randInt } from 'kontra';
 import { isGameStarted, SWAP_TIME } from '../../game';
 import { FPS, deactivateClickMode } from '../../../index';
 import { updateScoreboard } from '../../score/score';
-import { registerCatForScreenControls } from '../../screenControls/screenControls';
+import { registerPlayerForScreenControls } from '../../screenControls/screenControls';
 
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
@@ -20,7 +20,7 @@ function getVelocityIncrease() {
 }
 
 export class ControlHandler {
-  _cat;
+  _player;
   _leftKey;
   _rightKey;
   _direction = 0;
@@ -28,14 +28,14 @@ export class ControlHandler {
   _swappedControls = false;
   _swapTimeout;
 
-  constructor(cat, leftKey, rightKey) {
-    this._cat = cat;
+  constructor(player, leftKey, rightKey) {
+    this._player = player;
     this.startMoving();
     this.setupKeys(leftKey, rightKey);
 
-    // setup click handler for the cat with the left and right key
+    // setup click handler for the player with the left and right key
     if (leftKey === 'left') {
-      registerCatForScreenControls(cat);
+      registerPlayerForScreenControls(player);
     }
   }
 
@@ -72,8 +72,8 @@ export class ControlHandler {
 
   onDirectionOrVelocityUpdate() {
     const { x, y } = DIRECTIONS[this._direction];
-    this._cat.dx = x * this._velocity;
-    this._cat.dy = y * this._velocity;
+    this._player.dx = x * this._velocity;
+    this._player.dy = y * this._velocity;
   }
 
   speedUp() {
@@ -83,7 +83,7 @@ export class ControlHandler {
 
   swapControls() {
     this._swappedControls = true;
-    this._cat._markers.swap?.show();
+    this._player._markers.swap?.show();
     updateScoreboard();
 
     clearTimeout(this._swapTimeout);
@@ -104,7 +104,7 @@ export class ControlHandler {
   }
 
   restoreControls() {
-    this._cat._markers.swap?.hide();
+    this._player._markers.swap?.hide();
     this._swappedControls = false;
     this._swapTimeout = undefined;
     updateScoreboard();
@@ -116,14 +116,14 @@ export class ControlHandler {
     bindKeys(leftKey, () => {
       if (!isGameStarted()) return;
       deactivateClickMode();
-      this._cat.controlManually();
+      this._player.controlManually();
       this.turnLeft();
     });
 
     bindKeys(rightKey, () => {
       if (!isGameStarted()) return;
       deactivateClickMode();
-      this._cat.controlManually();
+      this._player.controlManually();
       this.turnRight();
     });
 

@@ -1,8 +1,8 @@
-import { GameObject, ObjectType } from '../gameObjects/gameObject';
+import { ObjectType } from '../gameObjects/gameObject';
 
-export const LEVEL_OBJECTS = [
+export const BASE_ADVENTURE_OBJECTS = [
   // 1
-  ObjectType.SYNTH,
+  ObjectType.TARGET,
   // 2
   ObjectType.ROCKET,
   ObjectType.ROCKET,
@@ -10,7 +10,7 @@ export const LEVEL_OBJECTS = [
   ObjectType.WORMHOLE,
   ObjectType.WORMHOLE,
   // 4
-  ObjectType.SYNTH,
+  ObjectType.TARGET,
   ObjectType.TRAP,
   // 5
   ObjectType.ATTACK,
@@ -23,12 +23,8 @@ export const LEVEL_OBJECTS = [
   ObjectType.TRAP,
   // 8
   ObjectType.WORMHOLE,
-  ObjectType.SYNTH,
+  ObjectType.TARGET,
   // 9
   ObjectType.ROCKET,
   ObjectType.DEATH,
 ];
-
-export function getLevelObjects(level, size) {
-  return LEVEL_OBJECTS.slice(0, level * 2 - 1).map((o) => new GameObject({ type: o, size }));
-}
