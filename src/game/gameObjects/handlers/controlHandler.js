@@ -31,16 +31,9 @@ export class ControlHandler {
   _swapTimeout;
   _withScreenControls = false;
 
-  constructor(player, leftKey, rightKey) {
+  constructor(player) {
     this._player = player;
     this.startMoving();
-    this.setupKeys(leftKey, rightKey);
-
-    // setup click handler for the player with the left and right key
-    if (leftKey === 'left') {
-      this._withScreenControls = true;
-      registerPlayerForScreenControls(player);
-    }
   }
 
   startMoving() {
@@ -87,7 +80,7 @@ export class ControlHandler {
 
   swapControls() {
     this._swappedControls = true;
-    this._player._markers.swap?.show();
+    this._player.markers.swap?.show();
     updateScoreboard();
     if (this._withScreenControls) {
       addBodyClasses(CONTROLS_SWAPPED_CLASS);
@@ -111,7 +104,7 @@ export class ControlHandler {
   }
 
   restoreControls() {
-    this._player._markers.swap?.hide();
+    this._player.markers.swap?.hide();
     this._swappedControls = false;
     this._swapTimeout = undefined;
     updateScoreboard();
@@ -139,5 +132,11 @@ export class ControlHandler {
 
     this._leftKey = leftKey === 'left' ? '&larr;' : leftKey.toUpperCase();
     this._rightKey = rightKey === 'right' ? '&rarr;' : rightKey.toUpperCase();
+
+    // setup click handler for the player with the left and right key
+    if (leftKey === 'left') {
+      this._withScreenControls = true;
+      registerPlayerForScreenControls(this._player);
+    }
   }
 }

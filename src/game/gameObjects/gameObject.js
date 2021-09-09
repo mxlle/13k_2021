@@ -7,7 +7,7 @@ const PRE_WORMHOLE_TIME_OBJ = 250;
 const POST_WORMHOLE_TIME = 500;
 
 export const ObjectType = {
-  PLAYER: '🐱',
+  MOVING: '🐱',
   TARGET: '🎹',
   ROCKET: '🚀',
   WORMHOLE: '💥',
@@ -17,7 +17,7 @@ export const ObjectType = {
   DEATH: '☠️',
 };
 
-export const PlayerType = ObjectType.PLAYER;
+export const MovingType = ObjectType.MOVING;
 
 export class GameObject extends CollisionDetector {
   obj;
@@ -61,19 +61,15 @@ export class GameObject extends CollisionDetector {
     this.obj.setScale(scale, scale);
 
     // continue moving object if not rotating or during inner bit of shrinking/growing (with threshold)
-    if (this.isPlayer() && rotation === null && scale > 0.5) {
+    if (this.isMovingObject && rotation === null && scale > 0.5) {
       super.update();
     }
-  }
-
-  isPlayer() {
-    return this.type === PlayerType;
   }
 
   wormhole() {
     this.canCollide = false;
     return this.animationHandler
-      .shrink(this.isPlayer() ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
+      .shrink(this.isMovingObject ? PRE_WORMHOLE_TIME : PRE_WORMHOLE_TIME_OBJ)
       .then(() => {
         this.obj.setScale(0, 0); // also before jump
         this.moveToRandomPlace();

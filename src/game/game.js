@@ -71,29 +71,29 @@ function getGameLoop() {
       // check for collisions
       const collisions = getCollisions(getAllObjects());
       const wormholeLater = [];
-      collisions.forEach(({ player, obj }) => {
+      collisions.forEach(({ movingObject, obj }) => {
         switch (obj.type) {
-          case ObjectType.PLAYER:
+          case ObjectType.MOVING:
             // CRASH
-            if (!player.crashSafety && !obj.crashSafety) {
-              player.handleCrash(1);
+            if (!movingObject.crashSafety && !obj.crashSafety) {
+              movingObject.handleCrash(1);
               obj.handleCrash(-1);
             }
             break;
           case ObjectType.TARGET:
             // SCORE
-            player.incScore();
+            if (movingObject.isPlayer) movingObject.incScore();
             wormholeLater.push(obj);
             updateSkyColor();
             break;
           case ObjectType.ROCKET:
             // ACCELERATE
-            player.speedUp();
+            movingObject.speedUp();
             obj.wormhole();
             break;
           case ObjectType.WORMHOLE:
             // WHOOSH
-            player.handleWormhole(obj);
+            movingObject.handleWormhole(obj);
             break;
           case ObjectType.SHUFFLE:
             // EVERYBODY SHUFFLING
@@ -101,23 +101,23 @@ function getGameLoop() {
             break;
           case ObjectType.ATTACK:
             // ATTACK
-            attackOthers(player, obj);
+            attackOthers(movingObject, obj);
             break;
           case ObjectType.TRAP:
             // OOPS
-            player.confuse();
+            movingObject.confuse();
             if (obj.oneTime) removeOneTimeObject(obj);
             else obj.wormhole();
             break;
           case ObjectType.DEATH:
             // BYE-BYE SCORE
-            player.resetScore();
+            if (movingObject.isPlayer) movingObject.resetScore();
             obj.wormhole();
             break;
           default:
             // bumping into custom object
-            if (!player.crashSafety) {
-              player.handleCrash(1);
+            if (!movingObject.crashSafety) {
+              movingObject.handleCrash(1);
             }
         }
       });
@@ -164,7 +164,7 @@ function endGame() {
   let won = false;
 
   // check who won
-  if (players.some((player) => player.isHuman() && player.hasWon())) {
+  if (players.some((player) => player.isHuman && player.hasWon())) {
     addBodyClasses(Result.WON);
     won = true;
     // check all levels finished
@@ -251,20 +251,20 @@ function getCollisions(objs) {
         continue;
       }
 
-      let player, obj;
-      if (o1.isPlayer()) {
-        player = o1;
+      let movingObject, obj;
+      if (o1.isMovingObject) {
+        movingObject = o1;
         obj = o2;
-      } else if (o2.isPlayer()) {
-        player = o2;
+      } else if (o2.isMovingObject) {
+        movingObject = o2;
         obj = o1;
       } else {
         // no collision if no player involved
         continue;
       }
 
-      if (collides(player, obj)) {
-        collisions.push({ player, obj });
+      if (collides(movingObject, obj)) {
+        collisions.push({ movingObject, obj });
       }
     }
   }
