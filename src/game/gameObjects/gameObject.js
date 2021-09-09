@@ -6,19 +6,6 @@ const PRE_WORMHOLE_TIME = 500;
 const PRE_WORMHOLE_TIME_OBJ = 250;
 const POST_WORMHOLE_TIME = 500;
 
-export const ObjectType = {
-  MOVING: '🐱',
-  TARGET: '🎹',
-  ROCKET: '🚀',
-  WORMHOLE: '💥',
-  SHUFFLE: '🎲',
-  ATTACK: '🔫',
-  TRAP: '💩',
-  DEATH: '☠️',
-};
-
-export const MovingType = ObjectType.MOVING;
-
 export class GameObject extends CollisionDetector {
   obj;
   type;

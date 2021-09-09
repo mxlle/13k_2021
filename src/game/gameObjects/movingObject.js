@@ -1,6 +1,7 @@
-import { GameObject, ObjectType } from './gameObject';
+import { GameObject } from './gameObject';
 import { Marker } from './marker';
 import { ControlHandler } from './handlers/controlHandler';
+import { ObjectType } from '../config/objectType';
 
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;

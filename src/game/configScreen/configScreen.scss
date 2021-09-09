@@ -4,7 +4,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.66);
   color: white;
   font-size: 37px;
   z-index: 1;
@@ -25,11 +25,32 @@ textarea {
   background: black;
   color: white;
   width: 40vw;
-  height: 40vh;
+  height: 30vh;
   font-size: 37px;
   letter-spacing: 10px;
   padding: 13px;
   margin: 37px;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 13px;
+  .emoji-btn {
+    cursor: pointer;
+    padding: 13px;
+    margin: 3px 7px;
+    background: indigo;
+    border-radius: 13px;
+    font-size: 26px;
+  }
+
+  + .button-container {
+    .emoji-btn {
+      background: darkblue;
+    }
+  }
 }
 
 input {
@@ -38,6 +59,7 @@ input {
   color: white;
   font-size: 37px;
   padding: 7px;
+  margin-top: 37px;
   margin-bottom: 37px;
   margin-left: 13px;
 }

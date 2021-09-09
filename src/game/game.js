@@ -1,7 +1,7 @@
 import './game.scss';
 
 import { collides, GameLoop } from 'kontra';
-import { GameObject, ObjectType } from './gameObjects/gameObject';
+import { GameObject } from './gameObjects/gameObject';
 import { initScoreboard } from './score/score';
 import { getNextLevel, isLastLevel } from './config/gameSetup';
 import { addBodyClasses, removeBodyClasses } from './utils';
@@ -22,6 +22,7 @@ import {
   TRAP_TIME,
 } from './globals';
 import { setupExpertMode } from './config/expertMode';
+import { ObjectType } from './config/objectType';
 
 export const Result = {
   WON: 'won',

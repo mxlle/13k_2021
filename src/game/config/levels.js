@@ -1,4 +1,4 @@
-import { ObjectType } from '../gameObjects/gameObject';
+import { ObjectType } from './objectType';
 
 export const BASE_ADVENTURE_OBJECTS = [
   // 1

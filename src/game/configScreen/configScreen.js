@@ -5,6 +5,9 @@ import { bindKeys } from 'kontra';
 import { storeCustomGoal, storeCustomLevelConfig } from '../store';
 import { CUSTOM_LEVEL_ID, deactivateClickMode, loadGame } from '../globals';
 import { getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/customLevel';
+import { getAllPlayers } from '../config/players';
+import { getValidObjectTypes } from '../config/objectType';
+import { getSupportedLevelConfigArray } from '../config/levelConfig';
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 13312;
@@ -35,7 +38,7 @@ export function initConfigScreen() {
 
 export function showConfigScreen() {
   if (!configScreen) createConfigScreen();
-  textarea.value = getCurrentCustomLevelConfig();
+  setConfigValue(getCurrentCustomLevelConfig());
   goalInput.value = getCurrentCustomGoal();
   document.body.appendChild(configScreen);
   textarea.focus();
@@ -44,7 +47,7 @@ export function showConfigScreen() {
 
 function closeConfigScreen(loadNewLevel) {
   if (loadNewLevel) {
-    storeCustomLevelConfig(textarea.value);
+    storeCustomLevelConfig(getConfigValue());
     storeCustomGoal(goalInput.value);
     loadGame(CUSTOM_LEVEL_ID);
   }
@@ -57,7 +60,10 @@ function createConfigScreen() {
   const desc = createElement({ cssClass: 'config-desc', text: 'Add and remove emojis from the textarea' });
   configScreen.appendChild(desc);
   textarea = createElement({ tag: 'textarea' });
+  textarea.addEventListener('input', validateConfig);
   configScreen.appendChild(textarea);
+  configScreen.appendChild(createEmojiButtons(getAllPlayers(), true));
+  configScreen.appendChild(createEmojiButtons([...getValidObjectTypes(), '👽', '🍔']));
   const goalContainer = createElement({ cssClass: 'goal-input', text: 'Goal:' });
   goalInput = createElement({ tag: 'input' });
   goalInput.type = 'number';
@@ -68,6 +74,37 @@ function createConfigScreen() {
   configScreen.appendChild(goalContainer);
   const closeButton = createElement({ cssClass: 'close-btn', text: 'Apply config', onClick: closeConfigScreen });
   configScreen.appendChild(closeButton);
+}
+
+function createEmojiButtons(emojis, isToggle) {
+  const buttonsContainer = createElement({ cssClass: 'button-container' });
+  emojis.forEach((emoji) => {
+    const btn = createElement({
+      cssClass: 'emoji-btn',
+      text: emoji,
+      onClick: () => {
+        if (isToggle && getConfigValue().includes(emoji)) {
+          setConfigValue(getConfigValue().replace(emoji, ''));
+        } else {
+          setConfigValue(getConfigValue() + emoji);
+        }
+      },
+    });
+    buttonsContainer.appendChild(btn);
+  });
+  return buttonsContainer;
+}
+
+function getConfigValue() {
+  return textarea.value;
+}
+
+function setConfigValue(value) {
+  textarea.value = getSupportedLevelConfigArray(value).join('');
+}
+
+function validateConfig() {
+  setConfigValue(getConfigValue());
 }
 
 function validateGoal() {
