@@ -2,14 +2,9 @@ import './configScreen.scss';
 
 import { createElement } from '../utils';
 import { bindKeys } from 'kontra';
-import {
-  CUSTOM_LEVEL_ID,
-  getCustomGoalFromStore,
-  getCustomLevelFromStore,
-  saveCustomGoalInStore,
-  saveCustomLevelInStore,
-} from '../customLevel';
+import { CUSTOM_LEVEL_ID, getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/customLevel';
 import { deactivateClickMode, loadGame } from '../../index';
+import { storeCustomGoal, storeCustomLevelConfig } from '../store';
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 13312;
@@ -40,8 +35,8 @@ export function initConfigScreen() {
 
 export function showConfigScreen() {
   if (!configScreen) createConfigScreen();
-  textarea.value = getCustomLevelFromStore();
-  goalInput.value = getCustomGoalFromStore();
+  textarea.value = getCurrentCustomLevelConfig();
+  goalInput.value = getCurrentCustomGoal();
   document.body.appendChild(configScreen);
   textarea.focus();
   shown = true;
@@ -49,8 +44,8 @@ export function showConfigScreen() {
 
 function closeConfigScreen(loadNewLevel) {
   if (loadNewLevel) {
-    saveCustomLevelInStore(textarea.value);
-    saveCustomGoalInStore(goalInput.value);
+    storeCustomLevelConfig(textarea.value);
+    storeCustomGoal(goalInput.value);
     loadGame(CUSTOM_LEVEL_ID);
   }
   document.body.removeChild(configScreen);

@@ -1,42 +1,38 @@
-import { CatType, GameObject, ObjectType } from './gameObjects/gameObject';
-import { Cat } from './gameObjects/cat';
-import { ALL_PLAYERS, getCatsString, getIncludedCatsString } from './players';
+import { CatType, GameObject, ObjectType } from '../gameObjects/gameObject';
+import { Cat } from '../gameObjects/cat';
+import { ALL_CATS } from './players';
 import { LEVEL_OBJECTS } from './levels';
-import { StoreKey } from '../index';
-import { getStoredNumber, storeNumber } from './utils';
+import { getStoredCustomGoal, getStoredCustomLevelConfig } from '../store';
 
 export const CUSTOM_LEVEL_ID = 13;
 
-export function getCustomLevelFromStore() {
-  const BONUS_LEVEL_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
-  return localStorage.getItem(StoreKey.CUSTOM_LEVEL) || BONUS_LEVEL_CONFIG;
+export function getCurrentCustomLevelConfig() {
+  const BONUS_LEVEL_DEFAULT_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
+  return getStoredCustomLevelConfig() || BONUS_LEVEL_DEFAULT_CONFIG;
 }
 
-export function saveCustomLevelInStore(levelConfig) {
-  localStorage.setItem(StoreKey.CUSTOM_LEVEL, levelConfig);
-}
-
-export function getCustomGoalFromStore() {
-  return getStoredNumber(StoreKey.CUSTOM_GOAL) || CUSTOM_LEVEL_ID;
-}
-
-export function saveCustomGoalInStore(goal) {
-  storeNumber(StoreKey.CUSTOM_GOAL, goal);
+export function getCurrentCustomGoal() {
+  return getStoredCustomGoal() || CUSTOM_LEVEL_ID;
 }
 
 export function getSupportedLevelConfig(levelConfig) {
   let validConfig = getIncludedCatsString(levelConfig);
-  if (!validConfig?.length) validConfig = ALL_PLAYERS[0].character; // at least one cat
+  if (!validConfig?.length) validConfig = ALL_CATS[0]; // at least one cat
 
-  for (const c of levelConfig) {
+  // special handling for death which is 2 characters
+  for (let d = 0; d < getDeathCount(levelConfig); d++) {
+    validConfig += ObjectType.DEATH;
+  }
+  const remainingLevelConfig = removeDeathFrom(levelConfig);
+
+  for (const c of remainingLevelConfig) {
     if (!getCatsString().includes(c) && characterIsEmoji(c)) {
       validConfig += c;
     }
   }
 
-  // special handling for death which is 2 characters
-  for (let d = 0; d < getDeathCount(levelConfig); d++) {
-    validConfig += ObjectType.DEATH;
+  if (!validConfig.includes(ObjectType.SYNTH)) {
+    validConfig += ObjectType.SYNTH;
   }
 
   return validConfig;
@@ -81,9 +77,13 @@ function getDeathCount(objectsString) {
   return (objectsString.match(/☠️/g) || []).length;
 }
 
+function removeDeathFrom(objectsString) {
+  return objectsString.replace(/☠️/g, '');
+}
+
 function deathEmojiHandling(objectsString, size) {
   const deathCount = getDeathCount(objectsString);
-  const remainingObjectsString = objectsString.replace(/☠️/g, ''); // TODO not working correctly
+  const remainingObjectsString = removeDeathFrom(objectsString);
   const deathObjects = [];
   for (let i = 0; i < deathCount; i++) {
     deathObjects.push(new GameObject({ type: ObjectType.DEATH, size }));
@@ -102,4 +102,12 @@ function emojiLives(emoji) {
     /([\u{02603}\u{026c4}\u{026f4}-\u{026f9}\u{02708}\u{1f385}\u{1f3c2}-\u{1f3c4}\u{1f3c7}\u{1f400}-\u{1f43d}\u{1f43f}\u{1f466}-\u{1f47f}\u{1f481}-\u{1f483}\u{1f486}-\u{1f487}\u{1f574}-\u{1f575}\u{1f577}\u{1f57a}\u{1f600}-\u{1f64c}\u{1f64d}-\u{1f64e}\u{1f680}-\u{1f68e}\u{1f690}-\u{1f6a4}\u{1f6b2}\u{1f6b4}-\u{1f6b5}\u{1f6e5}\u{1f6e9}\u{1f691}-\u{1f697}\u{1f920}-\u{1f931}\u{1f934}-\u{1f93e}\u{1f970}-\u{1f97a}\u{1f980}-\u{1f9ae}\u{1f9cd}\u{1f9cf}-\u{1f9df}\u{1fab0}-\u{1fab3}])/giu;
 
   return regexExp.test(emoji);
+}
+
+function getCatsString() {
+  return ALL_CATS.join('');
+}
+
+function getIncludedCatsString(objectsString) {
+  return ALL_CATS.filter((char) => objectsString.includes(char)).join('');
 }

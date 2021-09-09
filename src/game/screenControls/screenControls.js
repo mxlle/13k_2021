@@ -4,7 +4,7 @@ import { createElement } from '../utils';
 import { activateClickMode, isExpertMode, loadGame, onSpace } from '../../index';
 import { isPreparationMode } from '../game';
 import { showConfigScreen } from '../configScreen/configScreen';
-import { CUSTOM_LEVEL_ID } from '../customLevel';
+import { CUSTOM_LEVEL_ID } from '../config/customLevel';
 
 let catToControl;
 let clickCount = 0;

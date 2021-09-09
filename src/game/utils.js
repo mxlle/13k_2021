@@ -23,15 +23,6 @@ export function removeBodyClasses(...classes) {
   document.body.classList.remove(...classes);
 }
 
-export function getStoredNumber(id) {
-  const num = Number(localStorage.getItem(id));
-  return isNaN(num) ? 0 : num;
-}
-
-export function storeNumber(id, num) {
-  localStorage.setItem(id, `${num}`);
-}
-
 export function getWidthHeightScale() {
   const BASE_RESOLUTION = 1500 * 1000;
   const width = window.innerWidth;

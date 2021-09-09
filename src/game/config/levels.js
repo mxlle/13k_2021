@@ -1,4 +1,4 @@
-import { GameObject, ObjectType } from './gameObjects/gameObject';
+import { GameObject, ObjectType } from '../gameObjects/gameObject';
 
 export const LEVEL_OBJECTS = [
   // 1

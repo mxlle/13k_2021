@@ -2,8 +2,8 @@ import { getCats, getCatsFromString } from './players';
 import { getLevelObjects } from './levels';
 import {
   CUSTOM_LEVEL_ID,
-  getCustomGoalFromStore,
-  getCustomLevelFromStore,
+  getCurrentCustomGoal,
+  getCurrentCustomLevelConfig,
   getGameObjectsFromString,
   getObjectCountFromValidLevelConfig,
   getSupportedLevelConfig,
@@ -24,7 +24,7 @@ export function isLastLevel(level) {
 }
 
 export function getNextLevel(level) {
-  return isLastLevel(level) ? level : level + 1;
+  return isLastLevel(level) ? CUSTOM_LEVEL_ID : level + 1;
 }
 
 export function getAvailableLevelsAsString() {
@@ -33,17 +33,21 @@ export function getAvailableLevelsAsString() {
 
 export function getLevelConfig(_level) {
   const level = Number(_level);
-  if (level === CUSTOM_LEVEL_ID) return getCustomLevel(getCustomLevelFromStore(), getCustomGoalFromStore());
+  if (level === CUSTOM_LEVEL_ID) {
+    // custom configuration
+    return getCustomLevel(getCurrentCustomLevelConfig(), getCurrentCustomGoal());
+  } else {
+    // predefined levels 1 - 9
+    const size = getBaseObjectSizeFromAmountOfObjects(level + level * 2 - 1); // cats + objects // TODO
+    const cats = getCats(level, size);
+    const objects = getLevelObjects(level, size);
 
-  const size = getBaseObjectSizeFromAmountOfObjects(level + level * 2 - 1); // cats + objects
-  const cats = getCats(level, size);
-  const objects = getLevelObjects(level, size);
-
-  return {
-    cats,
-    objects,
-    goal: level,
-  };
+    return {
+      cats,
+      objects,
+      goal: level,
+    };
+  }
 }
 
 function getCustomLevel(levelConfig, goal) {
@@ -56,6 +60,7 @@ function getCustomLevel(levelConfig, goal) {
   return { cats, objects, goal };
 }
 
+// the more objects the smaller they should be
 function getBaseObjectSizeFromAmountOfObjects(amount) {
   if (amount < 5) {
     return ObjectSize.XL;

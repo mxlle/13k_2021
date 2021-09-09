@@ -3,11 +3,12 @@ import './game.scss';
 import { collides, GameLoop } from 'kontra';
 import { GameObject, ObjectType } from './gameObjects/gameObject';
 import { initScoreboard } from './score/score';
-import { FPS, loadGame, setupExpertMode, StoreKey } from '../index';
-import { getNextLevel, isLastLevel } from './gameSetup';
-import { addBodyClasses, removeBodyClasses, storeNumber } from './utils';
+import { FPS, loadGame, setupExpertMode } from '../index';
+import { getNextLevel, isLastLevel } from './config/gameSetup';
+import { addBodyClasses, removeBodyClasses } from './utils';
 import { updateSkyColor } from './scene/scene';
 import { updateHints } from './hints/hints';
+import { storeExportMode } from './store';
 
 export const SWAP_TIME = 5000;
 
@@ -169,7 +170,7 @@ function endGame() {
     won = true;
     // check all levels finished
     if (isLastLevel(currentLevel)) {
-      storeNumber(StoreKey.EXPERT, 1);
+      storeExportMode();
       setupExpertMode();
     }
   } else {

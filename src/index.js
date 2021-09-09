@@ -1,25 +1,20 @@
-import { init, initKeys, bindKeys } from 'kontra';
+import { bindKeys, init, initKeys } from 'kontra';
 
 import './index.scss';
 
 import { addBackgroundScene } from './game/scene/scene';
 import { initGame, isGameInitialized, isGameStarted, isPreparationMode, prepareGame, shuffleAndScaleAll, startGame } from './game/game';
-import { getAvailableLevelsAsString, getLevelConfig } from './game/gameSetup';
-import { addBodyClasses, addCanvasToBody, getStoredNumber, getWidthHeightScale, removeBodyClasses, storeNumber } from './game/utils';
+import { getAvailableLevelsAsString, getLevelConfig } from './game/config/gameSetup';
+import { addBodyClasses, addCanvasToBody, getWidthHeightScale, removeBodyClasses } from './game/utils';
 import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
 import { setObjectScale } from './game/gameObjects/collisionDetector';
 import { configureIsShown, initConfigScreen } from './game/configScreen/configScreen';
-import { CUSTOM_LEVEL_ID } from './game/customLevel';
+import { CUSTOM_LEVEL_ID } from './game/config/customLevel';
+import { getStoredExportMode, getStoredLevel, storeLevel } from './game/store';
 
 export const FPS = 60;
 
-export const StoreKey = {
-  LEVEL: '🐱🚀🎹.level',
-  EXPERT: '🐱🚀🎹.expert',
-  CUSTOM_LEVEL: '🐱🚀🎹.customLevel',
-  CUSTOM_GOAL: '🐱🚀🎹.customGoal',
-};
 const CLICK_MODE = 'click-mode';
 
 let expertMode = false;
@@ -42,9 +37,9 @@ prepareGame();
 
 export function loadGame(nextLevel) {
   if (nextLevel) {
-    storeNumber(StoreKey.LEVEL, nextLevel);
+    storeLevel(nextLevel);
   }
-  const level = getStoredNumber(StoreKey.LEVEL) || 1;
+  const level = getStoredLevel() || 1;
   const { cats, objects, goal } = getLevelConfig(level);
   initGame(cats, objects, goal, level);
   updateHints();
@@ -64,7 +59,7 @@ function setupEventListeners() {
 }
 
 export function setupExpertMode() {
-  if (getStoredNumber(StoreKey.EXPERT) && !expertMode) {
+  if (getStoredExportMode() && !expertMode) {
     addBodyClasses('expert');
     bindKeys(getAvailableLevelsAsString().concat('0'), (event) => {
       if (isPreparationMode() && !configureIsShown()) {
