@@ -9,7 +9,8 @@ import { addBodyClasses, addCanvasToBody, getStoredNumber, getWidthHeightScale, 
 import { initHints, updateHints } from './game/hints/hints';
 import { initScreenControls } from './game/screenControls/screenControls';
 import { setObjectScale } from './game/gameObjects/collisionDetector';
-import { initConfigScreen } from './game/configScreen/configScreen';
+import { configureIsShown, initConfigScreen } from './game/configScreen/configScreen';
+import { CUSTOM_LEVEL_ID } from './game/customLevel';
 
 export const FPS = 60;
 
@@ -45,7 +46,7 @@ export function loadGame(nextLevel) {
   }
   const level = getStoredNumber(StoreKey.LEVEL) || 1;
   const { cats, objects, goal } = getLevelConfig(level);
-  initGame(cats, objects, goal);
+  initGame(cats, objects, goal, level);
   updateHints();
 }
 
@@ -66,8 +67,8 @@ export function setupExpertMode() {
   if (getStoredNumber(StoreKey.EXPERT) && !expertMode) {
     addBodyClasses('expert');
     bindKeys(getAvailableLevelsAsString().concat('0'), (event) => {
-      if (isPreparationMode()) {
-        const level = event.key === '0' ? 13 : event.key;
+      if (isPreparationMode() && !configureIsShown()) {
+        const level = event.key === '0' ? CUSTOM_LEVEL_ID : event.key;
         loadGame(level);
       }
     });
@@ -77,7 +78,7 @@ export function setupExpertMode() {
 }
 
 export function onSpace() {
-  if (!isGameStarted()) {
+  if (!isGameStarted() && !configureIsShown()) {
     if (isPreparationMode()) {
       startGame();
     } else {

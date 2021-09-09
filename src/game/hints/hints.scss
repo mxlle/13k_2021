@@ -26,7 +26,9 @@ body:not(.started) {
 }
 
 .bonus-level-hint {
-  animation: rainbow 1s infinite;
+  color: purple;
+  opacity: 1;
+  animation: pulse 1s infinite;
 }
 
 .click-mode {
@@ -35,23 +37,14 @@ body:not(.started) {
   }
 }
 
-@keyframes rainbow {
+@keyframes pulse {
   0% {
-    color: indigo;
-  }
-  20% {
-    color: purple;
-  }
-  40% {
-    color: saddlebrown;
+    opacity: 1;
   }
   60% {
-    color: darkslategray;
-  }
-  80% {
-    color: darkslateblue;
+    opacity: 0.5;
   }
   100% {
-    color: indigo;
+    opacity: 1;
   }
 }

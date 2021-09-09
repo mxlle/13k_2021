@@ -40,12 +40,12 @@ export const isGameStarted = () => gameStarted;
 export const isGameEnded = () => gameEnded;
 export const isPreparationMode = () => preparationMode;
 
-export function initGame(_cats, _objects, level) {
+export function initGame(_cats, _objects, goal, level) {
   cats = _cats;
   objects = _objects;
   updateLevel(level);
   updateSkyColor();
-  initScoreboard(level, cats);
+  initScoreboard(goal, cats);
   if (!loop) {
     loop = getGameLoop();
     loop.start();

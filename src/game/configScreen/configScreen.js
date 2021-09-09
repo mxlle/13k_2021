@@ -2,13 +2,27 @@ import './configScreen.scss';
 
 import { createElement } from '../utils';
 import { bindKeys } from 'kontra';
-import { getCustomLevelFromStore, saveCustomLevelInStore } from '../customLevel';
-import { loadGame } from '../../index';
+import {
+  CUSTOM_LEVEL_ID,
+  getCustomGoalFromStore,
+  getCustomLevelFromStore,
+  saveCustomGoalInStore,
+  saveCustomLevelInStore,
+} from '../customLevel';
+import { deactivateClickMode, loadGame } from '../../index';
 
-let configScreen, shown, input;
+const MIN_GOAL = 1;
+const MAX_GOAL = 13312;
+
+let configScreen, shown, textarea, goalInput;
+
+export function configureIsShown() {
+  return shown;
+}
 
 export function initConfigScreen() {
   bindKeys('enter', (event) => {
+    deactivateClickMode();
     if (shown) {
       closeConfigScreen(true);
     } else {
@@ -17,6 +31,7 @@ export function initConfigScreen() {
     event.preventDefault(); // to not add enter in textarea
   });
   bindKeys('esc', () => {
+    deactivateClickMode();
     if (shown) {
       closeConfigScreen(false);
     }
@@ -25,16 +40,18 @@ export function initConfigScreen() {
 
 export function showConfigScreen() {
   if (!configScreen) createConfigScreen();
-  input.value = getCustomLevelFromStore();
+  textarea.value = getCustomLevelFromStore();
+  goalInput.value = getCustomGoalFromStore();
   document.body.appendChild(configScreen);
-  input.focus();
+  textarea.focus();
   shown = true;
 }
 
 function closeConfigScreen(loadNewLevel) {
   if (loadNewLevel) {
-    saveCustomLevelInStore(input.value);
-    loadGame(13); // TODO
+    saveCustomLevelInStore(textarea.value);
+    saveCustomGoalInStore(goalInput.value);
+    loadGame(CUSTOM_LEVEL_ID);
   }
   document.body.removeChild(configScreen);
   shown = false;
@@ -44,8 +61,25 @@ function createConfigScreen() {
   configScreen = createElement({ cssClass: 'config', onClick: (event) => event.stopPropagation() });
   const desc = createElement({ cssClass: 'config-desc', text: 'Add and remove emojis from the textarea' });
   configScreen.appendChild(desc);
-  input = createElement({ tag: 'textarea' });
-  configScreen.appendChild(input);
+  textarea = createElement({ tag: 'textarea' });
+  configScreen.appendChild(textarea);
+  const goalContainer = createElement({ cssClass: 'goal-input', text: 'Goal:' });
+  goalInput = createElement({ tag: 'input' });
+  goalInput.type = 'number';
+  goalInput.min = MIN_GOAL;
+  goalInput.max = MAX_GOAL;
+  goalInput.addEventListener('blur', validateGoal);
+  goalContainer.appendChild(goalInput);
+  configScreen.appendChild(goalContainer);
   const closeButton = createElement({ cssClass: 'close-btn', text: 'Apply config', onClick: closeConfigScreen });
   configScreen.appendChild(closeButton);
+}
+
+function validateGoal() {
+  const goal = goalInput.value;
+  if (goal < MIN_GOAL) {
+    goalInput.value = MIN_GOAL;
+  } else if (goal > MAX_GOAL) {
+    goalInput.value = MAX_GOAL;
+  }
 }

@@ -29,6 +29,12 @@
   }
 }
 
+.prepare[data-level="13"] {
+  &::after {
+    content: '🐱🚀🎹\A Custom';
+  }
+}
+
 .prepare:not(.started) {
   &::after {
     opacity: 0.2; /* fade in logo */

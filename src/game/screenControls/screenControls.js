@@ -4,6 +4,7 @@ import { createElement } from '../utils';
 import { activateClickMode, isExpertMode, loadGame, onSpace } from '../../index';
 import { isPreparationMode } from '../game';
 import { showConfigScreen } from '../configScreen/configScreen';
+import { CUSTOM_LEVEL_ID } from '../customLevel';
 
 let catToControl;
 let clickCount = 0;
@@ -27,7 +28,7 @@ export function initScreenControls() {
     if (isExpertMode() && isPreparationMode()) {
       clickCount++;
       setTimeout(() => clickCount--, 1000);
-      if (clickCount > 4) loadGame(13);
+      if (clickCount > 4) loadGame(CUSTOM_LEVEL_ID);
     }
   });
 }

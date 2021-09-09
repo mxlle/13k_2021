@@ -3,6 +3,9 @@ import { Cat } from './gameObjects/cat';
 import { ALL_PLAYERS, getCatsString, getIncludedCatsString } from './players';
 import { LEVEL_OBJECTS } from './levels';
 import { StoreKey } from '../index';
+import { getStoredNumber, storeNumber } from './utils';
+
+export const CUSTOM_LEVEL_ID = 13;
 
 export function getCustomLevelFromStore() {
   const BONUS_LEVEL_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
@@ -11,6 +14,14 @@ export function getCustomLevelFromStore() {
 
 export function saveCustomLevelInStore(levelConfig) {
   localStorage.setItem(StoreKey.CUSTOM_LEVEL, levelConfig);
+}
+
+export function getCustomGoalFromStore() {
+  return getStoredNumber(StoreKey.CUSTOM_GOAL) || CUSTOM_LEVEL_ID;
+}
+
+export function saveCustomGoalInStore(goal) {
+  storeNumber(StoreKey.CUSTOM_GOAL, goal);
 }
 
 export function getSupportedLevelConfig(levelConfig) {
