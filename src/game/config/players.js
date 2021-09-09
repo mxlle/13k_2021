@@ -20,9 +20,9 @@ export function getCats(amount, size) {
     .map((config) => new Cat({ ...config, size }));
 }
 
-export function getCatsFromString(objectsString, size) {
+export function getCatsFromConfigArray(configArray, size) {
   return getPlayerConfigs(ALL_CATS)
-    .filter((config) => objectsString.includes(config.character))
+    .filter((config) => configArray.includes(config.character))
     .map((config) => new Cat({ ...config, size }));
 }
 

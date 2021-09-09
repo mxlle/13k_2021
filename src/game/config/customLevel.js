@@ -1,4 +1,4 @@
-import { CatType, GameObject, ObjectType } from '../gameObjects/gameObject';
+import { GameObject, ObjectType } from '../gameObjects/gameObject';
 import { Cat } from '../gameObjects/cat';
 import { ALL_CATS } from './players';
 import { LEVEL_OBJECTS } from './levels';
@@ -7,7 +7,7 @@ import { getStoredCustomGoal, getStoredCustomLevelConfig } from '../store';
 export const CUSTOM_LEVEL_ID = 13;
 
 export function getCurrentCustomLevelConfig() {
-  const BONUS_LEVEL_DEFAULT_CONFIG = getCatsString() + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
+  const BONUS_LEVEL_DEFAULT_CONFIG = ALL_CATS.join('') + LEVEL_OBJECTS.join('') + LEVEL_OBJECTS.join('') + '👽👽🐙🐙🍔🍔🍔🍔🍔';
   return getStoredCustomLevelConfig() || BONUS_LEVEL_DEFAULT_CONFIG;
 }
 
@@ -15,86 +15,25 @@ export function getCurrentCustomGoal() {
   return getStoredCustomGoal() || CUSTOM_LEVEL_ID;
 }
 
-export function getSupportedLevelConfig(levelConfig) {
-  let validConfig = getIncludedCatsString(levelConfig);
-  if (!validConfig?.length) validConfig = ALL_CATS[0]; // at least one cat
+export function getSupportedLevelConfigArray(levelConfig) {
+  let emojiArray = splitEmojis(levelConfig);
+  emojiArray = filterDuplicatePlayers(emojiArray);
 
-  // special handling for death which is 2 characters
-  for (let d = 0; d < getDeathCount(levelConfig); d++) {
-    validConfig += ObjectType.DEATH;
-  }
-  const remainingLevelConfig = removeDeathFrom(levelConfig);
-
-  for (const c of remainingLevelConfig) {
-    if (!getCatsString().includes(c) && characterIsEmoji(c)) {
-      validConfig += c;
-    }
+  if (!emojiArray.some(isPlayerEmoji)) {
+    emojiArray.unshift(ALL_CATS[0]); // at least one cat
   }
 
-  if (!validConfig.includes(ObjectType.SYNTH)) {
-    validConfig += ObjectType.SYNTH;
+  if (!emojiArray.includes(ObjectType.SYNTH)) {
+    emojiArray.push(ObjectType.SYNTH);
   }
 
-  return validConfig;
+  return emojiArray;
 }
 
-export function getObjectCountFromValidLevelConfig(levelConfig) {
-  let count = 0;
-  for (const o of levelConfig) {
-    count++;
-  }
-
-  // special handling for death which is 2 characters
-  count -= getDeathCount(levelConfig);
-
-  return count;
-}
-
-export function getGameObjectsFromString(objectsString, size) {
-  const gameObjects = [];
-  const validObjectTypes = Object.values(ObjectType).filter((o) => o !== CatType);
-
-  // special handling for death which is 2 characters
-  const { deathObjects, remainingObjectsString } = deathEmojiHandling(objectsString, size);
-  gameObjects.push(...deathObjects);
-
-  for (const o of remainingObjectsString) {
-    if (validObjectTypes.includes(o)) {
-      gameObjects.push(new GameObject({ type: o, size }));
-    } else if (!getCatsString().includes(o) && characterIsEmoji(o)) {
-      if (emojiLives(o)) {
-        gameObjects.push(new Cat({ character: o, size, isCustom: true }));
-      } else {
-        gameObjects.push(new GameObject({ type: o, size, isCustom: true }));
-      }
-    }
-  }
-
-  return gameObjects;
-}
-
-function getDeathCount(objectsString) {
-  return (objectsString.match(/☠️/g) || []).length;
-}
-
-function removeDeathFrom(objectsString) {
-  return objectsString.replace(/☠️/g, '');
-}
-
-function deathEmojiHandling(objectsString, size) {
-  const deathCount = getDeathCount(objectsString);
-  const remainingObjectsString = removeDeathFrom(objectsString);
-  const deathObjects = [];
-  for (let i = 0; i < deathCount; i++) {
-    deathObjects.push(new GameObject({ type: ObjectType.DEATH, size }));
-  }
-  return { deathCount, deathObjects, remainingObjectsString };
-}
-
-function characterIsEmoji(char) {
-  const regexExp = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
-
-  return regexExp.test(char);
+export function getGameObjectsFromConfigArray(configLevelArray, size) {
+  return configLevelArray
+    .filter(isNotPlayerEmoji)
+    .map((emoji) => (emojiLives(emoji) ? new Cat({ character: emoji, size }) : new GameObject({ type: emoji, size })));
 }
 
 function emojiLives(emoji) {
@@ -104,10 +43,36 @@ function emojiLives(emoji) {
   return regexExp.test(emoji);
 }
 
-function getCatsString() {
-  return ALL_CATS.join('');
+function filterDuplicatePlayers(emojiArray) {
+  return emojiArray.filter((emoji, index) => {
+    return isNotPlayerEmoji(emoji) || emojiArray.indexOf(emoji) === index;
+  });
 }
 
-function getIncludedCatsString(objectsString) {
-  return ALL_CATS.filter((char) => objectsString.includes(char)).join('');
+function isPlayerEmoji(emoji) {
+  return ALL_CATS.includes(emoji);
+}
+
+function isNotPlayerEmoji(emoji) {
+  return !isPlayerEmoji(emoji);
+}
+
+function splitEmojis(string) {
+  const list = [];
+  while (string.length) {
+    const [char] = string.match(
+      /^[\u{1F1E6}-\u{1F1FF}]{2}|.[\ufe0e\ufe0f]?[\u{1F3FB}-\u{1F3FF}]?(\u200d\p{Emoji}[\ufe0e\ufe0f]?|[\u{E0020}-\u{E007F}])*[\ufe0e\ufe0f]?/u
+    );
+    if (characterIsEmoji(char)) {
+      list.push(char);
+    }
+    string = string.slice(char.length);
+  }
+  return list;
+}
+
+function characterIsEmoji(char) {
+  const regexExp = /\p{Emoji}/u;
+
+  return regexExp.test(char);
 }
