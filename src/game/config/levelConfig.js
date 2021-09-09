@@ -1,4 +1,4 @@
-import { GameObject, ObjectType } from '../gameObjects/gameObject';
+import { GameObject, ObjectType, PlayerType } from '../gameObjects/gameObject';
 import { Player } from '../gameObjects/player';
 import { getAllPlayers } from './players';
 
@@ -18,9 +18,16 @@ export function getSupportedLevelConfigArray(levelConfig) {
 }
 
 export function getGameObjectsFromConfigArray(configLevelArray, size) {
-  return configLevelArray
-    .filter(isNotPlayerEmoji)
-    .map((emoji) => (emojiLives(emoji) ? new Player({ emoji, size }) : new GameObject({ type: emoji, size })));
+  return configLevelArray.filter(isNotPlayerEmoji).map((emoji) => {
+    const validObjectTypes = Object.values(ObjectType).filter((type) => type !== PlayerType);
+    if (validObjectTypes.includes(emoji)) {
+      // predefined type
+      return new GameObject({ type: emoji, size });
+    } else {
+      // custom object
+      return emojiLives(emoji) ? new Player({ emoji, size }) : new GameObject({ type: emoji, size });
+    }
+  });
 }
 
 function emojiLives(emoji) {
