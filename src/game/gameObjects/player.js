@@ -52,12 +52,12 @@ export class Player extends GameObject {
     this._controls.speedUp();
   }
 
-  turnLeft() {
-    this._controls.turnLeft();
+  turnLeft(alreadySwapped) {
+    this._controls.turnLeft(alreadySwapped);
   }
 
-  turnRight() {
-    this._controls.turnRight();
+  turnRight(alreadySwapped) {
+    this._controls.turnRight(alreadySwapped);
   }
 
   handleCrash(direction) {

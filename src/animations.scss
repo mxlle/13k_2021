@@ -1,0 +1,23 @@
+@keyframes danger {
+  0% {
+    color: white;
+  }
+  50% {
+    color: orange;
+  }
+  100% {
+    color: white;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}

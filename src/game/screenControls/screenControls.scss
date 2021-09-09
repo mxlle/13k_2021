@@ -1,3 +1,5 @@
+@import "../../animations";
+
 .controls {
   display: none;
 }
@@ -59,6 +61,15 @@
     }
     .space , .enter {
       display: none;
+    }
+
+    &.screen-controls-swapped {
+      .controls {
+        flex-direction: row-reverse;
+        .arrow {
+          animation: danger .5s infinite;
+        }
+      }
     }
   }
 

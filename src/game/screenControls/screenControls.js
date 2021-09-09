@@ -37,12 +37,12 @@ export function registerPlayerForScreenControls(player) {
 
 function leftClick() {
   playerToControl?.controlManually();
-  playerToControl?.turnLeft();
+  playerToControl?.turnLeft(true); // swapped already in css, so set alreadySwapped
 }
 
 function rightClick() {
   playerToControl?.controlManually();
-  playerToControl?.turnRight();
+  playerToControl?.turnRight(true); // swapped already in css, so set alreadySwapped
 }
 
 function spaceClick() {

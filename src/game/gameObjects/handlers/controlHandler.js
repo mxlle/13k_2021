@@ -2,6 +2,9 @@ import { bindKeys, randInt } from 'kontra';
 import { updateScoreboard } from '../../score/score';
 import { registerPlayerForScreenControls } from '../../screenControls/screenControls';
 import { deactivateClickMode, FPS, isGameStarted, TRAP_TIME } from '../../globals';
+import { addBodyClasses, removeBodyClasses } from '../../utils';
+
+const CONTROLS_SWAPPED_CLASS = 'screen-controls-swapped';
 
 const DIRECTIONS = [
   { x: 0, y: -1 }, // UP
@@ -26,6 +29,7 @@ export class ControlHandler {
   _velocity = 0;
   _swappedControls = false;
   _swapTimeout;
+  _withScreenControls = false;
 
   constructor(player, leftKey, rightKey) {
     this._player = player;
@@ -34,6 +38,7 @@ export class ControlHandler {
 
     // setup click handler for the player with the left and right key
     if (leftKey === 'left') {
+      this._withScreenControls = true;
       registerPlayerForScreenControls(player);
     }
   }
@@ -84,6 +89,9 @@ export class ControlHandler {
     this._swappedControls = true;
     this._player._markers.swap?.show();
     updateScoreboard();
+    if (this._withScreenControls) {
+      addBodyClasses(CONTROLS_SWAPPED_CLASS);
+    }
 
     clearTimeout(this._swapTimeout);
 
@@ -107,6 +115,9 @@ export class ControlHandler {
     this._swappedControls = false;
     this._swapTimeout = undefined;
     updateScoreboard();
+    if (this._withScreenControls) {
+      removeBodyClasses(CONTROLS_SWAPPED_CLASS);
+    }
   }
 
   setupKeys(leftKey, rightKey) {

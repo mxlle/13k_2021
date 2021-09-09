@@ -1,3 +1,5 @@
+@import "../../animations";
+
 .score {
   font-size: 37px;
   position: absolute;
@@ -55,16 +57,4 @@ body:not(.started) {
      z-index: 1;
    }
  }
-
-@keyframes danger {
-  0% {
-    color: white;
-  }
-  50% {
-    color: orange;
-  }
-  100% {
-    color: white;
-  }
-}
 
