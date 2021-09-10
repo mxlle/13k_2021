@@ -8,6 +8,7 @@ import { getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/cus
 import { getAllPlayers } from '../config/players';
 import { getValidObjectTypes } from '../config/objectType';
 import { getSupportedLevelConfigArray } from '../config/levelConfig';
+import { extraAdventures } from '../config/levels';
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 13312;
@@ -57,8 +58,9 @@ function closeConfigScreen(loadNewLevel) {
 
 function createConfigScreen() {
   configScreen = createElement({ cssClass: 'config', onClick: (event) => event.stopPropagation() });
-  const desc = createElement({ cssClass: 'config-desc', text: 'Add and remove emojis from the textarea' });
+  const desc = createElement({ cssClass: 'config-desc', text: 'Choose a new adventure or create your own' });
   configScreen.appendChild(desc);
+  configScreen.appendChild(createThemeButtons(extraAdventures));
   textarea = createElement({ tag: 'textarea' });
   textarea.addEventListener('input', validateConfig);
   configScreen.appendChild(textarea);
@@ -72,7 +74,7 @@ function createConfigScreen() {
   goalInput.addEventListener('blur', validateGoal);
   goalContainer.appendChild(goalInput);
   configScreen.appendChild(goalContainer);
-  const closeButton = createElement({ cssClass: 'close-btn', text: 'Apply config', onClick: closeConfigScreen });
+  const closeButton = createElement({ cssClass: 'close-btn', text: 'Load game', onClick: closeConfigScreen });
   configScreen.appendChild(closeButton);
 }
 
@@ -88,6 +90,22 @@ function createEmojiButtons(emojis, isToggle) {
         } else {
           setConfigValue(getConfigValue() + emoji);
         }
+      },
+    });
+    buttonsContainer.appendChild(btn);
+  });
+  return buttonsContainer;
+}
+
+function createThemeButtons(themes) {
+  const buttonsContainer = createElement({ cssClass: 'button-container' });
+  themes.forEach(({ id, goal, config }) => {
+    const btn = createElement({
+      cssClass: 'theme-btn',
+      text: id,
+      onClick: () => {
+        setConfigValue(config);
+        goalInput.value = goal;
       },
     });
     buttonsContainer.appendChild(btn);

@@ -4,7 +4,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0,0,0,0.66);
+  background: rgba(0,0,0,0.9);
   color: white;
   font-size: 37px;
   z-index: 1;
@@ -14,9 +14,14 @@
   flex-direction: column;
 }
 
+.config-desc {
+  text-align: center;
+}
+
 .close-btn {
   cursor: pointer;
   color: gold;
+  background-color: rgba(white, 0.2);
   border: 1px solid gold;
   padding: 13px 26px;
 }
@@ -29,27 +34,31 @@ textarea {
   font-size: 37px;
   letter-spacing: 10px;
   padding: 13px;
-  margin: 37px;
+  margin: 13px;
 }
 
 .button-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 13px;
-  .emoji-btn {
+  margin-top: 13px;
+  .emoji-btn, .theme-btn {
     cursor: pointer;
     padding: 13px;
     margin: 3px 7px;
-    background: indigo;
+    background: #202;
     border-radius: 13px;
     font-size: 26px;
   }
 
   + .button-container {
     .emoji-btn {
-      background: darkblue;
+      background: #002;
     }
+  }
+
+  .theme-btn {
+    background: #022;
   }
 }
 

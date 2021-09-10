@@ -28,3 +28,15 @@ export const BASE_ADVENTURE_OBJECTS = [
   ObjectType.ROCKET,
   ObjectType.DEATH,
 ];
+
+export const extraAdventures = [
+  { id: '🌈', goal: 13, config: '😻😸😹😽😺🎹🎹🎹🎹🚀🚀🚀🚀💥💥💥💥🎲🌈🌈🌈🦄🦄🦄🍭🍭🍭' },
+  { id: '🍕', goal: 42, config: '😻😸🙀😼😹😽😿😺😾🎹🎹🎹🎹🚀🚀🚀🚀🚀🚀🚀🚀🚀💥💥💥🎲☠️🔫💩🍟🍟🍟😋🤤🌭🌭🌭🍕🍕🍕🧑‍🍳🧑‍🍳🍔🍔' },
+  {
+    id: '🏖️',
+    goal: 7,
+    config: '😻😸🙀😼😹😽😿😺😾🎹🎹🎹🎹🚀🚀🚀🚀🚀🚀🚀🚀🚀💥💥💥💥💥🎲☠️🔫🔫🌴🌴🌴🐬🐬🐬🦩🦩🦩☀️☀️☀️☀️🏖️🏖️🏖️🍉🍉🍉🍉🍍🍍🍍',
+  },
+  { id: '🎃', goal: 13, config: '🙀😼😹😿😾🎹🎹🚀🚀🚀🚀💥💥💥💥🎲☠️🔫💩💩🧟🧟👻👻🎃🎃🕯️☠️🧙️🧙️🧹' },
+  { id: '🎄', goal: 25, config: '😻😸🙀😼😹😽😺🎹🎹🎹🎹🚀🚀🚀🚀🚀🚀💥💥💥🎲☠️🔫💩🎄🎄🎄🎄🎅🎅🤶🤶🎁🎁🎁⛄⛄❄️❄️' },
+];
