@@ -15,7 +15,7 @@ export function initHints() {
   youWon = createElement({ text: 'You won!' });
   youLost = createElement({ text: 'You lost!' });
   expertHint = createElement({ text: 'Press 1-9 to choose your level of chaos.', cssClass: 'expert-hint' });
-  expertState = createElement({ text: 'Wow! You are an expert.', cssClass: 'expert-state' });
+  expertState = createElement({ text: 'Wow! You are a master of the chaos.', cssClass: 'expert-state' });
   expertConfigHint = createElement({ text: 'Press ENTER to configure.', cssClass: 'expert-hint' });
   bonusLevel = createElement({ text: 'Bonus level!', cssClass: 'bonus-level-hint' });
 }
