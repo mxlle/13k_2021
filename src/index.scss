@@ -20,3 +20,13 @@ body {
 canvas {
   position: absolute;
 }
+
+button.btn {
+  font-size: 26px;
+  font-family: monospace;
+  cursor: pointer;
+  color: gold;
+  border: 1px solid gold;
+  background-color: rgba(white, 0.2);
+  padding: 13px 26px;
+}

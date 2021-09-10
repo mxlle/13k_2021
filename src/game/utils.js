@@ -4,7 +4,7 @@ export function addCanvasToBody() {
 
 export function createElement({ tag, cssClass, text, onClick }) {
   const elem = document.createElement(tag || 'div');
-  if (cssClass) elem.classList.add(cssClass);
+  if (cssClass) elem.classList.add(...cssClass.split(' '));
   if (text) {
     const textNode = document.createTextNode(text);
     elem.appendChild(textNode);

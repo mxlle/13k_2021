@@ -3,12 +3,11 @@ import './configScreen.scss';
 import { createElement } from '../utils';
 import { bindKeys } from 'kontra';
 import { storeCustomGoal, storeCustomLevelConfig } from '../store';
-import { CUSTOM_LEVEL_ID, deactivateClickMode, loadGame } from '../globals';
+import { CUSTOM_LEVEL_ID, deactivateClickMode, getSupportedLevelConfigArray, loadGame } from '../globals';
 import { getCurrentCustomGoal, getCurrentCustomLevelConfig } from '../config/customLevel';
 import { getAllPlayers } from '../config/players';
 import { getValidObjectTypes } from '../config/objectType';
-import { getSupportedLevelConfigArray } from '../config/levelConfig';
-import { extraAdventures } from '../config/levels';
+import { baseAdventures, extraAdventures } from '../config/levels';
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 13312;
@@ -48,9 +47,16 @@ export function showConfigScreen() {
 
 function closeConfigScreen(loadNewLevel) {
   if (loadNewLevel) {
-    storeCustomLevelConfig(getConfigValue());
-    storeCustomGoal(goalInput.value);
-    loadGame(CUSTOM_LEVEL_ID);
+    const config = getConfigValue();
+    const goal = Number(goalInput.value);
+    const isBaseLevel = baseAdventures.some((adventure) => adventure.goal === goal && adventure.config === config);
+    storeCustomLevelConfig(config);
+    storeCustomGoal(goal);
+    if (isBaseLevel) {
+      loadGame(goal);
+    } else {
+      loadGame(CUSTOM_LEVEL_ID);
+    }
   }
   document.body.removeChild(configScreen);
   shown = false;
@@ -58,14 +64,15 @@ function closeConfigScreen(loadNewLevel) {
 
 function createConfigScreen() {
   configScreen = createElement({ cssClass: 'config', onClick: (event) => event.stopPropagation() });
-  const desc = createElement({ cssClass: 'config-desc', text: 'Choose a new adventure or create your own' });
+  const desc = createElement({ cssClass: 'config-desc', text: 'Choose your next adventure or build your own' });
   configScreen.appendChild(desc);
-  configScreen.appendChild(createThemeButtons(extraAdventures));
+  configScreen.appendChild(createAdventureButtons(baseAdventures));
+  configScreen.appendChild(createAdventureButtons(extraAdventures));
   textarea = createElement({ tag: 'textarea' });
   textarea.addEventListener('input', validateConfig);
   configScreen.appendChild(textarea);
   configScreen.appendChild(createEmojiButtons(getAllPlayers(), true));
-  configScreen.appendChild(createEmojiButtons([...getValidObjectTypes(), '👽', '🍔']));
+  configScreen.appendChild(createEmojiButtons([...getValidObjectTypes(), '👽', '🪐']));
   const goalContainer = createElement({ cssClass: 'goal-input', text: 'Goal:' });
   goalInput = createElement({ tag: 'input' });
   goalInput.type = 'number';
@@ -74,7 +81,7 @@ function createConfigScreen() {
   goalInput.addEventListener('blur', validateGoal);
   goalContainer.appendChild(goalInput);
   configScreen.appendChild(goalContainer);
-  const closeButton = createElement({ cssClass: 'close-btn', text: 'Load game', onClick: closeConfigScreen });
+  const closeButton = createElement({ tag: 'button', cssClass: 'btn', text: 'Load game', onClick: closeConfigScreen });
   configScreen.appendChild(closeButton);
 }
 
@@ -82,6 +89,7 @@ function createEmojiButtons(emojis, isToggle) {
   const buttonsContainer = createElement({ cssClass: 'button-container' });
   emojis.forEach((emoji) => {
     const btn = createElement({
+      tag: 'button',
       cssClass: 'emoji-btn',
       text: emoji,
       onClick: () => {
@@ -97,11 +105,12 @@ function createEmojiButtons(emojis, isToggle) {
   return buttonsContainer;
 }
 
-function createThemeButtons(themes) {
+function createAdventureButtons(adventures) {
   const buttonsContainer = createElement({ cssClass: 'button-container' });
-  themes.forEach(({ id, goal, config }) => {
+  adventures.forEach(({ id, goal, config }) => {
     const btn = createElement({
-      cssClass: 'theme-btn',
+      tag: 'button',
+      cssClass: 'adventure-btn',
       text: id,
       onClick: () => {
         setConfigValue(config);

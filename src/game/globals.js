@@ -26,7 +26,7 @@ export const getCurrentLevel = () => currentLevel;
 export const setCurrentLevel = (level) => (currentLevel = level);
 
 // EXPERT MODE
-export let expertMode = false;
+let expertMode = false;
 export const isExpertMode = () => expertMode;
 export const setExpertMode = () => (expertMode = true);
 
@@ -52,4 +52,11 @@ export function activateClickMode() {
 }
 export function deactivateClickMode() {
   removeBodyClasses(CLICK_MODE);
+}
+
+// LEVEL VALIDATOR
+let validatorFn = () => {};
+export const initLevelValidator = (fn) => (validatorFn = fn);
+export function getSupportedLevelConfigArray(...args) {
+  return validatorFn(...args);
 }

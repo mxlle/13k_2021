@@ -18,14 +18,6 @@
   text-align: center;
 }
 
-.close-btn {
-  cursor: pointer;
-  color: gold;
-  background-color: rgba(white, 0.2);
-  border: 1px solid gold;
-  padding: 13px 26px;
-}
-
 textarea {
   background: black;
   color: white;
@@ -42,7 +34,7 @@ textarea {
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 13px;
-  .emoji-btn, .theme-btn {
+  .emoji-btn, .adventure-btn {
     cursor: pointer;
     padding: 13px;
     margin: 3px 7px;
@@ -57,18 +49,26 @@ textarea {
     }
   }
 
-  .theme-btn {
+  .adventure-btn {
     background: #022;
   }
 }
+.goal-input {
+  input {
+    display: inline-block;
+    background: black;
+    color: white;
+    font-size: 37px;
+    padding: 7px;
+    margin-top: 37px;
+    margin-bottom: 37px;
+    margin-left: 13px;
+    text-align: right;
+  }
 
-input {
-  display: inline-block;
-  background: black;
-  color: white;
-  font-size: 37px;
-  padding: 7px;
-  margin-top: 37px;
-  margin-bottom: 37px;
-  margin-left: 13px;
+  &::after {
+    content: 'x 🎹';
+    margin-left: 21px;
+  }
+
 }
