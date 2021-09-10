@@ -101,6 +101,7 @@ function getConfigValue() {
 
 function setConfigValue(value) {
   textarea.value = getSupportedLevelConfigArray(value).join('');
+  textarea.focus();
 }
 
 function validateConfig() {

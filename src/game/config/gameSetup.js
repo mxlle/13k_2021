@@ -49,9 +49,7 @@ export function getLevelConfig(_level) {
 }
 
 function getPlayersFromConfigArray(configArray, size) {
-  return getPlayerConfigs(getAllPlayers())
-    .filter((config) => configArray.includes(config.emoji))
-    .map((config) => new Player({ ...config, size }));
+  return getPlayerConfigs(getAllPlayers().filter((emoji) => configArray.includes(emoji))).map((config) => new Player({ ...config, size }));
 }
 
 // the more objects the smaller they should be

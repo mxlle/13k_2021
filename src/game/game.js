@@ -226,7 +226,7 @@ function attackOthers(player, attack) {
 function addOneTimeObject(obj) {
   obj.oneTime = true;
   obj.appear(300);
-  obj.animationHandler.spinAround(300, 1, 1);
+  obj.animationHandler.spinAround(300, 1, 1).catch(() => {});
   oneTimeObjects.push(obj);
 }
 
