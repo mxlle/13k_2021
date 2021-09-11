@@ -1,6 +1,8 @@
 {
-  "name": "13k_2021",
-  "version": "0.0.1",
+  "name": "space-cat-13",
+  "description": "SPACE: Playful Adventures of Cat Emojis. A game developed for the js13kGames competition",
+  "version": "1.0.13",
+  "author": "Almut Kieffer-Jones",
   "scripts": {
     "build": "npm rum clean && rollup -c",
     "clean": "rimraf dist && mkdirp dist",
