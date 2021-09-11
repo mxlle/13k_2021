@@ -31,11 +31,11 @@ export function storeCustomLevelConfig(levelConfig) {
   localStorage.setItem(StoreKey.CUSTOM_LEVEL, levelConfig);
 }
 
-export function getStoredExportMode() {
+export function getStoredExpertMode() {
   return getStoredNumber(StoreKey.EXPERT);
 }
 
-export function storeExportMode() {
+export function storeExpertMode() {
   storeNumber(StoreKey.EXPERT, 1);
 }
 

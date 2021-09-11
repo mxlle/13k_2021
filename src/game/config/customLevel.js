@@ -3,7 +3,7 @@ import { CUSTOM_LEVEL_ID } from '../globals';
 import { extraAdventures } from './levels';
 
 export function getCurrentCustomLevelConfig() {
-  return getStoredCustomLevelConfig() || extraAdventures[0];
+  return getStoredCustomLevelConfig() || extraAdventures[0].config;
 }
 
 export function getCurrentCustomGoal() {

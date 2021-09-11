@@ -7,7 +7,7 @@ import { getNextLevel, isLastLevel } from './config/gameSetup';
 import { addBodyClasses, removeBodyClasses } from './utils';
 import { updateSkyColor } from './scene/scene';
 import { updateHints } from './hints/hints';
-import { storeExportMode } from './store';
+import { storeExpertMode } from './store';
 import {
   FPS,
   getCurrentLevel,
@@ -170,7 +170,7 @@ function endGame() {
     won = true;
     // check all levels finished
     if (isLastLevel(getCurrentLevel())) {
-      storeExportMode();
+      storeExpertMode();
       setupExpertMode();
     }
   } else {
