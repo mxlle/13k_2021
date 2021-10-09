@@ -3,12 +3,12 @@ import './game.scss';
 import { collides, GameLoop } from 'kontra';
 import { GameObject } from './gameObjects/gameObject';
 import { initScoreboard } from './score/score';
-import { getNextLevel, isLastLevel } from './config/gameSetup';
+import { getNextLevel } from './config/gameSetup';
 import { addBodyClasses, removeBodyClasses } from './utils';
 import { updateSkyColor } from './scene/scene';
 import { updateHints } from './hints/hints';
-import { storeExpertMode } from './store';
 import {
+  CUSTOM_LEVEL_ID,
   FPS,
   getCurrentLevel,
   isGameEnded,
@@ -21,8 +21,9 @@ import {
   setPreparationMode,
   TRAP_TIME,
 } from './globals';
-import { setupExpertMode } from './config/expertMode';
 import { ObjectType } from './config/objectType';
+import { storeCustomLevelConfig } from './store';
+import { baseAdventures, extraAdventures } from './config/levels';
 
 export const Result = {
   WON: 'won',
@@ -141,7 +142,17 @@ export function prepareGame() {
   setPreparationMode(true);
   setGameEnded(false);
   if (document.body.classList.contains(Result.WON)) {
-    loadGame(getNextLevel(getCurrentLevel()));
+    const nextLevel = getNextLevel(getCurrentLevel());
+    if (nextLevel === CUSTOM_LEVEL_ID) {
+      if (getCurrentLevel() !== CUSTOM_LEVEL_ID) {
+        // load first extra adventure
+        storeCustomLevelConfig(extraAdventures[0].config);
+      }
+    } else {
+      // so that this will be opened in level configurator
+      storeCustomLevelConfig(baseAdventures[nextLevel - 1].config);
+    }
+    loadGame(nextLevel);
   } else {
     loadGame();
   }
@@ -168,11 +179,6 @@ function endGame() {
   if (players.some((player) => player.isHuman && player.hasWon())) {
     addBodyClasses(Result.WON);
     won = true;
-    // check all levels finished
-    if (isLastLevel(getCurrentLevel())) {
-      storeExpertMode();
-      setupExpertMode();
-    }
   } else {
     addBodyClasses(Result.LOST);
   }

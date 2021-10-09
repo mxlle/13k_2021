@@ -12,7 +12,7 @@
 
 .started {
   .hints {
-    opacity: 0.5;
+    opacity: 0.75;
   }
 }
 
@@ -23,8 +23,8 @@ body:not(.started) {
   }
 }
 
-.expert-hint, .expert-state {
-  color: gold;
+.secondary-hint {
+  opacity: 0.5;
 }
 
 .bonus-level-hint {

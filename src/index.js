@@ -18,7 +18,7 @@ import {
   isGameStarted,
   isPreparationMode,
 } from './game/globals';
-import { getStoredLevel, storeLevel } from './game/store';
+import { getStoredLevel, storeExpertMode, storeLevel } from './game/store';
 import { getLevelConfig } from './game/config/gameSetup';
 import { configureIsShown } from './game/configScreen/configScreen';
 
@@ -31,6 +31,7 @@ initScreenControls();
 let { canvas } = init();
 resizeCanvas();
 setupEventListeners();
+storeExpertMode(); // activate expert mode from beginning
 setupExpertMode();
 
 // initialize game
