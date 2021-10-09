@@ -22,7 +22,7 @@ import {
   TRAP_TIME,
 } from './globals';
 import { ObjectType } from './config/objectType';
-import { storeCustomLevelConfig } from './store';
+import { storeCustomGoal, storeCustomLevelConfig } from './store';
 import { baseAdventures, extraAdventures } from './config/levels';
 
 export const Result = {
@@ -147,10 +147,12 @@ export function prepareGame() {
       if (getCurrentLevel() !== CUSTOM_LEVEL_ID) {
         // load first extra adventure
         storeCustomLevelConfig(extraAdventures[0].config);
+        storeCustomGoal(extraAdventures[0].goal);
       }
     } else {
       // so that this will be opened in level configurator
       storeCustomLevelConfig(baseAdventures[nextLevel - 1].config);
+      storeCustomGoal(baseAdventures[nextLevel - 1].goal);
     }
     loadGame(nextLevel);
   } else {
