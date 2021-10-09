@@ -38,8 +38,12 @@ export class GameObject extends CollisionDetector {
 
   update() {
     // handle rotation
-    const rotation = this.animationHandler.getRotation();
-    if (rotation !== null) {
+    let rotation = this.animationHandler.getRotation();
+
+    if (this.useBaseRotation) {
+      const baseRotation = this.controls?.getBaseRotation();
+      this.obj.rotation = (rotation || 0) + baseRotation;
+    } else if (rotation !== null) {
       this.obj.rotation = rotation;
     }
 

@@ -60,3 +60,15 @@ export const initLevelValidator = (fn) => (validatorFn = fn);
 export function getSupportedLevelConfigArray(...args) {
   return validatorFn(...args);
 }
+
+// QUERY PARAMS
+let queryParams;
+
+export function getQueryParam(key) {
+  if (!queryParams) {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    queryParams = Object.fromEntries(urlSearchParams.entries());
+  }
+
+  return queryParams[key];
+}

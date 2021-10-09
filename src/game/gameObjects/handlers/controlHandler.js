@@ -30,6 +30,7 @@ export class ControlHandler {
   _swappedControls = false;
   _swapTimeout;
   _withScreenControls = false;
+  _baseRotation = 0;
 
   constructor(player) {
     this._player = player;
@@ -71,6 +72,7 @@ export class ControlHandler {
     const { x, y } = DIRECTIONS[this._direction];
     this._player.dx = x * this._velocity;
     this._player.dy = y * this._velocity;
+    this._baseRotation = (this._direction + 2) * (Math.PI / 2); // chin/bottom will point in move direction
   }
 
   speedUp() {
@@ -91,6 +93,10 @@ export class ControlHandler {
     this._swapTimeout = setTimeout(() => {
       this.restoreControls();
     }, TRAP_TIME);
+  }
+
+  getBaseRotation() {
+    return this._baseRotation;
   }
 
   getKeysString(isRandom) {

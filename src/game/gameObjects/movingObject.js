@@ -2,11 +2,14 @@ import { GameObject } from './gameObject';
 import { Marker } from './marker';
 import { ControlHandler } from './handlers/controlHandler';
 import { ObjectType } from '../config/objectType';
+import { getQueryParam } from '../globals';
 
 const SPIN_TIME = 1000;
 const CRASH_SAFETY_TIME = 2000;
 
 const MOVING_OBJECT_SCALE = 1.5;
+
+const BASE_ROTATION_PARAM = 'headRotation';
 
 export class MovingObject extends GameObject {
   isMovingObject = true;
@@ -14,6 +17,7 @@ export class MovingObject extends GameObject {
   isBot = true;
   markers = {};
   controls;
+  useBaseRotation;
 
   constructor(properties) {
     super({ type: ObjectType.MOVING, ...properties, size: properties.size * MOVING_OBJECT_SCALE });
@@ -22,6 +26,11 @@ export class MovingObject extends GameObject {
 
     this.controls = new ControlHandler(this);
     this.controls.startMoving();
+
+    this.useBaseRotation = getQueryParam(BASE_ROTATION_PARAM) !== undefined;
+    if (this.useBaseRotation) {
+      this.obj.rotation = this.controls.getBaseRotation();
+    }
   }
 
   update() {
